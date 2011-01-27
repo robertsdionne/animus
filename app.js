@@ -40,7 +40,8 @@ webgl.App.INTERVAL_MS = 10;
  * @param {Element} canvas The canvas.
  */
 webgl.App.prototype.install = function(canvas) {
-  this.gl_ = canvas.getContext(webgl.App.WEBGL_CONTEXT);
+  this.canvas_ = canvas;
+  this.gl_ = this.canvas_.getContext(webgl.App.WEBGL_CONTEXT);
   this.renderer_.onCreate(this.gl_);
   this.intervalHandle_ = this.window_.setInterval(
       goog.bind(this.onFrame_, this),
@@ -80,10 +81,10 @@ webgl.App.prototype.onFrame_ = function() {
  * @private
  */
 webgl.App.prototype.checkDimensions_ = function() {
-  if (this.width_ !== this.canvas.width ||
-      this.height_ !== this.canvas.height) {
-    this.width_ = canvas.width;
-    this.height_ = canvas.height;
+  if (this.width_ !== this.canvas_.width ||
+      this.height_ !== this.canvas_.height) {
+    this.width_ = this.canvas_.width;
+    this.height_ = this.canvas_.height;
     this.renderer_.onChange(this.gl_, this.width_, this.height_);
   }
 };
