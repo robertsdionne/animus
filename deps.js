@@ -3,4 +3,6 @@
 goog.addDependency('../../../animus/animus.js', ['animus'], ['goog.dom', 'webgl.App', 'webgl.Renderer']);
 goog.addDependency('../../../animus/app.js', ['webgl.App'], []);
 goog.addDependency('../../../animus/deps.js', [], []);
+goog.addDependency('../../../animus/program.js', ['webgl.Program'], []);
 goog.addDependency('../../../animus/renderer.js', ['webgl.Renderer'], []);
+goog.addDependency('../../../animus/shader.js', ['webgl.Shader'], []);

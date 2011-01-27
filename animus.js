@@ -8,7 +8,9 @@
 goog.provide('animus');
 
 goog.require('webgl.App');
+goog.require('webgl.Program');
 goog.require('webgl.Renderer');
+goog.require('webgl.Shader');
 
 goog.require('goog.dom');
 
@@ -34,30 +36,18 @@ animus.Renderer.prototype.onChange = function(gl, width, height) {
 
 
 animus.Renderer.prototype.onCreate = function(gl) {
-  this.p_ = gl.createProgram();
-  this.b_ = gl.createBuffer();
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  var v = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(v, document.getElementById('v').text);
-  var result = gl.compileShader(v);
-  gl.compileShader(v);
-  if (!gl.getShaderParameter(v, gl.COMPILE_STATUS)) {
-    throw new Error(gl.getShaderInfoLog(v));
-  }
-  gl.attachShader(this.p_, v);
-  gl.deleteShader(v); v = null;
-  var f = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(f, document.getElementById('f').text);
-  gl.compileShader(f);
-  if (!gl.getShaderParameter(f, gl.COMPILE_STATUS)) {
-    throw new Error(gl.getShaderInfoLog(f));
-  }
-  gl.attachShader(this.p_, f);
-  gl.deleteShader(f); f = null;
-  gl.linkProgram(this.p_);
-  gl.useProgram(this.p_);
+  var vertex = new webgl.Shader(
+      gl.VERTEX_SHADER, goog.dom.getElement('v').text);
+  var fragment = new webgl.Shader(
+      gl.FRAGMENT_SHADER, goog.dom.getElement('f').text);
+  this.p_ = new webgl.Program(vertex, fragment);
+  this.p_.create(gl);
+  this.p_.link(gl);
+  gl.useProgram(this.p_.handle);
 
-  this.p_.position = gl.getAttribLocation(this.p_, 'position');
+  this.b_ = gl.createBuffer();
+
+  this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
 
   var data = [];
   data.push(1, 0, 0);
@@ -69,6 +59,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
   gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
+
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
 };
 
 
