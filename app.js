@@ -1,0 +1,89 @@
+// Copyright 2011 Robert Scott Dionne. All Rights Reserved.
+
+/**
+ * @fileoverview
+ * @author robertsdionne@gmail.com (Robert Scott Dionne)
+ */
+
+goog.provide('animus.App');
+
+
+/**
+ * @param {Window} window The window.
+ * @param {Renderer} renderer The WebGL renderer.
+ * @constructor
+ */
+animus.App = function(window, renderer) {
+  this.window_ = window;
+  this.renderer_ = renderer;
+  this.uninstall();
+};
+
+
+/**
+ * WebGL context identifier.
+ * @type {string}
+ */
+animus.App.WEBGL_CONTEXT = 'experimental-webgl';
+
+
+/**
+ * Render interval in milliseconds.
+ * @type {number}
+ */
+animus.App.INTERVAL_MS = 10;
+
+
+/**
+ * Associates this App with the given canvas
+ * and starts the rendering loop.
+ * @param {Element} canvas The canvas.
+ */
+animus.App.prototype.install = function(canvas) {
+  this.gl_ = canvas.getContext(animus.App.WEBGL_CONTEXT);
+  this.renderer_.onCreate(this.gl_);
+  this.intervalHandle_ = this.window_.setInterval(
+      goog.bind(this.onFrame_, this),
+      animus.App.INTERVAL_MS);
+};
+
+
+/**
+ * Dissociates this App with the previously associated canvas
+ * and stops the rendering loop.
+ */
+animus.App.prototype.uninstall = function() {
+  if (this.intervalHandle_) {
+    this.window_.clearInterval(this.intervalHandle_);
+  }
+  this.renderer_.onDestroy(this.gl_);
+  this.width_ = this.height_ = 0;
+  this.canvas_ = null;
+  this.gl_ = null;
+  this.intervalHandle_ = null;
+};
+
+
+/**
+ * Dispatches onChange and onDraw events to the Renderer.
+ * @private
+ */
+animus.App.prototype.onFrame_ = function() {
+  this.checkDimensions_();
+  this.renderer_.onDraw(this.gl_);
+};
+
+
+/**
+ * Checks that the dimensions and, if so, dispatches onChange
+ * to the Renderer.
+ * @private
+ */
+animus.App.prototype.checkDimensions_ = function() {
+  if (this.width_ !== this.canvas.width ||
+      this.height_ !== this.canvas.height) {
+    this.width_ = canvas.width;
+    this.height_ = canvas.height;
+    this.renderer_.onChange(this.gl_, this.width_, this.height_);
+  }
+};

@@ -1,10 +1,17 @@
 // Copyright 2011 Robert Scott Dionne. All Rights Reserved.
 
+/**
+ * @fileoverview
+ * @author robertsdionne@gmail.com (Robert Scott Dionne)
+ */
+
 goog.provide('animus');
+
+goog.require('goog.dom');
 
 
 animus.load = function() {
-  var canvas = document.getElementById('c');
+  var canvas = goog.dom.getElement('c');
   canvas.width = 640;
   canvas.height = 640;
   var gl = canvas.getContext('experimental-webgl');
