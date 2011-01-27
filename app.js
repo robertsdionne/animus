@@ -5,7 +5,7 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('animus.App');
+goog.provide('webgl.App');
 
 
 /**
@@ -13,7 +13,7 @@ goog.provide('animus.App');
  * @param {Renderer} renderer The WebGL renderer.
  * @constructor
  */
-animus.App = function(window, renderer) {
+webgl.App = function(window, renderer) {
   this.window_ = window;
   this.renderer_ = renderer;
   this.uninstall();
@@ -24,14 +24,14 @@ animus.App = function(window, renderer) {
  * WebGL context identifier.
  * @type {string}
  */
-animus.App.WEBGL_CONTEXT = 'experimental-webgl';
+webgl.App.WEBGL_CONTEXT = 'experimental-webgl';
 
 
 /**
  * Render interval in milliseconds.
  * @type {number}
  */
-animus.App.INTERVAL_MS = 10;
+webgl.App.INTERVAL_MS = 10;
 
 
 /**
@@ -39,12 +39,12 @@ animus.App.INTERVAL_MS = 10;
  * and starts the rendering loop.
  * @param {Element} canvas The canvas.
  */
-animus.App.prototype.install = function(canvas) {
-  this.gl_ = canvas.getContext(animus.App.WEBGL_CONTEXT);
+webgl.App.prototype.install = function(canvas) {
+  this.gl_ = canvas.getContext(webgl.App.WEBGL_CONTEXT);
   this.renderer_.onCreate(this.gl_);
   this.intervalHandle_ = this.window_.setInterval(
       goog.bind(this.onFrame_, this),
-      animus.App.INTERVAL_MS);
+      webgl.App.INTERVAL_MS);
 };
 
 
@@ -52,7 +52,7 @@ animus.App.prototype.install = function(canvas) {
  * Dissociates this App with the previously associated canvas
  * and stops the rendering loop.
  */
-animus.App.prototype.uninstall = function() {
+webgl.App.prototype.uninstall = function() {
   if (this.intervalHandle_) {
     this.window_.clearInterval(this.intervalHandle_);
   }
@@ -68,7 +68,7 @@ animus.App.prototype.uninstall = function() {
  * Dispatches onChange and onDraw events to the Renderer.
  * @private
  */
-animus.App.prototype.onFrame_ = function() {
+webgl.App.prototype.onFrame_ = function() {
   this.checkDimensions_();
   this.renderer_.onDraw(this.gl_);
 };
@@ -79,7 +79,7 @@ animus.App.prototype.onFrame_ = function() {
  * to the Renderer.
  * @private
  */
-animus.App.prototype.checkDimensions_ = function() {
+webgl.App.prototype.checkDimensions_ = function() {
   if (this.width_ !== this.canvas.width ||
       this.height_ !== this.canvas.height) {
     this.width_ = canvas.width;
