@@ -1,0 +1,147 @@
+{
+  "character": [
+    {
+      "id": 1,
+      "skeleton_id": 2,
+      "mesh_id": [3, 4],
+      "clip_id": [5]
+    }
+  ],
+  "mesh": [
+    {
+      "id": 3,
+      "vertex": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "joint_index": [0],
+          "joint_weight": [1]
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "joint_index": [1],
+          "joint_weight": [1]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "vertex": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "joint_index": [0],
+          "joint_weight": [1]
+        },
+        {
+          "position": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          "joint_index": [1],
+          "joint_weight": [1]
+        }
+      ]
+    }
+  ],
+  "skeleton": [
+    {
+      "id": 2,
+      "joint": [
+        {
+          "inverse_bind_pose": {
+            "rotation": {
+              "imaginary": {}
+            },
+            "translation": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            }
+          }
+        },
+        {
+          "inverse_bind_pose": {
+            "rotation": {
+              "imaginary": {}
+            },
+            "translation": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            }
+          },
+          "parent_index": 0
+        }
+      ]
+    }
+  ],
+  "clip": [
+    {
+      "id": 5,
+      "duration": 1,
+      "pose_sample": [
+        {
+          "joint_pose": [
+            {
+              "rotation": {
+                "imaginary": {}
+              },
+              "translation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            },
+            {
+              "rotation": {
+                "imaginary": {}
+              },
+              "translation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            }
+          ]
+        },
+        {
+          "joint_pose": [
+            {
+              "rotation": {
+                "imaginary": {}
+              },
+              "translation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            },
+            {
+              "rotation": {
+                "imaginary": {}
+              },
+              "translation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            }
+          ]
+        }
+      ],
+      "pose_start_time": [0, 0.5]
+    }
+  ]
+}
