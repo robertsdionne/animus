@@ -10,7 +10,7 @@ goog.provide('webgl.App');
 
 /**
  * @param {Window} window The window.
- * @param {Renderer} renderer The WebGL renderer.
+ * @param {webapp.Renderer} renderer The WebGL renderer.
  * @constructor
  */
 webgl.App = function(window, renderer) {
