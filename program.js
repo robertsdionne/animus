@@ -22,6 +22,8 @@ webgl.Program.prototype = {
     this.fragment_.create(gl);
     this.handle = gl.createProgram();
   },
+
+
   dispose: function(gl) {
     gl.detachShader(this.handle, this.vertex_.handle);
     this.vertex_.dispose(gl);
@@ -30,6 +32,8 @@ webgl.Program.prototype = {
     gl.deleteProgram(this.handle);
     this.handle = null;
   },
+
+
   link: function(gl) {
     this.vertex_.compile(gl);
     gl.attachShader(this.handle, this.vertex_.handle);
