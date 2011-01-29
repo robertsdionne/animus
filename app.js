@@ -48,6 +48,8 @@ webgl.App.prototype = {
       this.renderer_.onChange(this.gl_, this.width_, this.height_);
     }
   },
+
+
   /**
    * Associates this App with the given canvas
    * and starts the rendering loop.
@@ -61,6 +63,8 @@ webgl.App.prototype = {
         goog.bind(this.onFrame_, this),
         webgl.App.INTERVAL_MS);
   },
+
+
   /**
    * Dispatches onChange and onDraw events to the Renderer.
    * @private
@@ -69,6 +73,8 @@ webgl.App.prototype = {
     this.checkDimensions_();
     this.renderer_.onDraw(this.gl_);
   },
+
+
   /**
    * Dissociates this App with the previously associated canvas
    * and stops the rendering loop.
