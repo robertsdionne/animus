@@ -17,7 +17,7 @@ webgl.Program = function(vertex, fragment) {
 
 
 webgl.Program.prototype = {
-  create = function(gl) {
+  create: function(gl) {
     this.vertex_.create(gl);
     this.fragment_.create(gl);
     this.handle = gl.createProgram();
