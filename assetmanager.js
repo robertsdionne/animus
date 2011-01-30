@@ -7,6 +7,8 @@
 
 goog.provide('animus.AssetManager');
 
+goog.require('animus.Asset');
+
 goog.require('goog.structs.Map');
 
 
@@ -17,40 +19,42 @@ animus.AssetManager = function() {
 goog.addSingletonGetter(animus.AssetManager);
 
 
-animus.AssetManager.prototype = {
-  /**
-   * Gets an Asset from the AssetManager.
-   * @param {number} id
-   * @return {Asset} The requested Asset, or undefined.
-   */
-  getAsset: function(id) {
-    return this.assetMap_.get(id);
-  },
+/**
+ * Gets an Asset from the AssetManager.
+ * @param {number} id
+ * @return {Asset} The requested Asset, or undefined.
+ */
+animus.AssetManager.prototype.getAsset = function(id) {
+  return this.assetMap_.get(id);
+};
 
 
-  /**
-   * Puts an Asset into the AssetManager.
-   * @param {number} id
-   * @param {animus.Asset} asset
-   * @return {boolean} True if the Asset was added to the AssetManager,
-   *     false otherwise.
-   */
-  putAsset: function(id, asset) {
-    if (this.assetMap_.containsKey(id)) {
-      return false;
-    }
-    if (!(asset instanceof Asset)) {
-      return false;
-    }
-    this.assetMap_.set(id, asset);
-  },
+animus.AssetManager.prototype.isIdReserved = function(id) {
+  return this.assetMap_.containsKey(id);
+};
 
 
-  /**
-   * Reserves an id for a new Asset.
-   * @return {number} The id reserved for the new Asset.
-   */
-  reserveId: function() {
-    return this.nextId_++;
+/**
+ * Puts an Asset into the AssetManager.
+ * @param {animus.Asset} asset
+ * @return {boolean} True if the Asset was added to the AssetManager,
+ *     false otherwise.
+ */
+animus.AssetManager.prototype.putAsset = function(asset) {
+  if (!(asset instanceof animus.Asset)) {
+    return false;
   }
+  if (this.assetMap_.containsKey(asset.id())) {
+    return false;
+  }
+  this.assetMap_.set(asset.id(), asset);
+};
+
+
+/**
+ * Reserves an id for a new Asset.
+ * @return {number} The id reserved for the new Asset.
+ */
+animus.AssetManager.prototype.reserveId = function() {
+  return this.nextId_++;
 };
