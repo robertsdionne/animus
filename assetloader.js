@@ -24,17 +24,16 @@ goog.addSingletonGetter(animus.AssetLoader);
 animus.AssetLoader.prototype.loadAssets = function(json) {
   var result = JSON.parse(json);
   var idMap = new goog.structs.Map();
-  for (var i = 0; i < result.character.length; ++i) {
-    this.loadAsset_(animus.Character, result.character[i], idMap);
-  }
-  for (var i = 0; i < result.clip.length; ++i) {
-    this.loadAsset_(animus.Clip, result.clip[i], idMap);
-  }
-  for (var i = 0; i < result.mesh.length; ++i) {
-    this.loadAsset_(animus.Mesh, result.mesh[i], idMap);
-  }
-  for (var i = 0; i < result.skeleton.length; ++i) {
-    this.loadAsset_(animus.Skeleton, result.skeleton[i], idMap);
+  this.loadAllOf_(animus.Character, result.character, idMap);
+  this.loadAllOf_(animus.Clip, result.clip, idMap);
+  this.loadAllOf_(animus.Mesh, result.mesh, idMap);
+  this.loadAllOf_(animus.Skeleton, result.skeleton, idMap);
+};
+
+
+animus.AssetLoader.prototype.loadAllOf_ = function(assetCtor, objects, idMap) {
+  for (var i = 0; i < objects.length; ++i) {
+    this.loadAsset_(assetCtor, objects[i], idMap);
   }
 };
 
@@ -50,12 +49,16 @@ animus.AssetLoader.prototype.loadAsset_ = function(assetCtor, object, idMap) {
 animus.AssetLoader.prototype.translateIdsInObject_ =
     function(object, mask, idMap) {
   var translated = {};
-  for (var property in mask) {
-    if (object[property].length) {
-      translated[property] =
-          this.translateIdsInArray_(object[property], idMap);
+  for (var property in object) {
+    if (property in mask) {
+      if (object[property].length) {
+        translated[property] =
+            this.translateIdsInArray_(object[property], idMap);
+      } else {
+        translated[property] = this.translateId_(object[property], idMap);
+      }
     } else {
-      translated[property] = this.translateId_(object[property], idMap);
+      translated[property] = object[property];
     }
   }
   return translated;
