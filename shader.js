@@ -24,7 +24,7 @@ webgl.Shader.prototype.compile = function(gl) {
   gl.compileShader(this.handle);
   if (!gl.getShaderParameter(this.handle, gl.COMPILE_STATUS)) {
     var log = gl.getShaderInfoLog(this.handle);
-    this.dispose();
+    this.dispose(gl);
     throw new Error(log);
   }
 };

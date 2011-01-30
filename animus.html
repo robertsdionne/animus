@@ -157,6 +157,8 @@
     </script>
     <script id="v" type="x-shader/x-vertex">
       attribute vec3 position;
+      attribute vec4 jointIndex;
+      attribute vec4 jointWeight;
       void main() {
         gl_Position = vec4(position, 1.0);
       }
