@@ -7,6 +7,8 @@
 
 goog.provide('animus.Character');
 
+goog.require('animus.Asset');
+
 
 animus.Character = function(object) {
   goog.base(this, object.id);
@@ -17,14 +19,21 @@ animus.Character = function(object) {
 goog.inherits(animus.Character, animus.Asset);
 
 
-animus.Character.prototype = {
-  skeletonId: function() {
-    return this.skeletonId_;
-  },
-  meshId: function() {
-    return this.meshId_;
-  },
-  clipId: function() {
-    return this.clipId_;
-  }
+animus.Character.LOAD_MASK = {
+  id: {}, skeletonId: {}, meshId: {}, clipId: {}
+};
+
+
+animus.Character.prototype.skeletonId = function() {
+  return this.skeletonId_;
+};
+
+
+animus.Character.prototype.meshId = function() {
+  return this.meshId_;
+};
+
+
+animus.Character.prototype.clipId = function() {
+  return this.clipId_;
 };
