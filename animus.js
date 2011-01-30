@@ -51,7 +51,14 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.b_ = gl.createBuffer();
 
+  this.p_.rotationPalette =
+      gl.getUniformLocation(this.p_.handle, 'rotationPalette');
+  this.p_.translationPalette =
+      gl.getUniformLocation(this.p_.handle, 'translationPalette');
+
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
+  this.p_.jointIndices = gl.getAttribLocation(this.p_.handle, 'jointIndices');
+  this.p_.jointWeights = gl.getAttribLocation(this.p_.handle, 'jointWeights');
 
   var assets = goog.dom.getElement('a').text;
   animus.AssetLoader.getInstance().loadAssets(assets);
