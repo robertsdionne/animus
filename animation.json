@@ -2,9 +2,9 @@
   "character": [
     {
       "id": 1,
-      "skeleton_id": 2,
-      "mesh_id": [3, 4],
-      "clip_id": [5]
+      "skeletonId": 2,
+      "meshId": [3, 4],
+      "clipId": [5]
     }
   ],
   "mesh": [
@@ -17,8 +17,8 @@
             "y": 0,
             "z": 0
           },
-          "joint_index": [0],
-          "joint_weight": [1]
+          "jointIndex": [0],
+          "jointWeight": [1]
         },
         {
           "position": {
@@ -26,8 +26,8 @@
             "y": 1,
             "z": 0
           },
-          "joint_index": [1],
-          "joint_weight": [1]
+          "jointIndex": [1],
+          "jointWeight": [1]
         }
       ]
     },
@@ -40,8 +40,8 @@
             "y": 0,
             "z": 0
           },
-          "joint_index": [0],
-          "joint_weight": [1]
+          "jointIndex": [0],
+          "jointWeight": [1]
         },
         {
           "position": {
@@ -49,8 +49,8 @@
             "y": 0,
             "z": 0
           },
-          "joint_index": [1],
-          "joint_weight": [1]
+          "jointIndex": [1],
+          "jointWeight": [1]
         }
       ]
     }
@@ -60,7 +60,7 @@
       "id": 2,
       "joint": [
         {
-          "inverse_bind_pose": {
+          "inverseBindPose": {
             "rotation": {
               "imaginary": {}
             },
@@ -72,7 +72,7 @@
           }
         },
         {
-          "inverse_bind_pose": {
+          "inverseBindPose": {
             "rotation": {
               "imaginary": {}
             },
@@ -82,7 +82,7 @@
               "z": 0
             }
           },
-          "parent_index": 0
+          "parentIndex": 0
         }
       ]
     }
@@ -91,10 +91,9 @@
     {
       "id": 5,
       "duration": 1,
-      "pose_sample": [
+      "poseSample": [
         {
-          "joint_pose": [
-            {
+          "jointPose": [ {
               "rotation": {
                 "imaginary": {}
               },
@@ -117,7 +116,7 @@
           ]
         },
         {
-          "joint_pose": [
+          "jointPose": [
             {
               "rotation": {
                 "imaginary": {}
@@ -141,7 +140,7 @@
           ]
         }
       ],
-      "pose_start_time": [0, 0.5]
+      "poseStartTime": [0, 0.5]
     }
   ]
 }
