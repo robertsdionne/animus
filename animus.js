@@ -30,51 +30,49 @@ animus.Renderer = function() {
 goog.inherits(animus.Renderer, webgl.Renderer);
 
 
-animus.Renderer.prototype = {
-  onChange: function(gl, width, height) {
-    gl.viewport(0, 0, width, height);
-  },
+animus.Renderer.prototype.onChange = function(gl, width, height) {
+  gl.viewport(0, 0, width, height);
+};
 
 
-  onCreate: function(gl) {
-    var vertex = new webgl.Shader(
-        gl.VERTEX_SHADER, goog.dom.getElement('v').text);
-    var fragment = new webgl.Shader(
-        gl.FRAGMENT_SHADER, goog.dom.getElement('f').text);
-    this.p_ = new webgl.Program(vertex, fragment);
-    this.p_.create(gl);
-    this.p_.link(gl);
-    gl.useProgram(this.p_.handle);
+animus.Renderer.prototype.onCreate = function(gl) {
+  var vertex = new webgl.Shader(
+      gl.VERTEX_SHADER, goog.dom.getElement('v').text);
+  var fragment = new webgl.Shader(
+      gl.FRAGMENT_SHADER, goog.dom.getElement('f').text);
+  this.p_ = new webgl.Program(vertex, fragment);
+  this.p_.create(gl);
+  this.p_.link(gl);
+  gl.useProgram(this.p_.handle);
 
-    this.b_ = gl.createBuffer();
+  this.b_ = gl.createBuffer();
 
-    this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
+  this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
 
-    var data = [];
-    data.push(1, 0, 0);
-    data.push(0, 1, 0);
-    data.push(0, 0, 0);
+  var data = [];
+  data.push(1, 0, 0);
+  data.push(0, 1, 0);
+  data.push(0, 0, 0);
 
-    var a = new Float32Array(data);
+  var a = new Float32Array(data);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
-    gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
+  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  },
-
-
-  onDestroy: goog.nullFunction,
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+};
 
 
-  onDraw: function(gl) {
-    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
-    gl.vertexAttribPointer(this.p_.position, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(this.p_.position);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-    gl.disableVertexAttribArray(this.p_.position);
-    gl.flush();
-  }
+animus.Renderer.prototype.onDestroy = goog.nullFunction;
+
+
+animus.Renderer.prototype.onDraw = function(gl) {
+  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
+  gl.vertexAttribPointer(this.p_.position, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(this.p_.position);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.disableVertexAttribArray(this.p_.position);
+  gl.flush();
 };
