@@ -19,7 +19,7 @@ animus.Character = function(object) {
 goog.inherits(animus.Character, animus.Asset);
 
 
-animus.Character.LOAD_MASK = {
+animus.Character.ASSET_ID_PROPERTY_MASK = {
   id: {}, skeletonId: {}, meshId: {}, clipId: {}
 };
 

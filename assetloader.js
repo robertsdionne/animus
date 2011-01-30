@@ -28,8 +28,8 @@ animus.AssetLoader.prototype.loadAssets = function(json) {
 
 
 animus.AssetLoader.prototype.loadAsset_ = function(assetCtor, object, idMap) {
-  var translated =
-      this.translateIdsInObject_(object, assetCtor.LOAD_MASK, idMap);
+  var translated = this.translateIdsInObject_(
+      object, assetCtor.ASSET_ID_PROPERTY_MASK, idMap);
   var asset = new assetCtor(translated);
   animus.AssetManager.getInstance().putAsset(asset);
 };
