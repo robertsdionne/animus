@@ -9,6 +9,9 @@ goog.provide('animus.AssetLoader');
 
 goog.require('animus.AssetManager');
 goog.require('animus.Character');
+goog.require('animus.Clip');
+goog.require('animus.Mesh');
+goog.require('animus.Skeleton');
 
 goog.require('goog.structs.Map');
 
@@ -23,6 +26,15 @@ animus.AssetLoader.prototype.loadAssets = function(json) {
   var idMap = new goog.structs.Map();
   for (var i = 0; i < result.character.length; ++i) {
     this.loadAsset_(animus.Character, result.character[i], idMap);
+  }
+  for (var i = 0; i < result.clip.length; ++i) {
+    this.loadAsset_(animus.Clip, result.clip[i], idMap);
+  }
+  for (var i = 0; i < result.mesh.length; ++i) {
+    this.loadAsset_(animus.Mesh, result.mesh[i], idMap);
+  }
+  for (var i = 0; i < result.skeleton.length; ++i) {
+    this.loadAsset_(animus.Skeleton, result.skeleton[i], idMap);
   }
 };
 

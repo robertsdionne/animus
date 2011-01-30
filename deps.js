@@ -3,10 +3,13 @@
 goog.addDependency('../../../animus/animus.js', ['animus'], ['goog.dom', 'webgl.App', 'webgl.Program', 'webgl.Renderer', 'webgl.Shader']);
 goog.addDependency('../../../animus/app.js', ['webgl.App'], []);
 goog.addDependency('../../../animus/asset.js', ['animus.Asset'], []);
-goog.addDependency('../../../animus/assetloader.js', ['animus.AssetLoader'], ['animus.AssetManager', 'animus.Character', 'goog.structs.Map']);
+goog.addDependency('../../../animus/assetloader.js', ['animus.AssetLoader'], ['animus.AssetManager', 'animus.Character', 'animus.Clip', 'animus.Mesh', 'animus.Skeleton', 'goog.structs.Map']);
 goog.addDependency('../../../animus/assetmanager.js', ['animus.AssetManager'], ['animus.Asset', 'goog.structs.Map']);
 goog.addDependency('../../../animus/character.js', ['animus.Character'], ['animus.Asset']);
+goog.addDependency('../../../animus/clip.js', ['animus.Clip'], ['animus.Asset']);
 goog.addDependency('../../../animus/deps.js', [], []);
+goog.addDependency('../../../animus/mesh.js', ['animus.Mesh'], ['animus.Asset']);
 goog.addDependency('../../../animus/program.js', ['webgl.Program'], []);
 goog.addDependency('../../../animus/renderer.js', ['webgl.Renderer'], []);
 goog.addDependency('../../../animus/shader.js', ['webgl.Shader'], []);
+goog.addDependency('../../../animus/skeleton.js', ['animus.Skeleton'], ['animus.Asset']);
