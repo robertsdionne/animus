@@ -7,6 +7,9 @@
 
 goog.provide('animus');
 
+goog.require('animus.AssetLoader');
+goog.require('animus.AssetManager');
+
 goog.require('webgl.App');
 goog.require('webgl.Program');
 goog.require('webgl.Renderer');
