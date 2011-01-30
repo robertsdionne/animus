@@ -16,8 +16,6 @@ animus.Asset = function(id) {
 };
 
 
-animus.Asset.prototype = {
-  id: function() {
-    return this.id_;
-  }
+animus.Asset.prototype.id = function() {
+  return this.id_;
 };
