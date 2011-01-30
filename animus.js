@@ -26,6 +26,7 @@ animus.load = function() {
 animus.Renderer = function() {
   this.p_ = null;
   this.b_ = null;
+  this.mesh_ = null;
 };
 goog.inherits(animus.Renderer, webgl.Renderer);
 
@@ -49,10 +50,16 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
 
+  var assets = goog.dom.getElement('a').text;
+  animus.AssetLoader.getInstance().loadAssets(assets);
+
+  this.mesh_ = animus.AssetManager.getInstance().getAsset(2);
+
   var data = [];
-  data.push(1, 0, 0);
-  data.push(0, 1, 0);
-  data.push(0, 0, 0);
+  for (var i = 0; i < this.mesh_.vertex().length; ++i) {
+    var pos = this.mesh_.vertex()[i].position;
+    data.push(pos.x, pos.y, pos.z);
+  }
 
   var a = new Float32Array(data);
 
@@ -72,7 +79,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
   gl.vertexAttribPointer(this.p_.position, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(this.p_.position);
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.drawArrays(gl.LINE_STRIP, 0, this.mesh_.vertex().length);
   gl.disableVertexAttribArray(this.p_.position);
   gl.flush();
 };
