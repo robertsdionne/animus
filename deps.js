@@ -10,6 +10,8 @@ goog.addDependency('../../../animus/clip.js', ['animus.Clip'], ['animus.Asset'])
 goog.addDependency('../../../animus/deps.js', [], []);
 goog.addDependency('../../../animus/mesh.js', ['animus.Mesh'], ['animus.Asset']);
 goog.addDependency('../../../animus/program.js', ['webgl.Program'], []);
+goog.addDependency('../../../animus/quaternion.js', ['animus.Quaternion'], ['animus.Vector']);
 goog.addDependency('../../../animus/renderer.js', ['webgl.Renderer'], []);
 goog.addDependency('../../../animus/shader.js', ['webgl.Shader'], []);
 goog.addDependency('../../../animus/skeleton.js', ['animus.Skeleton'], ['animus.Asset']);
+goog.addDependency('../../../animus/vector.js', ['animus.Vector'], ['animus.Quaternion']);
