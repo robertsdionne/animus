@@ -11,21 +11,39 @@ animus.load = function() {
   canvas.height = 640;
   new webgl.App(window, new animus.Renderer()).install(canvas);
 };
-animus.global.window.onload = animus.load;
+window.onload = animus.load;
 
 
+/**
+ * @constructor
+ */
 animus.Renderer = function() {
+  /**
+   * @type {WebGLProgram}
+   */
   this.p_ = null;
+
+  /**
+   * @type {WebGLBuffer}
+   */
   this.b_ = null;
 };
 animus.inherits(animus.Renderer, webgl.Renderer);
 
 
+/**
+ * @param {WebGLRenderingContext} gl
+ * @param {number} width
+ * @param {number} height
+ */
 animus.Renderer.prototype.onChange = function(gl, width, height) {
   gl.viewport(0, 0, width, height);
 };
 
 
+/**
+ * @param {WebGLRenderingContext} gl
+ */
 animus.Renderer.prototype.onCreate = function(gl) {
   var vertex = new webgl.Shader(
       gl.VERTEX_SHADER, animus.global.document.getElementById('v').text);
@@ -62,9 +80,15 @@ animus.Renderer.prototype.onCreate = function(gl) {
 };
 
 
+/**
+ * @param {WebGLRenderingContext} gl
+ */
 animus.Renderer.prototype.onDestroy = animus.nullFunction;
 
 
+/**
+ * @param {WebGLRenderingContext} gl
+ */
 animus.Renderer.prototype.onDraw = function(gl) {
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
