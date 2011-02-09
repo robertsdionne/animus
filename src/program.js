@@ -7,9 +7,6 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('webgl.Program');
-
-
 webgl.Program = function(vertex, fragment) {
   this.vertex_ = vertex;
   this.fragment_ = fragment;

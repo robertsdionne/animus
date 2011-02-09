@@ -2,6 +2,20 @@
 <html>
   <head>
     <script type="application/javascript">
+      var animus = {};
+      var animus.global = this;
+      var srcs = [
+        'src/app.js',
+        'src/program.js',
+        'src/renderer.js',
+        'src/shader.js',
+        'src/animus.js'
+      ];
+      srcs.forEach(function(src) {
+        animus.global.document.write(
+            '<script type="application/javascript" src="' +
+            src + '"></' + 'script>');
+      });
     </script>
     <script id="v" type="x-shader/x-vertex">
       uniform vec4 rotationPalette[16];
@@ -19,7 +33,7 @@
       }
     </script>
   </head>
-  <body onload="animus.load();">
+  <body>
     <canvas id="c"></canvas>
   </body>
 </html>

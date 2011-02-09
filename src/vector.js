@@ -5,11 +5,6 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('animus.Vector');
-
-goog.require('animus.Quaternion');
-
-
 /**
  * Constructs a new vector from the given coordinates.
  * @param {number} x
@@ -23,7 +18,7 @@ animus.Vector = function(x, y, z) {
   this.y_ = y || 0;
   this.z_ = z || 0;
 };
-goog.inherits(animus.Vector, animus.Quaternion);
+animus.inherits(animus.Vector, animus.Quaternion);
 
 
 /**

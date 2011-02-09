@@ -5,11 +5,6 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('animus.Quaternion');
-
-goog.require('animus.Vector');
-
-
 /**
  * Constructs a new quaternion given the vector and scalar.
  * @param {animus.Vector} vector

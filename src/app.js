@@ -5,9 +5,6 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('webgl.App');
-
-
 /**
  * @param {Window} window The window.
  * @param {webapp.Renderer} renderer The WebGL renderer.
@@ -59,7 +56,7 @@ webgl.App.prototype.install = function(canvas) {
   this.gl_ = this.canvas_.getContext(webgl.App.WEBGL_CONTEXT);
   this.renderer_.onCreate(this.gl_);
   this.intervalHandle_ = this.window_.setInterval(
-      goog.bind(this.onFrame_, this),
+      animus.bind(this.onFrame_, this),
       webgl.App.INTERVAL_MS);
 };
 

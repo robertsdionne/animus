@@ -5,9 +5,6 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('webgl.Renderer');
-
-
 /**
  * A WebGL renderer.
  * @interface
@@ -21,21 +18,21 @@ webgl.Renderer = function() {};
    * @param {number} width The new canvas width.
    * @param {number} height Thew new canvas height.
    */
- webgl.Renderer.prototype.onChange = goog.abstractMethod;
+ webgl.Renderer.prototype.onChange = animus.abstractMethod;
 
 
   /**
    * Handles WebGL context creation.
    * @param {WebGLRenderingContext} gl The WebGL rendering context.
    */
- webgl.Renderer.prototype.onCreate = goog.abstractMethod;
+ webgl.Renderer.prototype.onCreate = animus.abstractMethod;
 
 
   /**
    * Handles WebGL context destruction.
    * @param {WebGLRenderingContext} gl The WebGL rendering context.
    */
- webgl.Renderer.prototype.onDestroy = goog.abstractMethod;
+ webgl.Renderer.prototype.onDestroy = animus.abstractMethod;
 
 
 
@@ -43,4 +40,4 @@ webgl.Renderer = function() {};
    * Handles WebGL drawing.
    * @param {WebGLRenderingContext} gl The WebGL rendering context.
    */
- webgl.Renderer.prototype.onDraw = goog.abstractMethod;
+ webgl.Renderer.prototype.onDraw = animus.abstractMethod;

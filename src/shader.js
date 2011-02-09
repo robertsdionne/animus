@@ -5,9 +5,6 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('webgl.Shader');
-
-
 webgl.Shader = function(type, source) {
   this.type_ = type;
   this.source_ = source;
