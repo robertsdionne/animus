@@ -11,12 +11,12 @@ animus.load = function() {
   canvas.height = 640;
   new webgl.App(window, new animus.Renderer()).install(canvas);
 };
+animus.global.window.onload = animus.load;
 
 
 animus.Renderer = function() {
   this.p_ = null;
   this.b_ = null;
-  this.mesh_ = null;
 };
 animus.inherits(animus.Renderer, webgl.Renderer);
 
@@ -70,7 +70,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
   gl.vertexAttribPointer(this.p_.position, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(this.p_.position);
-  gl.drawArrays(gl.LINE_STRIP, 0, this.mesh_.vertex().length);
+  gl.drawArrays(gl.LINE_STRIP, 0, 2);
   gl.disableVertexAttribArray(this.p_.position);
   gl.flush();
 };

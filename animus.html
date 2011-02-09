@@ -2,9 +2,8 @@
 <html>
   <head>
     <script type="application/javascript">
-      var animus = {};
-      animus.global = this;
       var srcs = [
+        'src/base.js',
         'src/app.js',
         'src/program.js',
         'src/renderer.js',
@@ -12,7 +11,7 @@
         'src/animus.js'
       ];
       srcs.forEach(function(src) {
-        animus.global.document.write(
+        document.write(
             '<script type="application/javascript" src="' +
             src + '"></' + 'script>');
       });
