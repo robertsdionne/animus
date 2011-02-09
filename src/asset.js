@@ -5,12 +5,13 @@
  * @author robertsdionne@gmail.com (Robert Scott Dionne)
  */
 
-goog.provide('animus.Asset');
+//goog.provide('animus.Asset');
 
 
 /**
  * @constructor
  */
+var animus = {};
 animus.Asset = function(id) {
   this.id_ = id;
 };
