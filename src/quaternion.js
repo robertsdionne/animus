@@ -26,6 +26,13 @@ animus.Quaternion = function(vector, scalar) {
 };
 
 
+animus.Quaternion.fromAxisAngle = function(axis, angle) {
+  return new animus.Quaternion(
+      axis.normalized().times(Math.sin(angle/2)),
+      Math.cos(angle/2));
+};
+
+
 /**
  * @return {animus.Vector} The vector.
  */

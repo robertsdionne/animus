@@ -21,6 +21,15 @@ animus.Vector = function(x, y, z) {
 animus.inherits(animus.Vector, animus.Quaternion);
 
 
+animus.Vector.I = new animus.Vector(1, 0, 0);
+
+
+animus.Vector.J = new animus.Vector(0, 1, 0);
+
+
+animus.Vector.K = new animus.Vector(0, 0, 1);
+
+
 /**
  * @return {animus.Vector} This vector.
  */

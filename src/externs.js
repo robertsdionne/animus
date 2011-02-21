@@ -24,6 +24,7 @@ var Float32Array = function() {};
 /** @typedef {boolean} */ var GLboolean;
 /** @typedef {number} */ var GLclampf;
 /** @typedef {number} */ var GLenum;
+/** @typedef {number} */ var GLfloat;
 /** @typedef {number} */ var GLint;
 /** @typedef {number} */ var GLintptr;
 /** @typedef {number} */ var GLsizei;
@@ -257,6 +258,25 @@ WebGLRenderingContext.prototype.linkProgram = function(program) {};
  * @param {string} source
  */
 WebGLRenderingContext.prototype.shaderSource = function(shader, source) {};
+
+
+/**
+ * @param {WebGLUniformLocation} location
+ * @param {GLfloat} x
+ * @param {GLfloat} y
+ * @param {GLfloat} z
+ */
+WebGLRenderingContext.prototype.uniform3f = function(location, x, y, z) {};
+
+
+/**
+ * @param {WebGLUniformLocation} location
+ * @param {GLfloat} x
+ * @param {GLfloat} y
+ * @param {GLfloat} z
+ * @param {GLfloat} w
+ */
+WebGLRenderingContext.prototype.uniform4f = function(location, x, y, z, w) {};
 
 
 /**
