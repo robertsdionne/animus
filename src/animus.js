@@ -9,7 +9,8 @@ animus.load = function() {
   var canvas = animus.global.document.getElementById('c');
   canvas.width = 640;
   canvas.height = 640;
-  new webgl.App(window, new animus.Renderer()).install(canvas);
+  new webgl.App(window, new animus.Renderer(new animus.Keys(document)))
+      .install(canvas);
 };
 window.onload = animus.load;
 
@@ -17,7 +18,12 @@ window.onload = animus.load;
 /**
  * @constructor
  */
-animus.Renderer = function() {
+animus.Renderer = function(keys) {
+  /**
+   * @type {animus.Keys}
+   */
+  this.keys_ = keys;
+
   /**
    * @type {WebGLProgram}
    */
@@ -53,10 +59,14 @@ animus.Renderer.prototype.onChange = function(gl, width, height) {
 };
 
 
+var N = 8;
+
+
 /**
  * @param {WebGLRenderingContext} gl
  */
 animus.Renderer.prototype.onCreate = function(gl) {
+  this.keys_.install();
   var vertex = new webgl.Shader(
       gl.VERTEX_SHADER, animus.global.document.getElementById('v').text);
   var fragment = new webgl.Shader(
@@ -77,7 +87,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   var data = [
     0.0, 0.0, 0.0,
-    0.0, 0.5, 0.0
+    0.0, 1/N, 0.0
   ];
 
   var a = new Float32Array(data);
@@ -89,17 +99,22 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
   var segment = new animus.Geometry(this.b_, this.p_);
-  var joint = new animus.Transform();
-  joint.rotation = animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI/8);
-  joint.translation = new animus.Vector(0, 0.5, 0);
-  joint.children.push(segment);
-
   this.root_ = new animus.Transform();
   this.root_.children.push(segment);
-  this.root_.children.push(joint);
+  this.joint_ = [];
+  for (var i = 0; i < N-1; ++i) {
+    var joint = new animus.Transform();
+    joint.translation = new animus.Vector(0, 1/N, 0);
+    joint.children.push(segment);
+    if (i == 0) {
+      this.root_.children.push(joint);
+    } else {
+      this.joint_[i-1].children.push(joint);
+    }
+    this.joint_[i] = joint;
+  }
 
-  this.root_.rotation =
-      animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI/8);
+
   this.root_.translation = new animus.Vector(0, -0.5, 0);
 
   this.visitor_ = new animus.WebGlVisitor(gl);
@@ -116,6 +131,27 @@ animus.Renderer.prototype.onDestroy = animus.nullFunction;
  * @param {WebGLRenderingContext} gl
  */
 animus.Renderer.prototype.onDraw = function(gl) {
+  this.keys_.update();
+  if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
+    this.root_.rotation = this.root_.rotation.times(
+        animus.Quaternion.fromAxisAngle(
+            animus.Vector.K.negate(), Math.PI/128));
+    for (var i = 0; i < N-1; ++i) {
+      this.joint_[i].rotation = this.joint_[i].rotation.times(
+          animus.Quaternion.fromAxisAngle(
+              animus.Vector.K.negate(), Math.PI/128 / (i+1)));
+    }
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
+    this.root_.rotation = this.root_.rotation.times(
+        animus.Quaternion.fromAxisAngle(
+            animus.Vector.K.negate(), -Math.PI/128));
+    for (var i = 0; i < N-1; ++i) {
+      this.joint_[i].rotation = this.joint_[i].rotation.times(
+          animus.Quaternion.fromAxisAngle(
+              animus.Vector.K.negate(), -Math.PI/128 / (i+1)));
+    }
+  }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   this.root_.accept(this.visitor_);
   gl.flush();

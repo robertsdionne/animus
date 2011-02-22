@@ -10,5 +10,6 @@ java -jar lib/closure-compiler/compiler.jar \
   --js src/program.js \
   --js src/renderer.js \
   --js src/shader.js \
+  --js src/keys.js \
   --js src/animus.js \
   --js_output_file animus.js
