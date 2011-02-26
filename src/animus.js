@@ -87,7 +87,11 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   var data = [
     0.0, 0.0, 0.0,
-    0.0, 1/N, 0.0
+    1/N, 0.0, 0.0,
+    0.0, 0.0, 0.0,
+    0.0, 1/N, 0.0,
+    0.0, 0.0, 0.0,
+    0.0, 0.0, 1/N
   ];
 
   var a = new Float32Array(data);
@@ -105,6 +109,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
   for (var i = 0; i < N-1; ++i) {
     var joint = new animus.Transform();
     joint.translation = new animus.Vector(0, 1/N, 0);
+    joint.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, Math.PI/8 /* (i+1)*/);
     joint.children.push(segment);
     if (i == 0) {
       this.root_.children.push(joint);
@@ -113,7 +119,6 @@ animus.Renderer.prototype.onCreate = function(gl) {
     }
     this.joint_[i] = joint;
   }
-
 
   this.root_.translation = new animus.Vector(0, -0.5, 0);
 
@@ -133,24 +138,40 @@ animus.Renderer.prototype.onDestroy = animus.nullFunction;
 animus.Renderer.prototype.onDraw = function(gl) {
   this.keys_.update();
   if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
-    this.root_.rotation = this.root_.rotation.times(
-        animus.Quaternion.fromAxisAngle(
-            animus.Vector.K.negate(), Math.PI/128));
-    for (var i = 0; i < N-1; ++i) {
-      this.joint_[i].rotation = this.joint_[i].rotation.times(
-          animus.Quaternion.fromAxisAngle(
-              animus.Vector.K.negate(), Math.PI/128 / (i+1)));
-    }
+    this.root_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, Math.PI/128).times(this.root_.rotation);
+//  for (var i = 0; i < N-1; ++i) {
+//    this.joint_[i].rotation = animus.Quaternion.fromAxisAngle(
+//        animus.Vector.J, Math.PI/128 /*(i+1)*/).
+//            times(this.joint_[i].rotation);
+//  }
   }
   if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
-    this.root_.rotation = this.root_.rotation.times(
-        animus.Quaternion.fromAxisAngle(
-            animus.Vector.K.negate(), -Math.PI/128));
-    for (var i = 0; i < N-1; ++i) {
-      this.joint_[i].rotation = this.joint_[i].rotation.times(
-          animus.Quaternion.fromAxisAngle(
-              animus.Vector.K.negate(), -Math.PI/128 / (i+1)));
-    }
+    this.root_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, -Math.PI/128).times(this.root_.rotation);
+//  for (var i = 0; i < N-1; ++i) {
+//    this.joint_[i].rotation = animus.Quaternion.fromAxisAngle(
+//        animus.Vector.J, -Math.PI/128 /*(i+1)*/).
+//            times(this.joint_[i].rotation);
+//  }
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.UP)) {
+    this.root_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, Math.PI/128).times(this.root_.rotation);
+//  for (var i = 0; i < N-1; ++i) {
+//    this.joint_[i].rotation = animus.Quaternion.fromAxisAngle(
+//        animus.Vector.I, Math.PI/128 /*(i+1)*/).
+//            times(this.joint_[i].rotation);
+//  }
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
+    this.root_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, -Math.PI/128).times(this.root_.rotation);
+//  for (var i = 0; i < N-1; ++i) {
+//    this.joint_[i].rotation = animus.Quaternion.fromAxisAngle(
+//        animus.Vector.I, -Math.PI/128 /*(i+1)*/).
+//            times(this.joint_[i].rotation);
+//  }
   }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   this.root_.accept(this.visitor_);

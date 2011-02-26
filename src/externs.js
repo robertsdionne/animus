@@ -73,6 +73,10 @@ WebGLRenderingContext.prototype.LINE_STRIP;
 
 
 /** @type {GLenum} */
+WebGLRenderingContext.prototype.LINES;
+
+
+/** @type {GLenum} */
 WebGLRenderingContext.prototype.LINK_STATUS;
 
 

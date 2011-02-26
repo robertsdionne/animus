@@ -109,7 +109,7 @@ animus.Geometry.prototype.render = function(gl, rotation, translation) {
       translation.z());
   gl.vertexAttribPointer(this.program_.position, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(this.program_.position);
-  gl.drawArrays(gl.LINE_STRIP, 0, 2);
+  gl.drawArrays(gl.LINES, 0, 6);
   gl.disableVertexAttribArray(this.program_.position);
 };
 
@@ -178,10 +178,10 @@ animus.WebGlVisitor.prototype.visitComposite = function(composite) {
  * @inheritDoc
  */
 animus.WebGlVisitor.prototype.visitTransform = function(transform) {
+  this.translationStack_.unshift(this.translationStack_[0].plus(
+      this.rotationStack_[0].rotate(transform.translation)));
   this.rotationStack_.unshift(
       this.rotationStack_[0].times(transform.rotation));
-  this.translationStack_.unshift(transform.rotation.rotate(
-      this.translationStack_[0].plus(transform.translation)));
   this.visitComposite(transform);
   this.rotationStack_.shift();
   this.translationStack_.shift();
