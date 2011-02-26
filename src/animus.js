@@ -75,6 +75,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.p_.create(gl);
   this.p_.link(gl);
   gl.useProgram(this.p_.handle);
+  gl.enable(gl.DEPTH_TEST);
 
   this.b_ = gl.createBuffer();
 

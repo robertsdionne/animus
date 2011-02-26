@@ -61,6 +61,10 @@ WebGLRenderingContext.prototype.DEPTH_BUFFER_BIT;
 
 
 /** @type {GLenum} */
+WebGLRenderingContext.prototype.DEPTH_TEST;
+
+
+/** @type {GLenum} */
 WebGLRenderingContext.prototype.FLOAT;
 
 
