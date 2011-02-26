@@ -84,6 +84,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
       gl.getUniformLocation(this.p_.handle, 'translation');
 
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
+  this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
 
   var data = [
     0.0, 0.0, 0.0,
@@ -91,7 +92,13 @@ animus.Renderer.prototype.onCreate = function(gl) {
     0.0, 0.0, 0.0,
     0.0, 1/N, 0.0,
     0.0, 0.0, 0.0,
-    0.0, 0.0, 1/N
+    0.0, 0.0, 1/N,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0
   ];
 
   var a = new Float32Array(data);

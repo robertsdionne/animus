@@ -57,7 +57,7 @@ webgl.Program.prototype.link = function(gl) {
   gl.linkProgram(this.handle);
   if (!gl.getProgramParameter(this.handle, gl.LINK_STATUS)) {
     var log = gl.getProgramInfoLog(this.handle);
-    this.dispose();
+    this.dispose(gl);
     throw new Error(log);
   }
 };

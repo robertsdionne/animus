@@ -1,8 +1,9 @@
 <!-- Copyright 2010 Robert Scott Dionne. All Rights Reserved. -->
 <html>
   <head>
-    <script type="application/javascript" src="animus.js"></script>
     <!--
+    <script type="application/javascript" src="animus.js"></script>
+    -->
     <script type="application/javascript">
       var srcs = [
         'src/base.js',
@@ -22,11 +23,12 @@
             src + '"></' + 'script>');
       });
     </script>
-    -->
     <script id="v" type="x-shader/x-vertex">
       uniform vec4 rotation;
       uniform vec3 translation;
       attribute vec3 position;
+      attribute vec3 aColor;
+      varying vec3 vColor;
 
       bool isRoughlyEqual(float expected, float actual, float tolerance) {
         return abs(expected - actual) < tolerance;
@@ -52,46 +54,15 @@
       }
 
       void main() {
+        vColor = aColor;
         gl_Position = vec4(rotate(rotation, position) + translation, 1.0);
       }
     </script>
     <script id="f" type="x-shader/x-fragment">
-      bool isRoughlyEqual(float expected, float actual, float tolerance) {
-        return abs(expected - actual) < tolerance;
-      }
-
-      vec4 times(vec4 q, vec4 r) {
-        return vec4(r.xyz * q.w +
-          q.xyz * r.w +
-          cross(q.xyz, r.xyz),
-          q.w * r.w - dot(q.xyz, r.xyz));
-      }
-
-      vec4 conjugate(vec4 q) {
-        return vec4(-q.xyz, q.w);
-      }
-
-      vec4 reciprocal(vec4 q) {
-        return conjugate(q) / dot(q, q);
-      }
-
-      vec3 rotate(vec4 q, vec3 v) {
-        return times(times(q, vec4(v, 0)), reciprocal(q)).xyz;
-      }
-
-      vec4 fromAxisAngle(vec3 axis, float angle) {
-        return vec4(sin(angle/2.0) * normalize(axis), cos(angle/2.0));
-      }
+      varying lowp vec3 vColor;
 
       void main() {
-        highp vec3 v = vec3(1, 0, 0);
-        highp vec4 q = fromAxisAngle(vec3(0, 1, 0), 3.14159/2.0);
-        highp vec3 result = rotate(q, v);
-        bool passed = true;
-        passed = passed && isRoughlyEqual(0.0, result.x, 0.01);
-        passed = passed && isRoughlyEqual(0.0, result.y, 0.01);
-        passed = passed && isRoughlyEqual(-1.0, result.z, 0.01);
-        gl_FragColor = passed ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1);
+        gl_FragColor = vec4(vColor, 1);
       }
     </script>
   </head>
