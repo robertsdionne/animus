@@ -107,8 +107,8 @@ animus.Geometry.prototype.render = function(gl, rotation, translation) {
       translation.x(),
       translation.y(),
       translation.z());
-  gl.vertexAttribPointer(this.program_.position, 3, gl.FLOAT, false, 0, 0);
-  gl.vertexAttribPointer(this.program_.aColor, 3, gl.FLOAT, false, 0, 72);
+  gl.vertexAttribPointer(this.program_.position, 3, gl.FLOAT, false, 24, 0);
+  gl.vertexAttribPointer(this.program_.aColor, 3, gl.FLOAT, false, 24, 12);
   gl.enableVertexAttribArray(this.program_.position);
   gl.enableVertexAttribArray(this.program_.aColor);
   gl.drawArrays(gl.LINES, 0, 6);
