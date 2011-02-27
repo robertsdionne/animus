@@ -145,21 +145,53 @@ animus.Renderer.prototype.onDestroy = animus.nullFunction;
  */
 animus.Renderer.prototype.onDraw = function(gl) {
   this.keys_.update();
-  if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
-    this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, Math.PI/128).times(this.root_.rotation);
+  if (this.keys_.isPressed(animus.Keys.Key.W)) {
+    this.root_.translation = this.root_.translation.plus(
+        animus.Vector.J.times(0.01));
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.S)) {
+    this.root_.translation = this.root_.translation.plus(
+        animus.Vector.J.times(-0.01));
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.D)) {
+    this.root_.translation = this.root_.translation.plus(
+        animus.Vector.I.times(0.01));
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.A)) {
+    this.root_.translation = this.root_.translation.plus(
+        animus.Vector.I.times(-0.01));
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.Z)) {
+    this.root_.translation = this.root_.translation.plus(
+        animus.Vector.K.times(0.01));
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.Q)) {
+    this.root_.translation = this.root_.translation.plus(
+        animus.Vector.K.times(-0.01));
   }
   if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
     this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, -Math.PI/128).times(this.root_.rotation);
+        animus.Vector.J, Math.PI/128).times(this.root_.rotation);
   }
-  if (this.keys_.isPressed(animus.Keys.Key.UP)) {
+  if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
     this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, Math.PI/128).times(this.root_.rotation);
+        animus.Vector.J, -Math.PI/128).times(this.root_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
     this.root_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, Math.PI/128).times(this.root_.rotation);
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.UP)) {
+    this.root_.rotation = animus.Quaternion.fromAxisAngle(
         animus.Vector.I, -Math.PI/128).times(this.root_.rotation);
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.LT)) {
+    this.root_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, Math.PI/128).times(this.root_.rotation);
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.GT)) {
+    this.root_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, -Math.PI/128).times(this.root_.rotation);
   }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   this.root_.accept(this.visitor_);

@@ -26,7 +26,15 @@ animus.Keys.Key = {
   LEFT: 37,
   UP: 38,
   RIGHT: 39,
-  DOWN: 40
+  DOWN: 40,
+  W: 87,
+  A: 65,
+  S: 83,
+  D: 68,
+  Q: 81,
+  Z: 90,
+  LT: 188,
+  GT: 190
 };
 
 
@@ -45,6 +53,7 @@ animus.Keys.prototype.uninstall = function() {
 
 
 animus.Keys.prototype.handleKeyDown_ = function(event) {
+  console.log(event.keyCode);
   this.keys_[event.keyCode] = true;
   return false;
 };
