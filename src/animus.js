@@ -59,7 +59,7 @@ animus.Renderer.prototype.onChange = function(gl, width, height) {
 };
 
 
-var N = 8;
+var N = 32;
 
 
 /**
@@ -117,8 +117,11 @@ animus.Renderer.prototype.onCreate = function(gl) {
   for (var i = 0; i < N-1; ++i) {
     var joint = new animus.Transform();
     joint.translation = new animus.Vector(0, 1/N, 0);
-    joint.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, Math.PI/8 /* (i+1)*/);
+    joint.rotation =
+        animus.Quaternion.fromAxisAngle(
+            animus.Vector.J, Math.PI/4/(i+1)).times(
+        animus.Quaternion.fromAxisAngle(
+            animus.Vector.K, Math.PI/N /* (i+1)*/));
     joint.children.push(segment);
     if (i == 0) {
       this.root_.children.push(joint);
