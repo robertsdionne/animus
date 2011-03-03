@@ -87,22 +87,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
   this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
 
-  var data = [
-    0.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    1/N, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 1/N, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1/N,
-    0.0, 0.0, 1.0
-  ];
-
-  var a = new Float32Array(data);
+  var a = new animus.BoxMan().add(0.2/N, 1/N, 0.2/N).build();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.b_);
   gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
