@@ -136,49 +136,50 @@ animus.Renderer.prototype.onCreate = function(gl) {
   var leg = new animus.Geometry(this.leg_, this.p_);
   var torso = new animus.Geometry(this.torso_, this.p_);
   var head = new animus.Geometry(this.head_, this.p_);
-  var rightCalf = new animus.Transform(
+  this.rightCalf = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/4),
       new animus.Vector(0, 1.1, 0));
-  rightCalf.children.push(leg);
-  var rightThigh = new animus.Transform(
+  this.rightCalf.children.push(leg);
+  this.rightThigh = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/4)),
       new animus.Vector(-0.4, -0.1, 0));
-  rightThigh.children.push(leg, rightCalf);
-  var leftCalf = new animus.Transform(
+  this.rightThigh.children.push(leg, this.rightCalf);
+  this.leftCalf = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/2),
       new animus.Vector(0, 1.1, 0));
-  leftCalf.children.push(leg);
-  var leftThigh = new animus.Transform(
+  this.leftCalf.children.push(leg);
+  this.leftThigh = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, -Math.PI).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/6)),
       new animus.Vector(0.4, -0.1, 0));
-  leftThigh.children.push(leg, leftCalf);
-  var rightForearm = new animus.Transform(
+  this.leftThigh.children.push(leg, this.leftCalf);
+  this.rightForearm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
       new animus.Vector(0, 0.6, 0));
-  rightForearm.children.push(arm);
-  var rightArm = new animus.Transform(
+  this.rightForearm.children.push(arm);
+  this.rightArm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, 5*Math.PI/6)),
       new animus.Vector(-0.6, 2, 0));
-  rightArm.children.push(arm, rightForearm);
-  var leftForearm = new animus.Transform(
+  this.rightArm.children.push(arm, this.rightForearm);
+  this.leftForearm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
       new animus.Vector(0, 0.6, 0));
-  leftForearm.children.push(arm);
-  var leftArm = new animus.Transform(
+  this.leftForearm.children.push(arm);
+  this.leftArm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/3).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, -5*Math.PI/6)),
       new animus.Vector(0.6, 2, 0));
-  leftArm.children.push(arm, leftForearm);
-  var skull = new animus.Transform(
+  this.leftArm.children.push(arm, this.leftForearm);
+  this.skull = new animus.Transform(
       null,
       new animus.Vector(0, 2.1, 0));
-  skull.children.push(head);
+  this.skull.children.push(head);
   this.root_ = new animus.Transform();
   this.root_.children.push(
-      torso, rightThigh, leftThigh, rightArm, leftArm, skull);
+      torso, this.rightThigh, this.leftThigh,
+      this.rightArm, this.leftArm, this.skull);
   this.joint_ = [];
   this.root_.translation = new animus.Vector(0, -0.5, -5.0);
 
@@ -190,6 +191,24 @@ animus.Renderer.prototype.onCreate = function(gl) {
  * @param {WebGLRenderingContext} gl
  */
 animus.Renderer.prototype.onDestroy = animus.nullFunction;
+
+
+var perturb = function(transform, n) {
+  var selectDirection = Math.random();
+  var selectAxis = Math.random();
+  var direction = 1;
+  var axis = animus.Vector.I;
+  if (selectDirection < 1/2) {
+    direction = -1;
+  }
+  if (selectAxis < 1/3) {
+    axis = animus.Vector.J;
+  } else if (selectAxis < 2/3) {
+    axis = animus.Vector.K;
+  }
+  transform.rotation = animus.Quaternion.fromAxisAngle(
+      axis, Math.PI/n * direction).times(transform.rotation);
+};
 
 
 /**
@@ -245,6 +264,16 @@ animus.Renderer.prototype.onDraw = function(gl) {
     this.root_.rotation = animus.Quaternion.fromAxisAngle(
         animus.Vector.K, -Math.PI/128).times(this.root_.rotation);
   }
+  perturb(this.root_, 512);
+  perturb(this.rightForearm, 64);
+  perturb(this.leftForearm, 64);
+  perturb(this.rightArm, 64);
+  perturb(this.leftArm, 64);
+  perturb(this.rightCalf, 64);
+  perturb(this.leftCalf, 64);
+  perturb(this.rightThigh, 64);
+  perturb(this.leftThigh, 64);
+  perturb(this.skull, 64);
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   this.root_.accept(this.visitor_);
   gl.flush();
