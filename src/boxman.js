@@ -5,6 +5,9 @@
  */
 
 
+/**
+ * @constructor
+ */
 animus.BoxMan = function() {
   this.data_ = [];
 };

@@ -89,6 +89,10 @@ WebGLRenderingContext.prototype.STATIC_DRAW;
 
 
 /** @type {GLenum} */
+WebGLRenderingContext.prototype.TRIANGLES;
+
+
+/** @type {GLenum} */
 WebGLRenderingContext.prototype.VERTEX_SHADER;
 
 
