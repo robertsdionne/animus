@@ -76,6 +76,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.p_.link(gl);
   gl.useProgram(this.p_.handle);
   gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.CULL_FACE);
 
   this.b_ = gl.createBuffer();
 
@@ -85,6 +86,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
       gl.getUniformLocation(this.p_.handle, 'translation');
 
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
+  this.p_.aNormal = gl.getAttribLocation(this.p_.handle, 'aNormal');
   this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
 
   var a = new animus.BoxMan().add(0.2/N, 1/N, 0.2/N).build();

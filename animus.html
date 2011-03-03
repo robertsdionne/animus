@@ -28,7 +28,9 @@
       uniform vec4 rotation;
       uniform vec3 translation;
       attribute vec3 position;
+      attribute vec3 aNormal;
       attribute vec3 aColor;
+      varying vec3 vNormal;
       varying vec3 vColor;
 
       bool isRoughlyEqual(float expected, float actual, float tolerance) {
@@ -64,16 +66,19 @@
         perspective[3][2] = -20.0/9.0;
         perspective[2][3] = -1.0;
         perspective[3][3] = 0.0;
+        vNormal = rotate(rotation, aNormal);
         vColor = aColor;
         gl_Position = perspective *
             vec4(rotate(rotation, position) + translation, 1.0);
       }
     </script>
     <script id="f" type="x-shader/x-fragment">
+      varying highp vec3 vNormal;
       varying lowp vec3 vColor;
 
       void main() {
-        gl_FragColor = vec4(vColor, 1);
+        highp vec3 light = vec3(0, -1, 0);
+        gl_FragColor = vec4(max(-dot(light, vNormal), 0.1) * vColor, 1);
       }
     </script>
   </head>
