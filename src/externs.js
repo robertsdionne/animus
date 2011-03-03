@@ -57,6 +57,10 @@ WebGLRenderingContext.prototype.COMPILE_STATUS;
 
 
 /** @type {GLenum} */
+WebGLRenderingContext.prototype.CULL_FACE;
+
+
+/** @type {GLenum} */
 WebGLRenderingContext.prototype.DEPTH_BUFFER_BIT;
 
 
@@ -199,6 +203,12 @@ WebGLRenderingContext.prototype.disableVertexAttribArray = function(index) {};
  * @param {GLsizei} count
  */
 WebGLRenderingContext.prototype.drawArrays = function(mode, first, count) {};
+
+
+/**
+ * @param {GLenum} cap
+ */
+WebGLRenderingContext.prototype.enable = function(cap) {};
 
 
 /**

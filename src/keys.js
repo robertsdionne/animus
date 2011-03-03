@@ -53,7 +53,6 @@ animus.Keys.prototype.uninstall = function() {
 
 
 animus.Keys.prototype.handleKeyDown_ = function(event) {
-  console.log(event.keyCode);
   this.keys_[event.keyCode] = true;
   return false;
 };
