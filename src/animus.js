@@ -178,11 +178,12 @@ animus.Renderer.prototype.onCreate = function(gl) {
       null,
       new animus.Vector(0, 2.1, 0));
   this.skull.children.push(head);
-  this.root_ = new animus.Transform();
-  this.root_.children.push(
+  this.body_ = new animus.Transform();
+  this.body_.children.push(
       torso, this.rightThigh, this.leftThigh,
       this.rightArm, this.leftArm, this.skull);
-  this.joint_ = [];
+  this.root_ = new animus.Transform();
+  this.root_.children.push(this.body_);
   this.root_.translation = new animus.Vector(0, -0.5, -5.0);
 
   this.visitor_ = new animus.WebGlVisitor(gl);
@@ -205,12 +206,12 @@ animus.Renderer.prototype.getPerspectiveProjectionMatrix = function() {
 };
 
 
-animus.Renderer.prototype.getOrthogonalProjectionMatrix = function() {
+animus.Renderer.prototype.getOrthographicProjectionMatrix = function() {
   return [
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, -11.0/9.0, -1.0,
-    0.0, 0.0, -20.0/9.0, 0.0
+    1.0/4.0, 0.0, 0.0, 0.0,
+    0.0, 1.0/4.0, 0.0, 0.0,
+    0.0, 0.0, -2.0/9.0, 0.0,
+    0.0, 0.0, -11.0/9.0, 1.0
   ];
 };
 
@@ -221,55 +222,57 @@ animus.Renderer.prototype.getOrthogonalProjectionMatrix = function() {
 animus.Renderer.prototype.onDraw = function(gl) {
   this.keys_.update();
   if (this.keys_.isPressed(animus.Keys.Key.W)) {
-    this.root_.translation = this.root_.translation.plus(
+    this.body_.translation = this.body_.translation.plus(
         animus.Vector.J.times(0.01));
   }
   if (this.keys_.isPressed(animus.Keys.Key.S)) {
-    this.root_.translation = this.root_.translation.plus(
+    this.body_.translation = this.body_.translation.plus(
         animus.Vector.J.times(-0.01));
   }
   if (this.keys_.isPressed(animus.Keys.Key.D)) {
-    this.root_.translation = this.root_.translation.plus(
+    this.body_.translation = this.body_.translation.plus(
         animus.Vector.I.times(0.01));
   }
   if (this.keys_.isPressed(animus.Keys.Key.A)) {
-    this.root_.translation = this.root_.translation.plus(
+    this.body_.translation = this.body_.translation.plus(
         animus.Vector.I.times(-0.01));
   }
   if (this.keys_.isPressed(animus.Keys.Key.Z)) {
-    this.root_.translation = this.root_.translation.plus(
+    this.body_.translation = this.body_.translation.plus(
         animus.Vector.K.times(0.01));
   }
   if (this.keys_.isPressed(animus.Keys.Key.Q)) {
-    this.root_.translation = this.root_.translation.plus(
+    this.body_.translation = this.body_.translation.plus(
         animus.Vector.K.times(-0.01));
   }
   if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
-    this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, Math.PI/128).times(this.root_.rotation);
+    this.body_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, Math.PI/128).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
-    this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, -Math.PI/128).times(this.root_.rotation);
+    this.body_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, -Math.PI/128).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
-    this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, Math.PI/128).times(this.root_.rotation);
+    this.body_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, Math.PI/128).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.UP)) {
-    this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, -Math.PI/128).times(this.root_.rotation);
+    this.body_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, -Math.PI/128).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LT)) {
-    this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, Math.PI/128).times(this.root_.rotation);
+    this.body_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, Math.PI/128).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.GT)) {
-    this.root_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, -Math.PI/128).times(this.root_.rotation);
+    this.body_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, -Math.PI/128).times(this.body_.rotation);
   }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-  this.visitor_.projection = this.getPerspectiveProjectionMatrix();
+  this.visitor_.projection = this.getOrthographicProjectionMatrix();
+  this.root_.rotation = animus.Quaternion.fromAxisAngle(
+      animus.Vector.I, Math.PI / 2.0);
   this.root_.accept(this.visitor_);
   gl.flush();
 };
