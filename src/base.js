@@ -12,6 +12,18 @@ var webgl = {};
 animus.global = this;
 
 
+animus.global.requestAnimationFrame = (function() {
+  return animus.global.requestAnimationFrame ||
+      animus.global.webkitRequestAnimationFrame ||
+      animus.global.mozRequestAnimationFrame ||
+      animus.global.oRequestAnimationFrame ||
+      animus.global.msRequestAnimationFrame ||
+      function(callback, element) {
+        animus.global.setTimeout(callback, 1000/60);
+      };
+})();
+
+
 animus.inherits = function(child, parent) {
   var temp = function() {};
   temp.prototype = parent.prototype;
