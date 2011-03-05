@@ -116,6 +116,20 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.p_.aNormal = gl.getAttribLocation(this.p_.handle, 'aNormal');
   this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
 
+  this.texture_ = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, this.texture_);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 128, 128, 0,
+      gl.DEPTH_COMPONENT, gl.UNSIGNED_BYTE, null);
+
+  this.framebuffer_ = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D,
+      this.texture_, 0);
+
   var a = new animus.BoxMan().add(0.2, 0.5, 0.2).build();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.arm_);
@@ -284,9 +298,17 @@ animus.Renderer.prototype.onDraw = function(gl) {
         animus.Vector.K, -animus.Renderer.ROTATION).times(this.body_.rotation);
   }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-  this.visitor_.projection = this.getPerspectiveProjectionMatrix();
-//this.root_.rotation = animus.Quaternion.fromAxisAngle(
-//    animus.Vector.I, Math.PI / 2.0);
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
+  this.visitor_.projection = this.getOrthographicProjectionMatrix();
+  this.root_.rotation = animus.Quaternion.fromAxisAngle(
+      animus.Vector.I, Math.PI / 2.0);
   this.root_.accept(this.visitor_);
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER);
+  this.visitor_.projection = this.getPerspectiveProjectionMatrix();
+  this.root_.rotation = new animus.Quaternion();
+  this.root_.accept(this.visitor_);
+
   gl.flush();
 };
