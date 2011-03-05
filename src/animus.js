@@ -195,21 +195,23 @@ animus.Renderer.prototype.onCreate = function(gl) {
 animus.Renderer.prototype.onDestroy = animus.nullFunction;
 
 
-var perturb = function(transform, n) {
-  var selectDirection = Math.random();
-  var selectAxis = Math.random();
-  var direction = 1;
-  var axis = animus.Vector.I;
-  if (selectDirection < 1/2) {
-    direction = -1;
-  }
-  if (selectAxis < 1/3) {
-    axis = animus.Vector.J;
-  } else if (selectAxis < 2/3) {
-    axis = animus.Vector.K;
-  }
-  transform.rotation = animus.Quaternion.fromAxisAngle(
-      axis, Math.PI/n * direction).times(transform.rotation);
+animus.Renderer.prototype.getPerspectiveProjectionMatrix = function() {
+  return [
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, -11.0/9.0, -1.0,
+    0.0, 0.0, -20.0/9.0, 0.0
+  ];
+};
+
+
+animus.Renderer.prototype.getOrthogonalProjectionMatrix = function() {
+  return [
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, -11.0/9.0, -1.0,
+    0.0, 0.0, -20.0/9.0, 0.0
+  ];
 };
 
 
@@ -266,23 +268,8 @@ animus.Renderer.prototype.onDraw = function(gl) {
     this.root_.rotation = animus.Quaternion.fromAxisAngle(
         animus.Vector.K, -Math.PI/128).times(this.root_.rotation);
   }
-  perturb(this.root_, 512);
-  perturb(this.rightForearm, 64);
-  perturb(this.leftForearm, 64);
-  perturb(this.rightArm, 64);
-  perturb(this.leftArm, 64);
-  perturb(this.rightCalf, 64);
-  perturb(this.leftCalf, 64);
-  perturb(this.rightThigh, 64);
-  perturb(this.leftThigh, 64);
-  perturb(this.skull, 64);
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-  this.visitor_.projection = [
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, -11.0/9.0, -1.0,
-    0.0, 0.0, -20.0/9.0, 0.0
-  ];
+  this.visitor_.projection = this.getPerspectiveProjectionMatrix();
   this.root_.accept(this.visitor_);
   gl.flush();
 };
