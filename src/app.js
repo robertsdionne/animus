@@ -43,12 +43,31 @@ webgl.App.prototype.checkDimensions_ = function() {
  * Associates this App with the given canvas
  * and starts the rendering loop.
  * @param {Element} canvas The canvas.
+ * @param {Element} opt_stats The stats indicator div.
  */
-webgl.App.prototype.install = function(canvas) {
+webgl.App.prototype.install = function(canvas, opt_stats) {
   this.canvas_ = canvas;
   this.gl_ = this.canvas_.getContext(webgl.App.WEBGL_CONTEXT);
   this.renderer_.onCreate(this.gl_);
+  if (opt_stats) {
+    this.smoothDt_ = 0;
+    this.stats_ = opt_stats;
+    this.lastTick_ = new Date().getTime();
+  }
   this.onFrame_();
+};
+
+
+webgl.App.SMOOTH = 0.25;
+
+
+webgl.App.prototype.smooth = function(sample, average, rate) {
+  return rate * sample + (1 - rate) * average;
+};
+
+
+webgl.App.prototype.round = function(sample) {
+  return Math.round(10 * sample) / 10;
 };
 
 
@@ -59,6 +78,13 @@ webgl.App.prototype.install = function(canvas) {
 webgl.App.prototype.onFrame_ = function() {
   this.checkDimensions_();
   this.renderer_.onDraw(this.gl_);
+  if (this.stats_) {
+    var tick = new Date().getTime();
+    var dt = (tick - this.lastTick_) || 1;
+    this.smoothDt_ = this.smooth(dt, this.smoothDt_, webgl.App.SMOOTH);
+    this.stats_.innerText = this.round(this.smoothDt_) + ' ms ';
+    this.lastTick_ = tick;
+  }
   animus.global.requestAnimationFrame(
       animus.bind(this.onFrame_, this),
       this.canvas_);

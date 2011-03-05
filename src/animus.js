@@ -7,10 +7,11 @@
 
 animus.load = function() {
   var canvas = animus.global.document.getElementById('c');
+  var stats = animus.global.document.getElementById('stats');
   canvas.width = 640;
   canvas.height = 640;
   new webgl.App(window, new animus.Renderer(new animus.Keys(document)))
-      .install(canvas);
+      .install(canvas, stats);
 };
 window.onload = animus.load;
 
@@ -223,6 +224,12 @@ animus.Renderer.prototype.getOrthographicProjectionMatrix = function() {
 };
 
 
+animus.Renderer.DISPLACEMENT = 0.1;
+
+
+animus.Renderer.ROTATION = Math.PI/64;
+
+
 /**
  * @param {WebGLRenderingContext} gl
  */
@@ -230,51 +237,51 @@ animus.Renderer.prototype.onDraw = function(gl) {
   this.keys_.update();
   if (this.keys_.isPressed(animus.Keys.Key.W)) {
     this.body_.translation = this.body_.translation.plus(
-        animus.Vector.J.times(0.01));
+        animus.Vector.J.times(animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.S)) {
     this.body_.translation = this.body_.translation.plus(
-        animus.Vector.J.times(-0.01));
+        animus.Vector.J.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.D)) {
     this.body_.translation = this.body_.translation.plus(
-        animus.Vector.I.times(0.01));
+        animus.Vector.I.times(animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.A)) {
     this.body_.translation = this.body_.translation.plus(
-        animus.Vector.I.times(-0.01));
+        animus.Vector.I.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.Z)) {
     this.body_.translation = this.body_.translation.plus(
-        animus.Vector.K.times(0.01));
+        animus.Vector.K.times(animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.Q)) {
     this.body_.translation = this.body_.translation.plus(
-        animus.Vector.K.times(-0.01));
+        animus.Vector.K.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
     this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, Math.PI/128).times(this.body_.rotation);
+        animus.Vector.J, animus.Renderer.ROTATION).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
     this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, -Math.PI/128).times(this.body_.rotation);
+        animus.Vector.J, -animus.Renderer.ROTATION).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
     this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, Math.PI/128).times(this.body_.rotation);
+        animus.Vector.I, animus.Renderer.ROTATION).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.UP)) {
     this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, -Math.PI/128).times(this.body_.rotation);
+        animus.Vector.I, -animus.Renderer.ROTATION).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LT)) {
     this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, Math.PI/128).times(this.body_.rotation);
+        animus.Vector.K, animus.Renderer.ROTATION).times(this.body_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.GT)) {
     this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, -Math.PI/128).times(this.body_.rotation);
+        animus.Vector.K, -animus.Renderer.ROTATION).times(this.body_.rotation);
   }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   this.visitor_.projection = this.getPerspectiveProjectionMatrix();
