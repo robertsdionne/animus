@@ -89,9 +89,9 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.keys_.install();
   var vertex = new webgl.Shader(
       gl.VERTEX_SHADER,
-      this.getShaderSource('quatlib') + this.getShaderSource('v'));
+      this.getShaderSource('quatlib') + this.getShaderSource('v0'));
   var fragment = new webgl.Shader(
-      gl.FRAGMENT_SHADER, this.getShaderSource('f'));
+      gl.FRAGMENT_SHADER, this.getShaderSource('f0'));
   this.p_ = new webgl.Program(vertex, fragment);
   this.p_.create(gl);
   this.p_.link(gl);
