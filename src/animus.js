@@ -300,14 +300,16 @@ animus.Renderer.prototype.onDraw = function(gl) {
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
   gl.cullFace(gl.FRONT);
-  this.visitor_.projection = this.getOrthographicProjectionMatrix();
+  gl.uniformMatrix4fv(this.p_.projection, false,
+      this.getOrthographicProjectionMatrix());
   this.root_.rotation = animus.Quaternion.fromAxisAngle(
       animus.Vector.I, Math.PI / 2.0);
   this.root_.accept(this.visitor_);
 
   gl.bindFramebuffer(gl.FRAMEBUFFER);
   gl.cullFace(gl.BACK);
-  this.visitor_.projection = this.getPerspectiveProjectionMatrix();
+  gl.uniformMatrix4fv(this.p_.projection, false,
+      this.getPerspectiveProjectionMatrix());
   this.root_.rotation = new animus.Quaternion();
   this.root_.accept(this.visitor_);
 
