@@ -302,6 +302,15 @@ WebGLRenderingContext.prototype.uniform4f = function(location, x, y, z, w) {};
 
 
 /**
+ * @param {WebGLUniformLocation} location
+ * @param {GLboolean} transpose
+ * @param {Array.<GLfloat>|Float32Array} value
+ */
+WebGLRenderingContext.prototype.uniformMatrix4fv = function(
+    location, transpose, value) {};
+
+
+/**
  * @param {WebGLProgram} program
  */
 WebGLRenderingContext.prototype.useProgram = function(program) {};
