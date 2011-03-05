@@ -46,12 +46,19 @@
 
     </script>
     <script id="v0" type="x-shader/x-vertex">
+      // Per skeleton uniforms
       uniform mat4 projection;
+
+      // Per limb uniforms
       uniform vec4 rotation;
       uniform vec3 translation;
+
+      // Per vertex attributes
       attribute vec3 position;
       attribute vec3 aNormal;
       attribute vec3 aColor;
+
+      // Per vertex varyings
       varying vec3 vNormal;
       varying vec3 vColor;
 
@@ -63,6 +70,7 @@
       }
     </script>
     <script id="f0" type="x-shader/x-fragment">
+      // Per fragment varyings
       varying highp vec3 vNormal;
       varying lowp vec3 vColor;
 
