@@ -278,8 +278,8 @@ animus.Renderer.prototype.onDraw = function(gl) {
   }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   this.visitor_.projection = this.getPerspectiveProjectionMatrix();
-  this.root_.rotation = animus.Quaternion.fromAxisAngle(
-      animus.Vector.I, Math.PI / 2.0);
+//this.root_.rotation = animus.Quaternion.fromAxisAngle(
+//    animus.Vector.I, Math.PI / 2.0);
   this.root_.accept(this.visitor_);
   gl.flush();
 };
