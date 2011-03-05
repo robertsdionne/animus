@@ -95,7 +95,16 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.p_ = new webgl.Program(vertex, fragment);
   this.p_.create(gl);
   this.p_.link(gl);
-  gl.useProgram(this.p_.handle);
+
+  var vertex2 = new webgl.Shader(
+      gl.VERTEX_SHADER,
+      this.getShaderSource('quatlib') + this.getShaderSource('v1'));
+  var fragment2 = new webgl.Shader(
+      gl.FRAGMENT_SHADER, this.getShaderSource('f1'));
+  this.p2_ = new webgl.Program(vertex2, fragment2);
+  this.p2_.create(gl);
+  this.p2_.link(gl);
+
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
 
@@ -114,6 +123,17 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
   this.p_.aNormal = gl.getAttribLocation(this.p_.handle, 'aNormal');
   this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
+
+  this.p2_.projection =
+      gl.getUniformLocation(this.p2_.handle, 'projection');
+  this.p2_.rotation =
+      gl.getUniformLocation(this.p2_.handle, 'rotation');
+  this.p2_.translation =
+      gl.getUniformLocation(this.p2_.handle, 'translation');
+
+  this.p2_.position = gl.getAttribLocation(this.p2_.handle, 'position');
+  this.p2_.aNormal = gl.getAttribLocation(this.p2_.handle, 'aNormal');
+  this.p2_.aColor = gl.getAttribLocation(this.p2_.handle, 'aColor');
 
   this.texture_ = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, this.texture_);
@@ -300,16 +320,20 @@ animus.Renderer.prototype.onDraw = function(gl) {
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
   gl.cullFace(gl.FRONT);
-  gl.uniformMatrix4fv(this.p_.projection, false,
+  gl.useProgram(this.p2_.handle);
+  gl.uniformMatrix4fv(this.p2_.projection, false,
       this.getOrthographicProjectionMatrix());
+  this.visitor_.program = this.p2_;
   this.root_.rotation = animus.Quaternion.fromAxisAngle(
       animus.Vector.I, Math.PI / 2.0);
   this.root_.accept(this.visitor_);
 
   gl.bindFramebuffer(gl.FRAMEBUFFER);
+  gl.useProgram(this.p_.handle);
   gl.cullFace(gl.BACK);
   gl.uniformMatrix4fv(this.p_.projection, false,
       this.getPerspectiveProjectionMatrix());
+  this.visitor_.program = this.p_;
   this.root_.rotation = new animus.Quaternion();
   this.root_.accept(this.visitor_);
 

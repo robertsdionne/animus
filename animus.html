@@ -80,11 +80,24 @@
       }
     </script>
     <script id="v1" type="x-shader/x-vertex">
+      // Per skeleton uniforms
+      uniform mat4 projection;
+
+      // Per limb uniforms
+      uniform vec4 rotation;
+      uniform vec3 translation;
+
+      // Per vertex attributes
+      attribute vec3 position;
+
       void main() {
+        gl_Position = projection *
+            vec4(rotate(rotation, position) + translation, 1.0);
       }
     </script>
     <script id="f1" type="x-shader/x-fragment">
       void main() {
+        gl_FragColor = vec4(1, 0, 0, 1);
       }
     </script>
   </head>

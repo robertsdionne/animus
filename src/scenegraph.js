@@ -72,13 +72,11 @@ animus.Transform.prototype.accept = function(visitor) {
 
 /**
  * @param {WebGLBuffer} buffer
- * @param {animus.Program} program
  * @constructor
  * @extends {animus.Leaf}
  */
-animus.Geometry = function(buffer, program) {
+animus.Geometry = function(buffer) {
   this.buffer_ = buffer;
-  this.program_ = program;
 };
 animus.inherits(animus.Geometry, animus.Leaf);
 
@@ -97,27 +95,27 @@ animus.Geometry.prototype.accept = function(visitor) {
  * @param {animus.Vector} translation
  */
 animus.Geometry.prototype.render = function(
-    gl, rotation, translation) {
+    gl, program, rotation, translation) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer_);
-  gl.uniform4f(this.program_.rotation,
+  gl.uniform4f(program.rotation,
       rotation.vector().x(),
       rotation.vector().y(),
       rotation.vector().z(),
       rotation.scalar());
-  gl.uniform3f(this.program_.translation,
+  gl.uniform3f(program.translation,
       translation.x(),
       translation.y(),
       translation.z());
-  gl.vertexAttribPointer(this.program_.position, 3, gl.FLOAT, false, 36, 0);
-  gl.vertexAttribPointer(this.program_.aNormal, 3, gl.FLOAT, false, 36, 12);
-  gl.vertexAttribPointer(this.program_.aColor, 3, gl.FLOAT, false, 36, 24);
-  gl.enableVertexAttribArray(this.program_.position);
-  gl.enableVertexAttribArray(this.program_.aNormal);
-  gl.enableVertexAttribArray(this.program_.aColor);
+  gl.vertexAttribPointer(program.position, 3, gl.FLOAT, false, 36, 0);
+  gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 36, 12);
+  gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 36, 24);
+  gl.enableVertexAttribArray(program.position);
+  gl.enableVertexAttribArray(program.aNormal);
+  gl.enableVertexAttribArray(program.aColor);
   gl.drawArrays(gl.TRIANGLES, 0, 36);
-  gl.disableVertexAttribArray(this.program_.position);
-  gl.disableVertexAttribArray(this.program_.aNormal);
-  gl.disableVertexAttribArray(this.program_.aColor);
+  gl.disableVertexAttribArray(program.position);
+  gl.disableVertexAttribArray(program.aNormal);
+  gl.disableVertexAttribArray(program.aColor);
 };
 
 
@@ -166,6 +164,7 @@ animus.WebGlVisitor = function(gl) {
   this.gl_ = gl;
   this.rotationStack_ = [new animus.Quaternion()];
   this.translationStack_ = [new animus.Vector()];
+  this.program = null;
 };
 animus.inherits(animus.WebGlVisitor, animus.Visitor);
 
@@ -200,5 +199,8 @@ animus.WebGlVisitor.prototype.visitTransform = function(transform) {
  */
 animus.WebGlVisitor.prototype.visitGeometry = function(geometry) {
   geometry.render(
-      this.gl_, this.rotationStack_[0], this.translationStack_[0]);
+      this.gl_,
+      this.program,
+      this.rotationStack_[0],
+      this.translationStack_[0]);
 };
