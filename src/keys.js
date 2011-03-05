@@ -54,13 +54,13 @@ animus.Keys.prototype.uninstall = function() {
 
 animus.Keys.prototype.handleKeyDown_ = function(event) {
   this.keys_[event.keyCode] = true;
-  return false;
+  return true;
 };
 
 
 animus.Keys.prototype.handleKeyUp_ = function(event) {
   this.keys_[event.keyCode] = false;
-  return false;
+  return true;
 };
 
 
