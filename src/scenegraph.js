@@ -96,8 +96,10 @@ animus.Geometry.prototype.accept = function(visitor) {
  * @param {animus.Quaternion} rotation
  * @param {animus.Vector} translation
  */
-animus.Geometry.prototype.render = function(gl, rotation, translation) {
+animus.Geometry.prototype.render = function(
+    gl, projection, rotation, translation) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer_);
+  gl.uniformMatrix4fv(this.program_.projection, false, projection);
   gl.uniform4f(this.program_.rotation,
       rotation.vector().x(),
       rotation.vector().y(),
@@ -165,6 +167,7 @@ animus.WebGlVisitor = function(gl) {
   this.gl_ = gl;
   this.rotationStack_ = [new animus.Quaternion()];
   this.translationStack_ = [new animus.Vector()];
+  this.projection = null;
 };
 animus.inherits(animus.WebGlVisitor, animus.Visitor);
 
@@ -199,5 +202,6 @@ animus.WebGlVisitor.prototype.visitTransform = function(transform) {
  */
 animus.WebGlVisitor.prototype.visitGeometry = function(geometry) {
   geometry.render(
-      this.gl_, this.rotationStack_[0], this.translationStack_[0]);
+      this.gl_,
+      this.projection, this.rotationStack_[0], this.translationStack_[0]);
 };

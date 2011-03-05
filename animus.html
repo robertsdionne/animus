@@ -25,6 +25,7 @@
       });
     </script>
     <script id="v" type="x-shader/x-vertex">
+      uniform mat4 projection;
       uniform vec4 rotation;
       uniform vec3 translation;
       attribute vec3 position;
@@ -57,18 +58,9 @@
       }
 
       void main() {
-        mat4 perspective = mat4(1);
-        perspective[0][0] = 1.0;
-        perspective[2][0] = 0.0;
-        perspective[1][1] = 1.0;
-        perspective[2][1] = 0.0;
-        perspective[2][2] = -11.0/9.0;
-        perspective[3][2] = -20.0/9.0;
-        perspective[2][3] = -1.0;
-        perspective[3][3] = 0.0;
         vNormal = rotate(rotation, aNormal);
         vColor = aColor;
-        gl_Position = perspective *
+        gl_Position = projection *
             vec4(rotate(rotation, position) + translation, 1.0);
       }
     </script>

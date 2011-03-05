@@ -97,6 +97,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.torso_ = gl.createBuffer();
   this.head_ = gl.createBuffer();
 
+  this.p_.projection =
+      gl.getUniformLocation(this.p_.handle, 'projection');
   this.p_.rotation =
       gl.getUniformLocation(this.p_.handle, 'rotation');
   this.p_.translation =
@@ -275,6 +277,12 @@ animus.Renderer.prototype.onDraw = function(gl) {
   perturb(this.leftThigh, 64);
   perturb(this.skull, 64);
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+  this.visitor_.projection = [
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, -11.0/9.0, -1.0,
+    0.0, 0.0, -20.0/9.0, 0.0
+  ];
   this.root_.accept(this.visitor_);
   gl.flush();
 };
