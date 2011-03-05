@@ -76,21 +76,28 @@ animus.Renderer.prototype.onChange = function(gl, width, height) {
 var N = 32;
 
 
+animus.Renderer.prototype.getShaderSource = function(id) {
+  return animus.global.document.getElementById(id).text;
+};
+
+
 /**
  * @param {WebGLRenderingContext} gl
  */
 animus.Renderer.prototype.onCreate = function(gl) {
   this.keys_.install();
   var vertex = new webgl.Shader(
-      gl.VERTEX_SHADER, animus.global.document.getElementById('v').text);
+      gl.VERTEX_SHADER,
+      this.getShaderSource('quatlib') + this.getShaderSource('v'));
   var fragment = new webgl.Shader(
-      gl.FRAGMENT_SHADER, animus.global.document.getElementById('f').text);
+      gl.FRAGMENT_SHADER, this.getShaderSource('f'));
   this.p_ = new webgl.Program(vertex, fragment);
   this.p_.create(gl);
   this.p_.link(gl);
   gl.useProgram(this.p_.handle);
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
+//gl.cullFace(gl.FRONT);
 
   this.arm_ = gl.createBuffer();
   this.leg_ = gl.createBuffer();
@@ -270,7 +277,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
         animus.Vector.K, -Math.PI/128).times(this.body_.rotation);
   }
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-  this.visitor_.projection = this.getOrthographicProjectionMatrix();
+  this.visitor_.projection = this.getPerspectiveProjectionMatrix();
   this.root_.rotation = animus.Quaternion.fromAxisAngle(
       animus.Vector.I, Math.PI / 2.0);
   this.root_.accept(this.visitor_);

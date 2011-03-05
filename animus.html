@@ -24,20 +24,7 @@
             src + '"></' + 'script>');
       });
     </script>
-    <script id="v" type="x-shader/x-vertex">
-      uniform mat4 projection;
-      uniform vec4 rotation;
-      uniform vec3 translation;
-      attribute vec3 position;
-      attribute vec3 aNormal;
-      attribute vec3 aColor;
-      varying vec3 vNormal;
-      varying vec3 vColor;
-
-      bool isRoughlyEqual(float expected, float actual, float tolerance) {
-        return abs(expected - actual) < tolerance;
-      }
-
+    <script id="quatlib" type="x-shader/x-vertex">
       vec4 times(vec4 q, vec4 r) {
         return vec4(r.xyz * q.w +
           q.xyz * r.w +
@@ -56,6 +43,17 @@
       vec3 rotate(vec4 q, vec3 v) {
         return times(times(q, vec4(v, 0)), reciprocal(q)).xyz;
       }
+
+    </script>
+    <script id="v" type="x-shader/x-vertex">
+      uniform mat4 projection;
+      uniform vec4 rotation;
+      uniform vec3 translation;
+      attribute vec3 position;
+      attribute vec3 aNormal;
+      attribute vec3 aColor;
+      varying vec3 vNormal;
+      varying vec3 vColor;
 
       void main() {
         vNormal = rotate(rotation, aNormal);
