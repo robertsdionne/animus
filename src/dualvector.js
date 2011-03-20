@@ -14,9 +14,15 @@
  * @extends {animus.DualQuaternion}
  */
 animus.DualVector = function(x, y, z) {
-  this.x_ = x || new animus.DualNumber();
-  this.y_ = y || new animus.DualNumber();
-  this.z_ = z || new animus.DualNumber();
+  this.__defineGetter__("scalar", function() {return 0;});
+  var vector = this;
+  this.__defineGetter__("vector", function() {return vector;});
+  var x = x || 0;
+  this.__defineGetter__("x", function() {return x;});
+  var y = y || 0;
+  this.__defineGetter__("y", function() {return y;});
+  var z = z || 0;
+  this.__defineGetter__("z", function() {return z;});
 };
 animus.inherits(animus.DualVector, animus.DualQuaternion);
 
@@ -31,50 +37,10 @@ animus.DualVector.K = new animus.DualVector(0, 0, 1);
 
 
 /**
- * @return {animus.DualVector} This vector.
- */
-animus.DualVector.prototype.vector = function() {
-  return this;
-};
-
-
-/**
- * @return {number} Zero.
- */
-animus.DualVector.prototype.scalar = function() {
-  return 0;
-};
-
-
-/**
- * @return {number} The X coordinate.
- */
-animus.DualVector.prototype.x = function() {
-  return this.x_;
-};
-
-
-/**
- * @return {number} The Y coordinate.
- */
-animus.DualVector.prototype.y = function() {
-  return this.y_;
-};
-
-
-/**
- * @return {number} The Z coordinate.
- */
-animus.DualVector.prototype.z = function() {
-  return this.z_;
-};
-
-
-/**
  * @return {animus.DualVector} The negation of this vector.
  */
 animus.DualVector.prototype.negate = function() {
-  return new animus.DualVector(-this.x(), -this.y(), -this.z());
+  return new animus.DualVector(-this.x, -this.y, -this.z);
 };
 
 
@@ -93,9 +59,9 @@ animus.DualVector.prototype.magnitudeSquared = function() {
 animus.DualVector.prototype.plus = function(that) {
   if (that instanceof animus.DualVector) {
     return new animus.DualVector(
-        this.x() + that.x(),
-        this.y() + that.y(),
-        this.z() + that.z());
+        this.x + that.x,
+        this.y + that.y,
+        this.z + that.z);
   } else {
     return animus.DualQuaternion.prototype.plus.call(this, that);
   }
@@ -109,9 +75,9 @@ animus.DualVector.prototype.plus = function(that) {
 animus.DualVector.prototype.minus = function(that) {
   if (that instanceof animus.DualVector) {
     return new animus.DualVector(
-        this.x() - that.x(),
-        this.y() - that.y(),
-        this.z() - that.z());
+        this.x - that.x,
+        this.y - that.y,
+        this.z - that.z);
   } else {
     return animus.DualQuaternion.prototype.plus.call(this, that);
   }
@@ -124,7 +90,7 @@ animus.DualVector.prototype.minus = function(that) {
  */
 animus.DualVector.prototype.times = function(that) {
   if (typeof that === 'number') {
-    return new animus.DualVector(this.x() * that, this.y() * that, this.z() * that);
+    return new animus.DualVector(this.x * that, this.y * that, this.z * that);
   } else {
     return animus.DualQuaternion.prototype.times.call(this, that);
   }
@@ -137,7 +103,7 @@ animus.DualVector.prototype.times = function(that) {
  */
 animus.DualVector.prototype.over = function(that) {
   if (typeof that === 'number') {
-    return new animus.DualVector(this.x() / that, this.y() / that, this.z() / that);
+    return new animus.DualVector(this.x / that, this.y / that, this.z / that);
   } else {
     return animus.DualQuaternion.prototype.over.call(this, that);
   }
@@ -150,9 +116,9 @@ animus.DualVector.prototype.over = function(that) {
  */
 animus.DualVector.prototype.cross = function(that) {
   return new animus.DualVector(
-      this.y() * that.z() - this.z() * that.y(),
-      this.z() * that.x() - this.x() * that.z(),
-      this.x() * that.y() - this.y() * that.x());
+      this.y * that.z - this.z * that.y,
+      this.z * that.x - this.x * that.z,
+      this.x * that.y - this.y * that.x);
 };
 
 
@@ -161,7 +127,7 @@ animus.DualVector.prototype.cross = function(that) {
  * @param {animus.DualVector} that
  */
 animus.DualVector.prototype.dot = function(that) {
-  return this.x() * that.x() + this.y() * that.y() + this.z() * that.z();
+  return this.x * that.x + this.y * that.y + this.z * that.z;
 };
 
 
@@ -169,5 +135,5 @@ animus.DualVector.prototype.dot = function(that) {
  * @return {string} A string representation of this vector.
  */
 animus.DualVector.prototype.toString = function() {
-  return this.x() + 'i + ' + this.y() + 'j + ' + this.z() + 'k';
+  return this.x + 'i + ' + this.y + 'j + ' + this.z + 'k';
 };

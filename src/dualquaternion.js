@@ -7,60 +7,46 @@
 
 /**
  * Constructs a new quaternion given the vector and scalar.
- * @param {animus.Vector} vector
+ * @param {animus.DualVector} vector
  * @param {number} scalar
  * @constructor
  */
-animus.Quaternion = function(vector, scalar) {
+animus.DualQuaternion = function(vector, scalar) {
   /**
-   * @type {animus.Vector}
+   * @type {animus.DualVector}
    * @private
    */
-  this.vector_ = vector || new animus.Vector();
+  vector = vector || new animus.DualVector();
+  this.__defineGetter__("vector", function() {return vector;});
   
   /**
    * @type {number}
    * @private
    */
-  this.scalar_ = typeof scalar === "undefined" ? 1 : scalar;
+  scalar = typeof scalar === "undefined" ? 1 : scalar;
+  this.__defineGetter__("scalar", function() {return scalar;});
 };
 
 
-animus.Quaternion.fromAxisAngle = function(axis, angle) {
-  return new animus.Quaternion(
+animus.DualQuaternion.fromAxisAngle = function(axis, angle) {
+  return new animus.DualQuaternion(
       axis.normalized().times(Math.sin(angle/2)),
       Math.cos(angle/2));
 };
 
 
 /**
- * @return {animus.Vector} The vector.
+ * @return {animus.DualQuaternion} The negation of this quaternion.
  */
-animus.Quaternion.prototype.vector = function() {
-  return this.vector_;
-};
-
-
-/**
- * @return {number} The scalar.
- */
-animus.Quaternion.prototype.scalar = function() {
-  return this.scalar_;
-};
-
-
-/**
- * @return {animus.Quaternion} The negation of this quaternion.
- */
-animus.Quaternion.prototype.negate = function() {
-  return new animus.Quaternion(this.vector().negate(), -this.scalar());
+animus.DualQuaternion.prototype.negate = function() {
+  return new animus.DualQuaternion(this.vector.negate(), -this.scalar);
 };
 
 
 /**
  * @return {number} The magnitude of this quaternion.
  */
-animus.Quaternion.prototype.magnitude = function() {
+animus.DualQuaternion.prototype.magnitude = function() {
   return Math.sqrt(this.magnitudeSquared());
 };
 
@@ -68,110 +54,110 @@ animus.Quaternion.prototype.magnitude = function() {
 /**
  * @return {number} The square magnitude of this quaternion.
  */
-animus.Quaternion.prototype.magnitudeSquared = function() {
-  return this.scalar() * this.scalar() + this.vector().magnitudeSquared();
+animus.DualQuaternion.prototype.magnitudeSquared = function() {
+  return this.scalar * this.scalar + this.vector.magnitudeSquared();
 };
 
 
 /**
- * @return {animus.Quaternion} This quaternion normalized.
+ * @return {animus.DualQuaternion} This quaternion normalized.
  */
-animus.Quaternion.prototype.normalized = function() {
+animus.DualQuaternion.prototype.normalized = function() {
   return this.over(this.magnitude());
 };
 
 
 /**
- * @return {animus.Quaternion} This quaternion's conjugate.
+ * @return {animus.DualQuaternion} This quaternion's conjugate.
  */
-animus.Quaternion.prototype.conjugate = function() {
-  return new animus.Quaternion(this.vector().negate(), this.scalar());
+animus.DualQuaternion.prototype.conjugate = function() {
+  return new animus.DualQuaternion(this.vector.negate(), this.scalar);
 };
 
 
 /**
- * @return {animus.Quaternion} This quaternion's reciprocal.
+ * @return {animus.DualQuaternion} This quaternion's reciprocal.
  */
-animus.Quaternion.prototype.reciprocal = function() {
+animus.DualQuaternion.prototype.reciprocal = function() {
   return this.conjugate().over(this.magnitudeSquared());
 };
 
 
 /**
- * @return {animus.Quaternion} The sum of this and that.
- * @param {number|animus.Quaternion} that
+ * @return {animus.DualQuaternion} The sum of this and that.
+ * @param {number|animus.DualQuaternion} that
  */
-animus.Quaternion.prototype.plus = function(that) {
+animus.DualQuaternion.prototype.plus = function(that) {
   if (typeof that === 'number') {
-    return new animus.Quaternion(this.vector(), this.scalar() + that);
-  } else if (that instanceof animus.Quaternion) {
-    return new animus.Quaternion(
-        this.vector().plus(that.vector()),
-        this.scalar() + that.scalar());
+    return new animus.DualQuaternion(this.vector, this.scalar + that);
+  } else if (that instanceof animus.DualQuaternion) {
+    return new animus.DualQuaternion(
+        this.vector.plus(that.vector),
+        this.scalar + that.scalar);
   }
 };
 
 
 /**
- * @return {animus.Quaternion} The difference of this and that.
- * @param {number|animus.Quaternion} that
+ * @return {animus.DualQuaternion} The difference of this and that.
+ * @param {number|animus.DualQuaternion} that
  */
-animus.Quaternion.prototype.minus = function(that) {
+animus.DualQuaternion.prototype.minus = function(that) {
   if (typeof that === 'number') {
-    return new animus.Quaternion(this.vector(), this.scalar() - that);
-  } else if (that instanceof animus.Quaternion) {
-    return new animus.Quaternion(
-        this.vector().minus(that.vector()),
-        this.scalar() - that.scalar());
+    return new animus.DualQuaternion(this.vector, this.scalar - that);
+  } else if (that instanceof animus.DualQuaternion) {
+    return new animus.DualQuaternion(
+        this.vector.minus(that.vector),
+        this.scalar - that.scalar);
   }
 };
 
 
 /**
- * @return {animus.Quaternion} The product of this and that.
- * @param {number|animus.Quaternion} that
+ * @return {animus.DualQuaternion} The product of this and that.
+ * @param {number|animus.DualQuaternion} that
  */
-animus.Quaternion.prototype.times = function(that) {
+animus.DualQuaternion.prototype.times = function(that) {
   if (typeof that === 'number') {
-    return new animus.Quaternion(
-        this.vector().times(that),
-        this.scalar() * that);
-  } else if (that instanceof animus.Quaternion) {
-    return new animus.Quaternion(
-        that.vector().times(this.scalar()).
-            plus(this.vector().times(that.scalar())).
-            plus(this.vector().cross(that.vector())),
-        this.scalar() * that.scalar() - this.vector().dot(that.vector()));
+    return new animus.DualQuaternion(
+        this.vector.times(that),
+        this.scalar * that);
+  } else if (that instanceof animus.DualQuaternion) {
+    return new animus.DualQuaternion(
+        that.vector.times(this.scalar).
+            plus(this.vector.times(that.scalar)).
+            plus(this.vector.cross(that.vector)),
+        this.scalar * that.scalar - this.vector.dot(that.vector));
   }
 };
 
 
 /**
- * @return {animus.Quaternion} The quotient of this and that.
- * @param {number|animus.Quaternion} that
+ * @return {animus.DualQuaternion} The quotient of this and that.
+ * @param {number|animus.DualQuaternion} that
  */
-animus.Quaternion.prototype.over = function(that) {
+animus.DualQuaternion.prototype.over = function(that) {
   if (typeof that === 'number') {
-    return new animus.Quaternion(
-        this.vector().over(that),
-        this.scalar() / that);
-  } else if (that instanceof animus.Quaternion) {
+    return new animus.DualQuaternion(
+        this.vector.over(that),
+        this.scalar / that);
+  } else if (that instanceof animus.DualQuaternion) {
     return this.times(that.reciprocal());
   }
 };
 
 /**
- * @return {animus.Vector} That vector rotated by this quaternion.
- * @param {animus.Vector} that
+ * @return {animus.DualVector} That vector rotated by this quaternion.
+ * @param {animus.DualVector} that
  */
-animus.Quaternion.prototype.rotate = function(that) {
-  return this.times(that).times(this.reciprocal()).vector();
+animus.DualQuaternion.prototype.rotate = function(that) {
+  return this.times(that).times(this.reciprocal()).vector;
 };
 
 
 /**
  * @return {string} A string representation of this quaternion.
  */
-animus.Quaternion.prototype.toString = function() {
-  return this.vector() + ' + ' + this.scalar();
+animus.DualQuaternion.prototype.toString = function() {
+  return this.vector + ' + ' + this.scalar;
 };
