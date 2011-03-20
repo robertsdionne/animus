@@ -23,6 +23,24 @@ animus.DualVector = function(x, y, z) {
 animus.inherits(animus.DualVector, animus.DualQuaternion);
 
 
+animus.DualVector.prototype.real = function() {
+  return new animus.Vector(this.x.real, this.y.real, this.z.real);
+};
+
+
+animus.DualVector.prototype.dual = function() {
+  return new animus.Vector(this.x.dual, this.y.dual, this.z.dual);
+};
+
+
+animus.DualVector.prototype.dualConjugate = function() {
+  return new animus.DualVector(
+      this.x.dualConjugate(),
+      this.y.dualConjugate(),
+      this.z.dualConjugate());
+};
+
+
 /**
  * @return {animus.DualVector} The negation of this vector.
  */

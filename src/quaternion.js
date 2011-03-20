@@ -148,7 +148,7 @@ animus.Quaternion.prototype.over = function(that) {
  * @return {animus.Vector} That vector rotated by this quaternion.
  * @param {animus.Vector} that
  */
-animus.Quaternion.prototype.rotate = function(that) {
+animus.Quaternion.prototype.transform = function(that) {
   return this.times(that).times(this.reciprocal()).vector;
 };
 

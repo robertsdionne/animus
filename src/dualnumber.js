@@ -11,7 +11,7 @@ animus.DualNumber = function(real, dual) {
 };
 
 
-animus.DualNumber.prototype.conjugate = function() {
+animus.DualNumber.prototype.dualConjugate = function() {
   return new animus.DualNumber(this.real, -this.dual);
 };
 

@@ -40,6 +40,14 @@ animus.Vector.prototype.negate = function() {
 };
 
 
+animus.Vector.prototype.toDual = function() {
+  return new animus.DualVector(
+      new animus.DualNumber(this.x),
+      new animus.DualNumber(this.y),
+      new animus.DualNumber(this.z));
+};
+
+
 /**
  * @return {number} The square magnitude of this vector.
  */

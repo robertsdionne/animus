@@ -185,7 +185,7 @@ animus.WebGlVisitor.prototype.visitComposite = function(composite) {
  */
 animus.WebGlVisitor.prototype.visitTransform = function(transform) {
   this.translationStack_.unshift(this.translationStack_[0].plus(
-      this.rotationStack_[0].rotate(transform.translation)));
+      this.rotationStack_[0].transform(transform.translation)));
   this.rotationStack_.unshift(
       this.rotationStack_[0].times(transform.rotation));
   this.visitComposite(transform);
