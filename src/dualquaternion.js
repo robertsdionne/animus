@@ -16,15 +16,13 @@ animus.DualQuaternion = function(vector, scalar) {
    * @type {animus.DualVector}
    * @private
    */
-  vector = vector || new animus.DualVector();
-  this.__defineGetter__("vector", function() {return vector;});
+  this.vector = vector || new animus.DualVector();
   
   /**
    * @type {number}
    * @private
    */
-  scalar = typeof scalar === "undefined" ? 1 : scalar;
-  this.__defineGetter__("scalar", function() {return scalar;});
+  this.scalar = typeof scalar === "undefined" ? 1 : scalar;
 };
 
 

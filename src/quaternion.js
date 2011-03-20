@@ -16,15 +16,13 @@ animus.Quaternion = function(vector, scalar) {
    * @type {animus.Vector}
    * @private
    */
-  vector = vector || new animus.Vector();
-  this.__defineGetter__("vector", function() {return vector;});
+  this.vector = vector || new animus.Vector();
   
   /**
    * @type {number}
    * @private
    */
-  scalar = typeof scalar === "undefined" ? 1 : scalar;
-  this.__defineGetter__("scalar", function() {return scalar;});
+  this.scalar = typeof scalar === "undefined" ? 1 : scalar;
 };
 
 

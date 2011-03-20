@@ -14,15 +14,11 @@
  * @extends {animus.Quaternion}
  */
 animus.Vector = function(x, y, z) {
-  this.__defineGetter__("scalar", function() {return 0;});
-  var vector = this;
-  this.__defineGetter__("vector", function() {return vector;});
-  var x = x || 0;
-  this.__defineGetter__("x", function() {return x;});
-  var y = y || 0;
-  this.__defineGetter__("y", function() {return y;});
-  var z = z || 0;
-  this.__defineGetter__("z", function() {return z;});
+  this.scalar = 0;
+  this.vector = this;
+  this.x = x || 0;
+  this.y = y || 0;
+  this.z = z || 0;
 };
 animus.inherits(animus.Vector, animus.Quaternion);
 
