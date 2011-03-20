@@ -16,13 +16,15 @@ animus.Quaternion = function(vector, scalar) {
    * @type {animus.Vector}
    * @private
    */
-  this.vector_ = vector || new animus.Vector();
+  vector = vector || new animus.Vector();
+  this.__defineGetter__("vector", function() {return vector;});
   
   /**
    * @type {number}
    * @private
    */
-  this.scalar_ = typeof scalar === "undefined" ? 1 : scalar;
+  scalar = typeof scalar === "undefined" ? 1 : scalar;
+  this.__defineGetter__("scalar", function() {return scalar;});
 };
 
 
@@ -34,26 +36,10 @@ animus.Quaternion.fromAxisAngle = function(axis, angle) {
 
 
 /**
- * @return {animus.Vector} The vector.
- */
-animus.Quaternion.prototype.vector = function() {
-  return this.vector_;
-};
-
-
-/**
- * @return {number} The scalar.
- */
-animus.Quaternion.prototype.scalar = function() {
-  return this.scalar_;
-};
-
-
-/**
  * @return {animus.Quaternion} The negation of this quaternion.
  */
 animus.Quaternion.prototype.negate = function() {
-  return new animus.Quaternion(this.vector().negate(), -this.scalar());
+  return new animus.Quaternion(this.vector.negate(), -this.scalar);
 };
 
 
@@ -69,7 +55,7 @@ animus.Quaternion.prototype.magnitude = function() {
  * @return {number} The square magnitude of this quaternion.
  */
 animus.Quaternion.prototype.magnitudeSquared = function() {
-  return this.scalar() * this.scalar() + this.vector().magnitudeSquared();
+  return this.scalar * this.scalar + this.vector.magnitudeSquared();
 };
 
 
@@ -85,7 +71,7 @@ animus.Quaternion.prototype.normalized = function() {
  * @return {animus.Quaternion} This quaternion's conjugate.
  */
 animus.Quaternion.prototype.conjugate = function() {
-  return new animus.Quaternion(this.vector().negate(), this.scalar());
+  return new animus.Quaternion(this.vector.negate(), this.scalar);
 };
 
 
@@ -103,11 +89,11 @@ animus.Quaternion.prototype.reciprocal = function() {
  */
 animus.Quaternion.prototype.plus = function(that) {
   if (typeof that === 'number') {
-    return new animus.Quaternion(this.vector(), this.scalar() + that);
+    return new animus.Quaternion(this.vector, this.scalar + that);
   } else if (that instanceof animus.Quaternion) {
     return new animus.Quaternion(
-        this.vector().plus(that.vector()),
-        this.scalar() + that.scalar());
+        this.vector.plus(that.vector),
+        this.scalar + that.scalar);
   }
 };
 
@@ -118,11 +104,11 @@ animus.Quaternion.prototype.plus = function(that) {
  */
 animus.Quaternion.prototype.minus = function(that) {
   if (typeof that === 'number') {
-    return new animus.Quaternion(this.vector(), this.scalar() - that);
+    return new animus.Quaternion(this.vector, this.scalar - that);
   } else if (that instanceof animus.Quaternion) {
     return new animus.Quaternion(
-        this.vector().minus(that.vector()),
-        this.scalar() - that.scalar());
+        this.vector.minus(that.vector),
+        this.scalar - that.scalar);
   }
 };
 
@@ -134,14 +120,14 @@ animus.Quaternion.prototype.minus = function(that) {
 animus.Quaternion.prototype.times = function(that) {
   if (typeof that === 'number') {
     return new animus.Quaternion(
-        this.vector().times(that),
-        this.scalar() * that);
+        this.vector.times(that),
+        this.scalar * that);
   } else if (that instanceof animus.Quaternion) {
     return new animus.Quaternion(
-        that.vector().times(this.scalar()).
-            plus(this.vector().times(that.scalar())).
-            plus(this.vector().cross(that.vector())),
-        this.scalar() * that.scalar() - this.vector().dot(that.vector()));
+        that.vector.times(this.scalar).
+            plus(this.vector.times(that.scalar)).
+            plus(this.vector.cross(that.vector)),
+        this.scalar * that.scalar - this.vector.dot(that.vector));
   }
 };
 
@@ -153,8 +139,8 @@ animus.Quaternion.prototype.times = function(that) {
 animus.Quaternion.prototype.over = function(that) {
   if (typeof that === 'number') {
     return new animus.Quaternion(
-        this.vector().over(that),
-        this.scalar() / that);
+        this.vector.over(that),
+        this.scalar / that);
   } else if (that instanceof animus.Quaternion) {
     return this.times(that.reciprocal());
   }
@@ -165,7 +151,7 @@ animus.Quaternion.prototype.over = function(that) {
  * @param {animus.Vector} that
  */
 animus.Quaternion.prototype.rotate = function(that) {
-  return this.times(that).times(this.reciprocal()).vector();
+  return this.times(that).times(this.reciprocal()).vector;
 };
 
 
@@ -173,5 +159,5 @@ animus.Quaternion.prototype.rotate = function(that) {
  * @return {string} A string representation of this quaternion.
  */
 animus.Quaternion.prototype.toString = function() {
-  return this.vector() + ' + ' + this.scalar();
+  return this.vector + ' + ' + this.scalar;
 };

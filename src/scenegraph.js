@@ -98,14 +98,14 @@ animus.Geometry.prototype.render = function(
     gl, program, rotation, translation) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer_);
   gl.uniform4f(program.rotation,
-      rotation.vector().x(),
-      rotation.vector().y(),
-      rotation.vector().z(),
-      rotation.scalar());
+      rotation.vector.x,
+      rotation.vector.y,
+      rotation.vector.z,
+      rotation.scalar);
   gl.uniform3f(program.translation,
-      translation.x(),
-      translation.y(),
-      translation.z());
+      translation.x,
+      translation.y,
+      translation.z);
   gl.vertexAttribPointer(program.position, 3, gl.FLOAT, false, 36, 0);
   gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 36, 12);
   gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 36, 24);

@@ -48,14 +48,14 @@ animus.BoxMan.prototype.addFace_ = function(a, b, c, d) {
 
 animus.BoxMan.prototype.addTriangle_ = function(a, b, c) {
   var normal = c.minus(b).cross(a.minus(b)).normalized();
-  this.data_.push(a.x(), a.y(), a.z());
-  this.data_.push(normal.x(), normal.y(), normal.z());
+  this.data_.push(a.x, a.y, a.z);
+  this.data_.push(normal.x, normal.y, normal.z);
   this.data_.push(1, 1, 1);
-  this.data_.push(b.x(), b.y(), b.z());
-  this.data_.push(normal.x(), normal.y(), normal.z());
+  this.data_.push(b.x, b.y, b.z);
+  this.data_.push(normal.x, normal.y, normal.z);
   this.data_.push(1, 1, 1);
-  this.data_.push(c.x(), c.y(), c.z());
-  this.data_.push(normal.x(), normal.y(), normal.z());
+  this.data_.push(c.x, c.y, c.z);
+  this.data_.push(normal.x, normal.y, normal.z);
   this.data_.push(1, 1, 1);
 };
 
