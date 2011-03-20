@@ -55,3 +55,8 @@ animus.DualNumber.prototype.sqrt = function() {
       Math.sqrt(this.real),
       this.dual / 2 / Math.sqrt(this.real));
 };
+
+
+animus.DualNumber.prototype.toString = function() {
+  return this.real + ' + ' + this.dual + 'e';
+};

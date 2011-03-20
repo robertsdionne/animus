@@ -14,29 +14,21 @@
  * @extends {animus.DualQuaternion}
  */
 animus.DualVector = function(x, y, z) {
-  this.scalar = 0;
+  this.scalar = new animus.DualNumber();
   this.vector = this;
-  this.x = x || 0;
-  this.y = y || 0;
-  this.z = z || 0;
+  this.x = x || new animus.DualNumber();
+  this.y = y || new animus.DualNumber();
+  this.z = z || new animus.DualNumber();
 };
 animus.inherits(animus.DualVector, animus.DualQuaternion);
-
-
-animus.DualVector.I = new animus.DualVector(1, 0, 0);
-
-
-animus.DualVector.J = new animus.DualVector(0, 1, 0);
-
-
-animus.DualVector.K = new animus.DualVector(0, 0, 1);
 
 
 /**
  * @return {animus.DualVector} The negation of this vector.
  */
 animus.DualVector.prototype.negate = function() {
-  return new animus.DualVector(-this.x, -this.y, -this.z);
+  return new animus.DualVector(
+      this.x.negate(), this.y.negate(), this.z.negate());
 };
 
 
@@ -55,9 +47,7 @@ animus.DualVector.prototype.magnitudeSquared = function() {
 animus.DualVector.prototype.plus = function(that) {
   if (that instanceof animus.DualVector) {
     return new animus.DualVector(
-        this.x + that.x,
-        this.y + that.y,
-        this.z + that.z);
+        this.x.plus(that.x), this.y.plus(that.y), this.z.plus(that.z));
   } else {
     return animus.DualQuaternion.prototype.plus.call(this, that);
   }
@@ -71,9 +61,7 @@ animus.DualVector.prototype.plus = function(that) {
 animus.DualVector.prototype.minus = function(that) {
   if (that instanceof animus.DualVector) {
     return new animus.DualVector(
-        this.x - that.x,
-        this.y - that.y,
-        this.z - that.z);
+        this.x.minus(that.x), this.y.minus(that.y), this.z.minus(that.z));
   } else {
     return animus.DualQuaternion.prototype.plus.call(this, that);
   }
@@ -85,8 +73,9 @@ animus.DualVector.prototype.minus = function(that) {
  * @param {number|animus.DualQuaternion} that
  */
 animus.DualVector.prototype.times = function(that) {
-  if (typeof that === 'number') {
-    return new animus.DualVector(this.x * that, this.y * that, this.z * that);
+  if (that instanceof animus.DualNumber) {
+    return new animus.DualVector(
+        this.x.times(that), this.y.times(that), this.z.times(that));
   } else {
     return animus.DualQuaternion.prototype.times.call(this, that);
   }
@@ -98,8 +87,9 @@ animus.DualVector.prototype.times = function(that) {
  * @param {number|animus.DualQuaternion} that
  */
 animus.DualVector.prototype.over = function(that) {
-  if (typeof that === 'number') {
-    return new animus.DualVector(this.x / that, this.y / that, this.z / that);
+  if (that instanceof animus.DualNumber) {
+    return new animus.DualVector(
+        this.x.over(that), this.y.over(that), this.z.over(that));
   } else {
     return animus.DualQuaternion.prototype.over.call(this, that);
   }
@@ -112,9 +102,9 @@ animus.DualVector.prototype.over = function(that) {
  */
 animus.DualVector.prototype.cross = function(that) {
   return new animus.DualVector(
-      this.y * that.z - this.z * that.y,
-      this.z * that.x - this.x * that.z,
-      this.x * that.y - this.y * that.x);
+      this.y.times(that.z).minus(this.z.times(that.y)),
+      this.z.times(that.x).minus(this.x.times(that.z)),
+      this.x.times(that.y).minus(this.y.times(that.x)));
 };
 
 
@@ -123,7 +113,9 @@ animus.DualVector.prototype.cross = function(that) {
  * @param {animus.DualVector} that
  */
 animus.DualVector.prototype.dot = function(that) {
-  return this.x * that.x + this.y * that.y + this.z * that.z;
+  return this.x.times(that.x).
+      plus(this.y.times(that.y)).
+      plus(this.z.times(that.z));
 };
 
 
@@ -131,5 +123,5 @@ animus.DualVector.prototype.dot = function(that) {
  * @return {string} A string representation of this vector.
  */
 animus.DualVector.prototype.toString = function() {
-  return this.x + 'i + ' + this.y + 'j + ' + this.z + 'k';
+  return '(' + this.x + ')i + (' + this.y + ')j + (' + this.z + ')k';
 };
