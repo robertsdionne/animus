@@ -6,8 +6,8 @@
  */
 
 animus.DualNumber = function(real, dual) {
-  this.real = real;
-  this.dual = dual;
+  this.real = real || 0;
+  this.dual = dual || 0;
 };
 
 
