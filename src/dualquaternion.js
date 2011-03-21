@@ -47,6 +47,13 @@ animus.DualQuaternion.fromTranslation = function(translation) {
 };
 
 
+animus.DualQuaternion.fromRotation = function(rotation) {
+  return new animus.DualQuaternion(
+      rotation.vector.toDual(),
+      new animus.DualNumber(rotation.scalar));
+};
+
+
 animus.DualQuaternion.fromAxisAngle = function(axis, angle) {
   return new animus.DualQuaternion(
       axis.normalized().times(Math.sin(angle/2)).toDual(),

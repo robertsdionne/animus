@@ -58,6 +58,8 @@ animus.Transform = function(opt_rotation, opt_translation) {
   animus.Transform.superClass_.constructor.call(this);
   this.rotation = opt_rotation || new animus.Quaternion();
   this.translation = opt_translation || new animus.Vector();
+  this.transform = animus.DualQuaternion.fromTranslation(this.translation).
+      times(animus.DualQuaternion.fromRotation(this.rotation));
 };
 animus.inherits(animus.Transform, animus.Composite);
 
@@ -66,6 +68,8 @@ animus.inherits(animus.Transform, animus.Composite);
  * @inheritDoc
  */
 animus.Transform.prototype.accept = function(visitor) {
+  this.transform = animus.DualQuaternion.fromTranslation(this.translation).
+      times(animus.DualQuaternion.fromRotation(this.rotation));
   visitor.visitTransform(this);
 };
 
@@ -95,17 +99,18 @@ animus.Geometry.prototype.accept = function(visitor) {
  * @param {animus.Vector} translation
  */
 animus.Geometry.prototype.render = function(
-    gl, program, rotation, translation) {
+    gl, program, transformation) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer_);
-  gl.uniform4f(program.rotation,
-      rotation.vector.x,
-      rotation.vector.y,
-      rotation.vector.z,
-      rotation.scalar);
-  gl.uniform3f(program.translation,
-      translation.x,
-      translation.y,
-      translation.z);
+  gl.uniform4fv(program.transformation, [
+      transformation.vector.x.real,
+      transformation.vector.y.real,
+      transformation.vector.z.real,
+      transformation.scalar.real,
+      transformation.vector.x.dual,
+      transformation.vector.y.dual,
+      transformation.vector.z.dual,
+      transformation.scalar.dual
+  ]);
   gl.vertexAttribPointer(program.position, 3, gl.FLOAT, false, 36, 0);
   gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 36, 12);
   gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 36, 24);
@@ -162,8 +167,8 @@ animus.Visitor.prototype.visitGeometry = animus.nullFunction;
  */
 animus.WebGlVisitor = function(gl) {
   this.gl_ = gl;
-  this.rotationStack_ = [new animus.Quaternion()];
-  this.translationStack_ = [new animus.Vector()];
+  this.transformationStack_ = [];
+  this.transformationStack_[0] = new animus.DualQuaternion();
   this.program = null;
 };
 animus.inherits(animus.WebGlVisitor, animus.Visitor);
@@ -184,13 +189,21 @@ animus.WebGlVisitor.prototype.visitComposite = function(composite) {
  * @inheritDoc
  */
 animus.WebGlVisitor.prototype.visitTransform = function(transform) {
-  this.translationStack_.unshift(this.translationStack_[0].plus(
-      this.rotationStack_[0].transform(transform.translation)));
-  this.rotationStack_.unshift(
-      this.rotationStack_[0].times(transform.rotation));
+  this.transformationStack_.unshift(
+      this.transformationStack_[0].times(transform.transform));
+  if (!this.transformationStack_[0]) {
+    console.log('' + this.transformationStack_[1]);
+    console.log('' + transform.transform);
+    console.log(this.transformationStack_[1].times(transform.transform));
+    throw new Error('asdf');
+  }
   this.visitComposite(transform);
-  this.rotationStack_.shift();
-  this.translationStack_.shift();
+  this.transformationStack_.shift();
+  if (!this.transformationStack_[0]) {
+    console.log('' + this.transformationStack_[1]);
+    console.log('' + transform.transform);
+    throw new Error('asdf');
+  }
 };
 
 
@@ -201,6 +214,5 @@ animus.WebGlVisitor.prototype.visitGeometry = function(geometry) {
   geometry.render(
       this.gl_,
       this.program,
-      this.rotationStack_[0],
-      this.translationStack_[0]);
+      this.transformationStack_[0]);
 };

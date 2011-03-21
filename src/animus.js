@@ -115,10 +115,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.p_.projection =
       gl.getUniformLocation(this.p_.handle, 'projection');
-  this.p_.rotation =
-      gl.getUniformLocation(this.p_.handle, 'rotation');
-  this.p_.translation =
-      gl.getUniformLocation(this.p_.handle, 'translation');
+  this.p_.transformation =
+      gl.getUniformLocation(this.p_.handle, 'transformation');
 
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
   this.p_.aNormal = gl.getAttribLocation(this.p_.handle, 'aNormal');
@@ -126,10 +124,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.p2_.projection =
       gl.getUniformLocation(this.p2_.handle, 'projection');
-  this.p2_.rotation =
-      gl.getUniformLocation(this.p2_.handle, 'rotation');
-  this.p2_.translation =
-      gl.getUniformLocation(this.p2_.handle, 'translation');
+  this.p2_.transformation =
+      gl.getUniformLocation(this.p2_.handle, 'transformation');
 
   this.p2_.position = gl.getAttribLocation(this.p2_.handle, 'position');
   this.p2_.aNormal = gl.getAttribLocation(this.p2_.handle, 'aNormal');
