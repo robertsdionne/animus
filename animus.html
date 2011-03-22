@@ -13,6 +13,7 @@
         'src/dualquaternion.js',
         'src/dualvector.js',
         'src/boxman.js',
+        'src/palette.js',
         'src/scenegraph.js',
         'src/app.js',
         'src/program.js',
@@ -40,24 +41,26 @@
       uniform mat4 projection;
 
       // Per limb uniforms
-      uniform vec4 transformationPalette[20];
-      uniform vec4 transformation[2];
+      uniform vec4 jointPalette[22];
 
       // Per vertex attributes
       attribute vec3 position;
       attribute vec3 aNormal;
       attribute vec3 aColor;
+      attribute float joint;
 
       // Per vertex varyings
       varying vec3 vNormal;
       varying vec3 vColor;
 
-      void getJoint(int i, out vec4 joint[2]) {
-        joint[0] = transformationPalette[2 * i];
-        joint[1] = transformationPalette[2 * i + 1];
+      void getJoint(float i, out vec4 joint[2]) {
+        joint[0] = jointPalette[2 * int(i)];
+        joint[1] = jointPalette[2 * int(i) + 1];
       }
 
       void main() {
+        vec4 transformation[2];
+        getJoint(joint, transformation);
         float length = length(transformation[0]);
         vec4 transf[2];
         transf[0] = transformation[0] / length;
@@ -86,12 +89,20 @@
       uniform mat4 projection;
 
       // Per limb uniforms
-      uniform vec4 transformation[2];
+      uniform vec4 jointPalette[22];
 
       // Per vertex attributes
       attribute vec3 position;
+      attribute float joint;
+
+      void getJoint(float i, out vec4 joint[2]) {
+        joint[0] = jointPalette[2 * int(i)];
+        joint[1] = jointPalette[2 * int(i) + 1];
+      }
 
       void main() {
+        vec4 transformation[2];
+        getJoint(joint, transformation);
         float length = length(transformation[0]);
         vec4 transf[2];
         transf[0] = transformation[0] / length;

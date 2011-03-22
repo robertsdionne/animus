@@ -21,6 +21,11 @@ animus.Palette.prototype.set = function(i, joint) {
 };
 
 
+animus.Palette.prototype.reset = function() {
+  this.palette_ = [];
+};
+
+
 /**
  * @return {Array.<number>}
  */

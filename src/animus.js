@@ -33,22 +33,7 @@ animus.Renderer = function(keys) {
   /**
    * @type {WebGLBuffer}
    */
-  this.arm_ = null;
-
-  /**
-   * @type {WebGLBuffer}
-   */
-  this.leg_ = null;
-
-  /**
-   * @type {WebGLBuffer}
-   */
-  this.torso_ = null;
-
-  /**
-   * @type {WebGLBuffer}
-   */
-  this.head_ = null;
+  this.body_ = null;
 
   /**
    * @type {animus.Node}
@@ -108,28 +93,27 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
 
-  this.arm_ = gl.createBuffer();
-  this.leg_ = gl.createBuffer();
-  this.torso_ = gl.createBuffer();
-  this.head_ = gl.createBuffer();
+  this.body_ = gl.createBuffer();
 
   this.p_.projection =
       gl.getUniformLocation(this.p_.handle, 'projection');
-  this.p_.transformation =
-      gl.getUniformLocation(this.p_.handle, 'transformation');
+  this.p_.jointPalette =
+      gl.getUniformLocation(this.p_.handle, 'jointPalette');
 
   this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
   this.p_.aNormal = gl.getAttribLocation(this.p_.handle, 'aNormal');
   this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
+  this.p_.joint = gl.getAttribLocation(this.p_.handle, 'joint');
 
   this.p2_.projection =
       gl.getUniformLocation(this.p2_.handle, 'projection');
-  this.p2_.transformation =
-      gl.getUniformLocation(this.p2_.handle, 'transformation');
+  this.p2_.jointPalette =
+      gl.getUniformLocation(this.p2_.handle, 'jointPalette');
 
   this.p2_.position = gl.getAttribLocation(this.p2_.handle, 'position');
   this.p2_.aNormal = gl.getAttribLocation(this.p2_.handle, 'aNormal');
   this.p2_.aColor = gl.getAttribLocation(this.p2_.handle, 'aColor');
+  this.p2_.joint = gl.getAttribLocation(this.p2_.handle, 'joint');
 
   this.texture_ = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, this.texture_);
@@ -145,85 +129,69 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D,
       this.texture_, 0);
 
-  var a = new animus.BoxMan().add(0.2, 0.5, 0.2).build();
+  var a = new animus.BoxMan()
+      .add(1, 1, 2, 0.2)
+      .add(2, 0.5, 0.5, 0.5)
+      .add(3, 0.2, 0.5, 0.2)
+      .add(4, 0.2, 0.5, 0.2)
+      .add(5, 0.2, 0.5, 0.2)
+      .add(6, 0.2, 0.5, 0.2)
+      .add(7, 0.2, 1, 0.2)
+      .add(8, 0.2, 1, 0.2)
+      .add(9, 0.2, 1, 0.2)
+      .add(10, 0.2, 1, 0.2)
+      .build();
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.arm_);
-  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
-  gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
-
-  a = new animus.BoxMan().add(0.2, 1, 0.2).build();
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.leg_);
-  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
-  gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
-
-  a = new animus.BoxMan().add(1, 2, 0.2).build();
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.torso_);
-  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
-  gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
-
-  a = new animus.BoxMan().add(0.5, 0.5, 0.5).build();
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.head_);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
   gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
 
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
-  var arm = new animus.Geometry(this.arm_, this.p_);
-  var leg = new animus.Geometry(this.leg_, this.p_);
-  var torso = new animus.Geometry(this.torso_, this.p_);
-  var head = new animus.Geometry(this.head_, this.p_);
   this.rightCalf = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/4),
       new animus.Vector(0, 1.1, 0));
-  this.rightCalf.children.push(leg);
   this.rightThigh = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/4)),
       new animus.Vector(-0.4, -0.1, 0));
-  this.rightThigh.children.push(leg, this.rightCalf);
+  this.rightThigh.children.push(this.rightCalf);
   this.leftCalf = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/2),
       new animus.Vector(0, 1.1, 0));
-  this.leftCalf.children.push(leg);
   this.leftThigh = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, -Math.PI).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/6)),
       new animus.Vector(0.4, -0.1, 0));
-  this.leftThigh.children.push(leg, this.leftCalf);
+  this.leftThigh.children.push(this.leftCalf);
   this.rightForearm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
       new animus.Vector(0, 0.6, 0));
-  this.rightForearm.children.push(arm);
   this.rightArm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, 5*Math.PI/6)),
       new animus.Vector(-0.6, 2, 0));
-  this.rightArm.children.push(arm, this.rightForearm);
+  this.rightArm.children.push(this.rightForearm);
   this.leftForearm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
       new animus.Vector(0, 0.6, 0));
-  this.leftForearm.children.push(arm);
   this.leftArm = new animus.Transform(
       animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/3).times(
       animus.Quaternion.fromAxisAngle(animus.Vector.K, -5*Math.PI/6)),
       new animus.Vector(0.6, 2, 0));
-  this.leftArm.children.push(arm, this.leftForearm);
+  this.leftArm.children.push(this.leftForearm);
   this.skull = new animus.Transform(
       null,
       new animus.Vector(0, 2.1, 0));
-  this.skull.children.push(head);
-  this.body_ = new animus.Transform();
-  this.body_.children.push(
-      torso, this.rightThigh, this.leftThigh,
-      this.rightArm, this.leftArm, this.skull);
+  this.skeleton_ = new animus.Transform();
+  this.skeleton_.children.push(
+      this.skull, this.rightArm, this.leftArm,
+      this.rightThigh, this.leftThigh);
   this.root_ = new animus.Transform();
-  this.root_.children.push(this.body_);
+  this.root_.children.push(this.skeleton_);
   this.root_.translation = new animus.Vector(0, -0.5, -5.0);
 
-  this.visitor_ = new animus.WebGlVisitor(gl);
+  this.visitor_ = new animus.WebGlVisitor();
 };
 
 
@@ -265,64 +233,64 @@ animus.Renderer.ROTATION = Math.PI/64;
 animus.Renderer.prototype.onDraw = function(gl) {
   this.keys_.update();
   if (this.keys_.isPressed(animus.Keys.Key.W)) {
-    this.body_.translation = this.body_.translation.plus(
+    this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.J.times(animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.S)) {
-    this.body_.translation = this.body_.translation.plus(
+    this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.J.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.D)) {
-    this.body_.translation = this.body_.translation.plus(
+    this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.I.times(animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.A)) {
-    this.body_.translation = this.body_.translation.plus(
+    this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.I.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.Z)) {
-    this.body_.translation = this.body_.translation.plus(
+    this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.K.times(animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.Q)) {
-    this.body_.translation = this.body_.translation.plus(
+    this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.K.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
-    this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, animus.Renderer.ROTATION).times(this.body_.rotation);
+    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, animus.Renderer.ROTATION).times(this.skeleton_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
-    this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, -animus.Renderer.ROTATION).times(this.body_.rotation);
+    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, -animus.Renderer.ROTATION).times(this.skeleton_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
-    this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, animus.Renderer.ROTATION).times(this.body_.rotation);
+    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, animus.Renderer.ROTATION).times(this.skeleton_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.UP)) {
-    this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, -animus.Renderer.ROTATION).times(this.body_.rotation);
+    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, -animus.Renderer.ROTATION).times(this.skeleton_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LT)) {
-    this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, animus.Renderer.ROTATION).times(this.body_.rotation);
+    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, animus.Renderer.ROTATION).times(this.skeleton_.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.GT)) {
-    this.body_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, -animus.Renderer.ROTATION).times(this.body_.rotation);
+    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, -animus.Renderer.ROTATION).times(this.skeleton_.rotation);
   }
 
-  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
-  gl.clear(gl.DEPTH_BUFFER_BIT);
-  gl.cullFace(gl.FRONT);
-  gl.useProgram(this.p2_.handle);
-  gl.uniformMatrix4fv(this.p2_.projection, false,
-      this.getOrthographicProjectionMatrix());
-  this.visitor_.program = this.p2_;
-  this.root_.rotation = animus.Quaternion.fromAxisAngle(
-      animus.Vector.I, Math.PI / 2.0);
-  this.root_.accept(this.visitor_);
+//gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
+//gl.clear(gl.DEPTH_BUFFER_BIT);
+//gl.cullFace(gl.FRONT);
+//gl.useProgram(this.p2_.handle);
+//gl.uniformMatrix4fv(this.p2_.projection, false,
+//    this.getOrthographicProjectionMatrix());
+//this.visitor_.program = this.p2_;
+//this.root_.rotation = animus.Quaternion.fromAxisAngle(
+//    animus.Vector.I, Math.PI / 2.0);
+//this.visitor_.traverse(this.root_);
 
   gl.bindFramebuffer(gl.FRAMEBUFFER);
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
@@ -330,9 +298,9 @@ animus.Renderer.prototype.onDraw = function(gl) {
   gl.cullFace(gl.BACK);
   gl.uniformMatrix4fv(this.p_.projection, false,
       this.getPerspectiveProjectionMatrix());
-  this.visitor_.program = this.p_;
   this.root_.rotation = new animus.Quaternion();
-  this.root_.accept(this.visitor_);
+  this.visitor_.traverse(this.root_);
+  this.visitor_.render(gl, this.p_, this.body_);
 
   gl.flush();
 };
