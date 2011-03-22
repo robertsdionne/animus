@@ -167,8 +167,7 @@ animus.Visitor.prototype.visitGeometry = animus.nullFunction;
  */
 animus.WebGlVisitor = function(gl) {
   this.gl_ = gl;
-  this.transformationStack_ = [];
-  this.transformationStack_[0] = new animus.DualQuaternion();
+  this.transformationStack_ = [new animus.DualQuaternion()];
   this.program = null;
 };
 animus.inherits(animus.WebGlVisitor, animus.Visitor);
@@ -191,19 +190,8 @@ animus.WebGlVisitor.prototype.visitComposite = function(composite) {
 animus.WebGlVisitor.prototype.visitTransform = function(transform) {
   this.transformationStack_.unshift(
       this.transformationStack_[0].times(transform.transform));
-  if (!this.transformationStack_[0]) {
-    console.log('' + this.transformationStack_[1]);
-    console.log('' + transform.transform);
-    console.log(this.transformationStack_[1].times(transform.transform));
-    throw new Error('asdf');
-  }
   this.visitComposite(transform);
   this.transformationStack_.shift();
-  if (!this.transformationStack_[0]) {
-    console.log('' + this.transformationStack_[1]);
-    console.log('' + transform.transform);
-    throw new Error('asdf');
-  }
 };
 
 
