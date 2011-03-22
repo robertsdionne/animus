@@ -97,6 +97,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.p_.projection =
       gl.getUniformLocation(this.p_.handle, 'projection');
+  this.p_.selectedJoint =
+      gl.getUniformLocation(this.p_.handle, 'selectedJoint');
   this.p_.jointPalette =
       gl.getUniformLocation(this.p_.handle, 'jointPalette');
 
@@ -192,6 +194,19 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.root_.translation = new animus.Vector(0, -0.5, -5.0);
 
   this.visitor_ = new animus.WebGlVisitor();
+  this.joints_ = [
+    this.skeleton_,
+    this.skull,
+    this.rightArm,
+    this.rightForearm,
+    this.leftArm,
+    this.leftForearm,
+    this.rightThigh,
+    this.rightCalf,
+    this.leftThigh,
+    this.leftCalf
+  ];
+  this.selectedJoint_ = 0;
 };
 
 
@@ -231,7 +246,13 @@ animus.Renderer.ROTATION = Math.PI/64;
  * @param {WebGLRenderingContext} gl
  */
 animus.Renderer.prototype.onDraw = function(gl) {
-  this.keys_.update();
+  var joint = this.joints_[this.selectedJoint_ % 10];
+  if (this.keys_.justPressed(animus.Keys.Key.N)) {
+    this.selectedJoint_ += 1;
+  }
+  if (this.keys_.justPressed(animus.Keys.Key.P)) {
+    this.selectedJoint_ -= 1;
+  }
   if (this.keys_.isPressed(animus.Keys.Key.W)) {
     this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.J.times(animus.Renderer.DISPLACEMENT));
@@ -257,29 +278,30 @@ animus.Renderer.prototype.onDraw = function(gl) {
         animus.Vector.K.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
-    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, animus.Renderer.ROTATION).times(this.skeleton_.rotation);
+    joint.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, animus.Renderer.ROTATION).times(joint.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
-    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, -animus.Renderer.ROTATION).times(this.skeleton_.rotation);
+    joint.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, -animus.Renderer.ROTATION).times(joint.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
-    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, animus.Renderer.ROTATION).times(this.skeleton_.rotation);
+    joint.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, animus.Renderer.ROTATION).times(joint.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.UP)) {
-    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, -animus.Renderer.ROTATION).times(this.skeleton_.rotation);
+    joint.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, -animus.Renderer.ROTATION).times(joint.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.LT)) {
-    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, animus.Renderer.ROTATION).times(this.skeleton_.rotation);
+    joint.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, animus.Renderer.ROTATION).times(joint.rotation);
   }
   if (this.keys_.isPressed(animus.Keys.Key.GT)) {
-    this.skeleton_.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, -animus.Renderer.ROTATION).times(this.skeleton_.rotation);
+    joint.rotation = animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, -animus.Renderer.ROTATION).times(joint.rotation);
   }
+  this.keys_.update();
 
 //gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
 //gl.clear(gl.DEPTH_BUFFER_BIT);
@@ -296,6 +318,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   gl.useProgram(this.p_.handle);
   gl.cullFace(gl.BACK);
+  gl.uniform1f(this.p_.selectedJoint, this.selectedJoint_ % 10 + 1);
   gl.uniformMatrix4fv(this.p_.projection, false,
       this.getPerspectiveProjectionMatrix());
   this.root_.rotation = new animus.Quaternion();

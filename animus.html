@@ -39,6 +39,7 @@
     <script id="v0" type="x-shader/x-vertex">
       // Per skeleton uniforms
       uniform mat4 projection;
+      uniform float selectedJoint;
 
       // Per limb uniforms
       uniform vec4 jointPalette[22];
@@ -70,7 +71,11 @@
             transf[1].w * transf[0].xyz + cross(transf[0].xyz, transf[1].xyz));
         pos += transl;
         vNormal = rotate(transf[0], aNormal);
-        vColor = aColor;
+        if (joint == selectedJoint) {
+          vColor = vec3(1, 0, 0);
+        } else {
+          vColor = aColor;
+        }
         gl_Position = projection * vec4(pos, 1.0);
       }
     </script>
