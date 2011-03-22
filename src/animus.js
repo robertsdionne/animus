@@ -278,28 +278,28 @@ animus.Renderer.prototype.onDraw = function(gl) {
         animus.Vector.K.times(-animus.Renderer.DISPLACEMENT));
   }
   if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
-    joint.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, animus.Renderer.ROTATION).times(joint.rotation);
+    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
-    joint.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.J, -animus.Renderer.ROTATION).times(joint.rotation);
-  }
-  if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
-    joint.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, animus.Renderer.ROTATION).times(joint.rotation);
+    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+        animus.Vector.K, -animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Keys.Key.UP)) {
-    joint.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.I, -animus.Renderer.ROTATION).times(joint.rotation);
+    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, animus.Renderer.ROTATION));
+  }
+  if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
+    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+        animus.Vector.I, -animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Keys.Key.LT)) {
-    joint.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, animus.Renderer.ROTATION).times(joint.rotation);
+    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Keys.Key.GT)) {
-    joint.rotation = animus.Quaternion.fromAxisAngle(
-        animus.Vector.K, -animus.Renderer.ROTATION).times(joint.rotation);
+    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+        animus.Vector.J, -animus.Renderer.ROTATION));
   }
   this.keys_.update();
 
