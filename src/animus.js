@@ -312,9 +312,9 @@ animus.Renderer.prototype.onDraw = function(gl) {
     this.body_.rotation = animus.Quaternion.fromAxisAngle(
         animus.Vector.K, -animus.Renderer.ROTATION).times(this.body_.rotation);
   }
-  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
+  gl.clear(gl.DEPTH_BUFFER_BIT);
   gl.cullFace(gl.FRONT);
   gl.useProgram(this.p2_.handle);
   gl.uniformMatrix4fv(this.p2_.projection, false,
@@ -325,6 +325,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
   this.root_.accept(this.visitor_);
 
   gl.bindFramebuffer(gl.FRAMEBUFFER);
+  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   gl.useProgram(this.p_.handle);
   gl.cullFace(gl.BACK);
   gl.uniformMatrix4fv(this.p_.projection, false,
