@@ -86,7 +86,7 @@
 
       void main() {
         highp vec3 light = vec3(0, -1, 0);
-        gl_FragColor = vec4(max(-dot(light, vNormal), 0.1) * vColor, 1);
+        gl_FragColor = vec4(max(-dot(light, vNormal), 0.25) * vColor, 1);
       }
     </script>
     <script id="v1" type="x-shader/x-vertex">
