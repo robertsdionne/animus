@@ -9,8 +9,7 @@ animus.load = function() {
   var keys = new animus.Keys(document);
   new webgl.App(window, keys)
       .install({
-        'c0': new animus.Renderer(keys),
-        'c1': new animus.Renderer(keys)
+        'c0': new animus.Renderer(keys)
       }, 'stats');
 };
 window.onload = animus.load;
@@ -320,9 +319,17 @@ animus.Renderer.prototype.onDraw = function(gl) {
   gl.uniform1f(this.p_.selectedJoint, this.selectedJoint_ % 10 + 1);
   gl.uniformMatrix4fv(this.p_.projection, false,
       this.getPerspectiveProjectionMatrix());
-  this.root_.rotation = new animus.Quaternion();
-  this.visitor_.traverse(this.root_);
-  this.visitor_.render(gl, this.p_, this.body_);
+
+  var side = 23;
+
+  for (var i = 0; i < side; ++i) {
+    for (var j = 0; j < side; ++j) {
+      this.root_.rotation = new animus.Quaternion();
+      this.root_.translation = new animus.Vector(0 - 5 * i, -0.5 - 5 * j, -5.0);
+      this.visitor_.traverse(this.root_);
+      this.visitor_.render(gl, this.p_, this.body_);
+    }
+  }
 
   gl.flush();
 };
