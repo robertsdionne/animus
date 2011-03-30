@@ -6,12 +6,12 @@
  */
 
 animus.load = function() {
-  var canvas = animus.global.document.getElementById('c');
-  var stats = animus.global.document.getElementById('stats');
-  canvas.width = 640;
-  canvas.height = 640;
-  new webgl.App(window, new animus.Renderer(new animus.Keys(document)))
-      .install(canvas, stats);
+  var keys = new animus.Keys(document);
+  new webgl.App(window, keys)
+      .install({
+        'c0': new animus.Renderer(keys),
+        'c1': new animus.Renderer(keys)
+      }, 'stats');
 };
 window.onload = animus.load;
 
@@ -301,7 +301,6 @@ animus.Renderer.prototype.onDraw = function(gl) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.J, -animus.Renderer.ROTATION));
   }
-  this.keys_.update();
 
 //gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
 //gl.clear(gl.DEPTH_BUFFER_BIT);

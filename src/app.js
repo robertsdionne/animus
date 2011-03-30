@@ -7,13 +7,12 @@
 
 /**
  * @param {Window} window The window.
- * @param {webapp.Renderer} renderer The WebGL renderer.
  * @constructor
  */
-webgl.App = function(window, renderer) {
+webgl.App = function(window, keys) {
   this.window_ = window;
-  this.renderer_ = renderer;
-  this.uninstall();
+  this.keys_ = keys;
+  this.reset();
 };
 
 
@@ -30,11 +29,15 @@ webgl.App.WEBGL_CONTEXT = 'experimental-webgl';
  * @private
  */
 webgl.App.prototype.checkDimensions_ = function() {
-  if (this.width_ !== this.canvas_.width ||
-      this.height_ !== this.canvas_.height) {
-    this.width_ = this.canvas_.width;
-    this.height_ = this.canvas_.height;
-    this.renderer_.onChange(this.gl_, this.width_, this.height_);
+  for (var id in this.gls_) {
+    var width = this.canvases_[id].width;
+    var height = this.canvases_[id].height;
+    if (this.widths_[id] !== width ||
+        this.heights_[id] !== height) {
+      this.widths_[id] = width;
+      this.heights_[id] = height;
+      this.renderers_[id].onChange(this.gls_[id], width, height);
+    }
   }
 };
 
@@ -42,16 +45,18 @@ webgl.App.prototype.checkDimensions_ = function() {
 /**
  * Associates this App with the given canvas
  * and starts the rendering loop.
- * @param {Element} canvas The canvas.
- * @param {Element} opt_stats The stats indicator div.
+ * @param {Object.<String, webgl.Renderer>} renderers The renderers.
  */
-webgl.App.prototype.install = function(canvas, opt_stats) {
-  this.canvas_ = canvas;
-  this.gl_ = this.canvas_.getContext(webgl.App.WEBGL_CONTEXT);
-  this.renderer_.onCreate(this.gl_);
+webgl.App.prototype.install = function(renderers, opt_stats) {
+  for (var id in renderers) {
+    this.canvases_[id] = animus.global.document.getElementById(id);
+    this.gls_[id] = this.canvases_[id].getContext(webgl.App.WEBGL_CONTEXT);
+    this.renderers_[id] = renderers[id];
+    this.renderers_[id].onCreate(this.gls_[id]);
+  }
   if (opt_stats) {
     this.smoothDt_ = 0;
-    this.stats_ = opt_stats;
+    this.stats_ = animus.global.document.getElementById(opt_stats);
     this.lastTick_ = new Date().getTime();
   }
   this.onFrame_();
@@ -77,17 +82,19 @@ webgl.App.prototype.round = function(sample) {
  */
 webgl.App.prototype.onFrame_ = function() {
   this.checkDimensions_();
-  this.renderer_.onDraw(this.gl_);
-  if (this.stats_) {
+  if (this.stats_ ) {
     var tick = new Date().getTime();
     var dt = (tick - this.lastTick_) || 1;
     this.smoothDt_ = this.smooth(dt, this.smoothDt_, webgl.App.SMOOTH);
-    this.stats_.innerText = this.round(this.smoothDt_) + ' ms ';
+    this.stats_.innerText = this.round(this.smoothDt_) + ' ms';
     this.lastTick_ = tick;
   }
+  for (var id in this.gls_) {
+    this.renderers_[id].onDraw(this.gls_[id]);
+  }
+  this.keys_.update();
   animus.global.requestAnimationFrame(
-      animus.bind(this.onFrame_, this),
-      this.canvas_);
+      animus.bind(this.onFrame_, this))
 };
 
 
@@ -96,8 +103,17 @@ webgl.App.prototype.onFrame_ = function() {
  * and stops the rendering loop.
  */
 webgl.App.prototype.uninstall = function() {
-  this.renderer_.onDestroy(this.gl_);
-  this.width_ = this.height_ = 0;
-  this.canvas_ = null;
-  this.gl_ = null;
+  for (var id in this.gls_) {
+    this.renderers_[id].onDestroy(this.gls_[id]);
+  }
+  this.reset();
+};
+
+
+webgl.App.prototype.reset = function() {
+  this.canvases_ = {};
+  this.gls_ = {};
+  this.renderers_ = {};
+  this.widths_ = {};
+  this.heights_ = {};
 };
