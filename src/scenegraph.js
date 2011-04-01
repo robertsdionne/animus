@@ -168,7 +168,7 @@ animus.WebGlVisitor.prototype.render = function(gl, program, buffer) {
   gl.enableVertexAttribArray(program.aNormal);
   gl.enableVertexAttribArray(program.aColor);
   gl.enableVertexAttribArray(program.aJoint);
-  gl.drawArrays(gl.TRIANGLES, 0, 360);
+  gl.drawArrays(gl.TRIANGLES, 0, 396);
   gl.disableVertexAttribArray(program.aPosition);
   gl.disableVertexAttribArray(program.aNormal);
   gl.disableVertexAttribArray(program.aColor);
