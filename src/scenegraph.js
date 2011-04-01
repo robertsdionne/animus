@@ -159,18 +159,18 @@ animus.WebGlVisitor.prototype.visitTransform = function(transform) {
 
 animus.WebGlVisitor.prototype.render = function(gl, program, buffer) {
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.uniform4fv(program.jointPalette, this.palette_.get());
-  gl.vertexAttribPointer(program.position, 3, gl.FLOAT, false, 40, 0);
+  gl.uniform4fv(program.uJointPalette, this.palette_.get());
+  gl.vertexAttribPointer(program.aPosition, 3, gl.FLOAT, false, 40, 0);
   gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 40, 12);
   gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 40, 24);
-  gl.vertexAttribPointer(program.joint, 1, gl.FLOAT, false, 40, 36);
-  gl.enableVertexAttribArray(program.position);
+  gl.vertexAttribPointer(program.aJoint, 1, gl.FLOAT, false, 40, 36);
+  gl.enableVertexAttribArray(program.aPosition);
   gl.enableVertexAttribArray(program.aNormal);
   gl.enableVertexAttribArray(program.aColor);
-  gl.enableVertexAttribArray(program.joint);
+  gl.enableVertexAttribArray(program.aJoint);
   gl.drawArrays(gl.TRIANGLES, 0, 360);
-  gl.disableVertexAttribArray(program.position);
+  gl.disableVertexAttribArray(program.aPosition);
   gl.disableVertexAttribArray(program.aNormal);
   gl.disableVertexAttribArray(program.aColor);
-  gl.disableVertexAttribArray(program.joint);
+  gl.disableVertexAttribArray(program.aJoint);
 };

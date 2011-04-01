@@ -94,22 +94,22 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.body_ = gl.createBuffer();
 
-  this.p_.projection =
-      gl.getUniformLocation(this.p_.handle, 'projection');
-  this.p_.selectedJoint =
-      gl.getUniformLocation(this.p_.handle, 'selectedJoint');
-  this.p_.jointPalette =
-      gl.getUniformLocation(this.p_.handle, 'jointPalette');
+  this.p_.uProjection =
+      gl.getUniformLocation(this.p_.handle, 'uProjection');
+  this.p_.uSelectedJoint =
+      gl.getUniformLocation(this.p_.handle, 'uSelectedJoint');
+  this.p_.uJointPalette =
+      gl.getUniformLocation(this.p_.handle, 'uJointPalette');
 
-  this.p_.position = gl.getAttribLocation(this.p_.handle, 'position');
+  this.p_.aPosition = gl.getAttribLocation(this.p_.handle, 'aPosition');
   this.p_.aNormal = gl.getAttribLocation(this.p_.handle, 'aNormal');
   this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
-  this.p_.joint = gl.getAttribLocation(this.p_.handle, 'joint');
+  this.p_.aJoint = gl.getAttribLocation(this.p_.handle, 'aJoint');
 
-  this.p2_.projection =
-      gl.getUniformLocation(this.p2_.handle, 'projection');
-  this.p2_.jointPalette =
-      gl.getUniformLocation(this.p2_.handle, 'jointPalette');
+  this.p2_.uProjection =
+      gl.getUniformLocation(this.p2_.handle, 'uProjection');
+  this.p2_.uJointPalette =
+      gl.getUniformLocation(this.p2_.handle, 'uJointPalette');
 
   this.p2_.position = gl.getAttribLocation(this.p2_.handle, 'position');
   this.p2_.aNormal = gl.getAttribLocation(this.p2_.handle, 'aNormal');
@@ -305,7 +305,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
 //gl.clear(gl.DEPTH_BUFFER_BIT);
 //gl.cullFace(gl.FRONT);
 //gl.useProgram(this.p2_.handle);
-//gl.uniformMatrix4fv(this.p2_.projection, false,
+//gl.uniformMatrix4fv(this.p2_.uProjection, false,
 //    this.getOrthographicProjectionMatrix());
 //this.visitor_.program = this.p2_;
 //this.root_.rotation = animus.Quaternion.fromAxisAngle(
@@ -316,20 +316,12 @@ animus.Renderer.prototype.onDraw = function(gl) {
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   gl.useProgram(this.p_.handle);
   gl.cullFace(gl.BACK);
-  gl.uniform1f(this.p_.selectedJoint, this.selectedJoint_ % 10 + 1);
-  gl.uniformMatrix4fv(this.p_.projection, false,
+  gl.uniform1f(this.p_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
+  gl.uniformMatrix4fv(this.p_.uProjection, false,
       this.getPerspectiveProjectionMatrix());
 
-  var side = 23;
-
-  for (var i = 0; i < side; ++i) {
-    for (var j = 0; j < side; ++j) {
-      this.root_.rotation = new animus.Quaternion();
-      this.root_.translation = new animus.Vector(0 - 5 * i, -0.5 - 5 * j, -5.0);
-      this.visitor_.traverse(this.root_);
-      this.visitor_.render(gl, this.p_, this.body_);
-    }
-  }
+  this.visitor_.traverse(this.root_);
+  this.visitor_.render(gl, this.p_, this.body_);
 
   gl.flush();
 };
