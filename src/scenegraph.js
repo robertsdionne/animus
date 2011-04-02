@@ -161,16 +161,28 @@ animus.WebGlVisitor.prototype.render = function(gl, program, buffer) {
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.uniform4fv(program.uJointPalette, this.palette_.get());
   gl.vertexAttribPointer(program.aPosition, 3, gl.FLOAT, false, 40, 0);
-  gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 40, 12);
-  gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 40, 24);
-  gl.vertexAttribPointer(program.aJoint, 1, gl.FLOAT, false, 40, 36);
   gl.enableVertexAttribArray(program.aPosition);
-  gl.enableVertexAttribArray(program.aNormal);
-  gl.enableVertexAttribArray(program.aColor);
-  gl.enableVertexAttribArray(program.aJoint);
+  if (program.aNormal >= 0) {
+    gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 40, 12);
+    gl.enableVertexAttribArray(program.aNormal);
+  }
+  if (program.aColor >= 0) {
+    gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 40, 24);
+    gl.enableVertexAttribArray(program.aColor);
+  }
+  if (program.aJoint >= 0) {
+    gl.vertexAttribPointer(program.aJoint, 1, gl.FLOAT, false, 40, 36);
+    gl.enableVertexAttribArray(program.aJoint);
+  }
   gl.drawArrays(gl.TRIANGLES, 0, 396);
   gl.disableVertexAttribArray(program.aPosition);
-  gl.disableVertexAttribArray(program.aNormal);
-  gl.disableVertexAttribArray(program.aColor);
-  gl.disableVertexAttribArray(program.aJoint);
+  if (program.aNormal >= 0) {
+    gl.disableVertexAttribArray(program.aNormal);
+  }
+  if (program.aColor >= 0) {
+    gl.disableVertexAttribArray(program.aColor);
+  }
+  if (program.aJoint >= 0) {
+    gl.disableVertexAttribArray(program.aJoint);
+  }
 };

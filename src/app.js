@@ -93,8 +93,8 @@ webgl.App.prototype.onFrame_ = function() {
     this.renderers_[id].onDraw(this.gls_[id]);
   }
   this.keys_.update();
-  animus.global.requestAnimationFrame(
-      animus.bind(this.onFrame_, this))
+  animus.global.setTimeout(
+      animus.bind(this.onFrame_, this), 1000/60);
 };
 
 

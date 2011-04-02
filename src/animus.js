@@ -72,19 +72,19 @@ animus.Renderer.prototype.getShaderSource = function(id) {
  */
 animus.Renderer.prototype.onCreate = function(gl) {
   this.keys_.install();
-  var vertex = new webgl.Shader(
+  var vertex = new webgl.Shader('v0',
       gl.VERTEX_SHADER,
       this.getShaderSource('quatlib') + this.getShaderSource('v0'));
-  var fragment = new webgl.Shader(
+  var fragment = new webgl.Shader('f0',
       gl.FRAGMENT_SHADER, this.getShaderSource('f0'));
   this.p_ = new webgl.Program(vertex, fragment);
   this.p_.create(gl);
   this.p_.link(gl);
 
-  var vertex2 = new webgl.Shader(
+  var vertex2 = new webgl.Shader('v1',
       gl.VERTEX_SHADER,
       this.getShaderSource('quatlib') + this.getShaderSource('v1'));
-  var fragment2 = new webgl.Shader(
+  var fragment2 = new webgl.Shader('f1',
       gl.FRAGMENT_SHADER, this.getShaderSource('f1'));
   this.p2_ = new webgl.Program(vertex2, fragment2);
   this.p2_.create(gl);
@@ -95,35 +95,32 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.body_ = gl.createBuffer();
 
-  this.p_.uProjection =
-      gl.getUniformLocation(this.p_.handle, 'uProjection');
-  this.p_.uTransform =
-      gl.getUniformLocation(this.p_.handle, 'uTransform');
-  this.p_.uTexture =
-      gl.getUniformLocation(this.p_.handle, 'uTexture');
-  this.p_.uLightTransform =
-      gl.getUniformLocation(this.p_.handle, 'uLightTransform');
-  this.p_.uSelectedJoint =
-      gl.getUniformLocation(this.p_.handle, 'uSelectedJoint');
-  this.p_.uJointPalette =
-      gl.getUniformLocation(this.p_.handle, 'uJointPalette');
+  this.p_.defineUniforms(gl, [
+    'uProjection',
+    'uTransform',
+    'uTexture',
+    'uLightTransform',
+    'uSelectedJoint',
+    'uJointPalette'
+  ]);
 
-  this.p_.aPosition = gl.getAttribLocation(this.p_.handle, 'aPosition');
-  this.p_.aNormal = gl.getAttribLocation(this.p_.handle, 'aNormal');
-  this.p_.aColor = gl.getAttribLocation(this.p_.handle, 'aColor');
-  this.p_.aJoint = gl.getAttribLocation(this.p_.handle, 'aJoint');
+  this.p_.defineAttributes(gl, [
+    'aPosition',
+    'aNormal',
+    'aColor',
+    'aJoint'
+  ]);
 
-  this.p2_.uProjection =
-      gl.getUniformLocation(this.p2_.handle, 'uProjection');
-  this.p2_.uLightTransform =
-      gl.getUniformLocation(this.p2_.handle, 'uLightTransform');
-  this.p2_.uJointPalette =
-      gl.getUniformLocation(this.p2_.handle, 'uJointPalette');
+  this.p2_.defineUniforms(gl, [
+    'uProjection',
+    'uLightTransform',
+    'uJointPalette'
+  ]);
 
-  this.p2_.aPosition = gl.getAttribLocation(this.p2_.handle, 'aPosition');
-  this.p2_.aNormal = gl.getAttribLocation(this.p2_.handle, 'aNormal');
-  this.p2_.aColor = gl.getAttribLocation(this.p2_.handle, 'aColor');
-  this.p2_.aJoint = gl.getAttribLocation(this.p2_.handle, 'aJoint');
+  this.p2_.defineAttributes(gl, [
+    'aPosition',
+    'aJoint'
+  ]);
 
   this.texture_ = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, this.texture_);
@@ -373,7 +370,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
     this.visitor_.traverse(this.root_);
     this.visitor_.render(gl, this.p2_, this.body_);
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     gl.useProgram(this.p_.handle);
     gl.cullFace(gl.BACK);

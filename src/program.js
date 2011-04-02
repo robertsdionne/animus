@@ -11,6 +11,8 @@
  * @constructor
  */
 webgl.Program = function(vertex, fragment) {
+  this.name = vertex.name + ':' + fragment.name;
+
   /**
    * @type {webgl.Shader}
    */
@@ -20,6 +22,30 @@ webgl.Program = function(vertex, fragment) {
    * @type {webgl.Shader}
    */
   this.fragment_ = fragment;
+};
+
+
+webgl.Program.prototype.defineUniforms = function(gl, uniforms) {
+  for (var i = 0; i < uniforms.length; ++i) {
+    var uniform = uniforms[i];
+    this[uniform] = gl.getUniformLocation(this.handle, uniform);
+//  if (this[uniform] < 0) {
+//    throw new Error(this.name + ': uniform ' + uniform +
+//        ' was ' + this[uniform]);
+//  }
+  }
+};
+
+
+webgl.Program.prototype.defineAttributes = function(gl, attributes) {
+  for (var i = 0; i < attributes.length; ++i) {
+    var attribute = attributes[i];
+    this[attribute] = gl.getAttribLocation(this.handle, attribute);
+//  if (this[attribute] < 0) {
+//    throw new Error(this.name + ': attribute ' + attribute +
+//        ' was ' + this[attribute]);
+//  }
+  }
 };
 
 

@@ -8,7 +8,8 @@
 /**
  * @constructor
  */
-webgl.Shader = function(type, source) {
+webgl.Shader = function(name, type, source) {
+  this.name = name;
   this.type_ = type;
   this.source_ = source;
 };
