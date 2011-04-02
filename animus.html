@@ -106,6 +106,9 @@
       const highp vec4 BIT_SHIFT = vec4(1./(256.*256.*256.),
           1./(256.*256.), 1./256., 1.);
 
+      // Depth unpacking function and constants adapted from
+      // SpiderGL Example 6: Shadow Mapping:
+      // http://spidergl.org/example.php?id=6
       float unpackDepth(vec4 rgbaDepth) {
         return dot(rgbaDepth, BIT_SHIFT);
       }
@@ -160,6 +163,9 @@
       const highp vec4 BIT_SHIFT = vec4(256.*256.*256., 256.*256., 256., 1.);
       const highp vec4 BIT_MASK = vec4(0., 1./256., 1./256., 1./256.);
 
+      // Depth packing function and constants adapted from
+      // SpiderGL Example 6: Shadow Mapping:
+      // http://spidergl.org/example.php?id=6
       vec4 packDepth(float depth) {
         highp vec4 result = fract(depth * BIT_SHIFT);
         result -= result.xxyz * BIT_MASK;

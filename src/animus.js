@@ -147,18 +147,22 @@ animus.Renderer.prototype.onCreate = function(gl) {
     console.log(status);
   }
 
+  // These indices (parameter 1 of add()) depend upon
+  // the preorder traversal of the scenegraph, this.root_.
+  // We pass them to the shader as a vertex attribute
+  // to index the joint palette uniform.
   var a = new animus.BoxMan()
-      .add(1, 1, 2, 0.2)
-      .add(2, 0.5, 0.5, 0.5)
-      .add(3, 0.2, 0.5, 0.2)
-      .add(4, 0.2, 0.5, 0.2)
-      .add(5, 0.2, 0.5, 0.2)
-      .add(6, 0.2, 0.5, 0.2)
-      .add(7, 0.2, 1, 0.2)
-      .add(8, 0.2, 1, 0.2)
-      .add(9, 0.2, 1, 0.2)
-      .add(10, 0.2, 1, 0.2)
-      .add(11, 20, 1, 20)
+      .add(1, 1, 2, 0.2)      // skeleton
+      .add(2, 0.5, 0.5, 0.5)  // skull
+      .add(3, 0.2, 0.5, 0.2)  // right arm
+      .add(4, 0.2, 0.5, 0.2)  // right forearm
+      .add(5, 0.2, 0.5, 0.2)  // left arm
+      .add(6, 0.2, 0.5, 0.2)  // left forearm
+      .add(7, 0.2, 1, 0.2)    // right thigh
+      .add(8, 0.2, 1, 0.2)    // right calf
+      .add(9, 0.2, 1, 0.2)    // left thigh
+      .add(10, 0.2, 1, 0.2)   // left calf
+      .add(11, 20, 1, 20)     // floor
       .build();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
@@ -213,6 +217,9 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.root_.translation = new animus.Vector(0, -0.5, -5.0);
 
   this.visitor_ = new animus.WebGlVisitor();
+
+  // This array order depends upon the preorder traversal
+  // of the scenegraph, this.root_.
   this.joints_ = [
     this.skeleton_,
     this.skull,
