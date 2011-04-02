@@ -1,9 +1,21 @@
-To execute:
-1) Get Google Chrome: http://www.google.com/chrome
+Animus
+Author: Robert Dionne
 
-2) Download animus as a zip file:
+Animus is an animation engine, written in WebGL, that uses dual quaternions for the translations and rotations of the joints. Currently, it supports posing a character with vertices skinned to a single joint, but will eventually support skinning to multiple joints and animated motion.
+
+Mac OS X support:
+Google Chrome 10: http://www.google.com/chrome
+Mozilla Firefox 4: http://www.mozilla.com/en-US/firefox/new/
+
+Windows 7 support:
+Mozilla Firefox 4: http://www.mozilla.com/en-US/firefox/new/
+
+To execute:
+1) Download animus as a zip file:
 https://github.com/robertsdionne/animus/zipball/master
 
-3) Unzip animus.
+2) Unzip animus.
 
-4) Open file:///path/to/animus.html in Google Chrome.
+3) Open file:///path/to/animus.html in your browser.
+
+Currently, animus does not work in Google Chrome 10 on Windows 7. I'll need to debug this issue further.
