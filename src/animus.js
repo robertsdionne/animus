@@ -345,7 +345,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
   }
 
   if (this.index_ == 1) {
-    gl.bindFramebuffer(gl.FRAMEBUFFER);//, this.framebuffer_);
+    gl.bindFramebuffer(gl.FRAMEBUFFER);
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     gl.cullFace(gl.FRONT);
     gl.useProgram(this.p2_.handle);

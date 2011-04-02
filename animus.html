@@ -100,25 +100,29 @@
       varying highp vec3 vNormal;
       varying lowp vec3 vColor;
 
+      const highp vec3 LIGHT_POSITION = vec3(0., 3., 0.);
+      const highp float AMBIENT = 0.25;
+      const highp float ERROR = 0.001;
+      const highp vec4 BIT_SHIFT = vec4(1./(256.*256.*256.),
+          1./(256.*256.), 1./256., 1.);
+
       float unpackDepth(vec4 rgbaDepth) {
-        highp vec4 bitShift = vec4(1./(256.*256.*256.),
-            1./(256.*256.), 1./256., 1.);
-        return dot(rgbaDepth, bitShift);
+        return dot(rgbaDepth, BIT_SHIFT);
       }
 
       void main() {
-        highp float visibility = 0.25;
-        highp vec3 light = normalize(vec3(0., 3., 0.) - vPosition);
+        highp float diffuse = AMBIENT;
+        highp vec3 light = normalize(LIGHT_POSITION - vPosition);
         highp float dot = dot(light, vNormal);
-        if (dot > 0.) {
-          highp vec4 shadowCoord = vTexCoord/vTexCoord.w;
-          highp vec4 rgbaDepth = texture2DProj(uTexture, vTexCoord);
-          highp float depth = unpackDepth(rgbaDepth);
-          if (depth - shadowCoord.z > 0.) {
-            visibility = dot;
+        if (dot >= 0.) {
+          highp float calculatedDepth = vTexCoord.z/vTexCoord.w;
+          highp float mapDepth =
+              unpackDepth(texture2DProj(uTexture, vTexCoord));
+          if (calculatedDepth - mapDepth < ERROR) {
+            diffuse = max(dot, AMBIENT);
           }
         }
-        gl_FragColor = vec4(visibility * vColor, 1.);
+        gl_FragColor = vec4(diffuse * vColor, 1.);
       }
     </script>
     <script id="v1" type="x-shader/x-vertex">
@@ -155,11 +159,12 @@
       }
     </script>
     <script id="f1" type="x-shader/x-fragment">
+      const highp vec4 BIT_SHIFT = vec4(256.*256.*256., 256.*256., 256., 1.);
+      const highp vec4 BIT_MASK = vec4(0., 1./256., 1./256., 1./256.);
+
       vec4 packDepth(float depth) {
-        highp vec4 bitShift = vec4(256.*256.*256., 256.*256., 256., 1.);
-        highp vec4 bitMask = vec4(0., 1./256., 1./256., 1./256.);
-        highp vec4 result = fract(depth * bitShift);
-        result -= result.xxyz * bitMask;
+        highp vec4 result = fract(depth * BIT_SHIFT);
+        result -= result.xxyz * BIT_MASK;
         return result;
       }
 
@@ -170,7 +175,28 @@
   </head>
   <body>
     <div id="stats"></div>
-    <canvas id="c0" width="640" height="640"></canvas>
-    <canvas id="c1" width="640" height="640"></canvas>
+    <div style="float: left;">
+      <canvas id="c0" width="640" height="640"></canvas>
+    </div>
+    <p><b>Controls</b></p>
+    <table>
+      <tr><th>Character Translation</th></tr>
+      <tr><td><b>d</b></td><td>Positive X.</td></tr>
+      <tr><td><b>a</b></td><td>Negative X.</td></tr>
+      <tr><td><b>w</b></td><td>Positive Y.</td></tr>
+      <tr><td><b>s</b></td><td>Negative Y.</td></tr>
+      <tr><td><b>z</b></td><td>Positive Z.</td></tr>
+      <tr><td><b>q</b></td><td>Negative Z.</td></tr>
+      <tr><th>Joint Rotation</th></tr>
+      <tr><td><b>up</b></td><td>Positive Pitch.</td></tr>
+      <tr><td><b>down</b></td><td>Negative Pitch.</td></tr>
+      <tr><td><b>, (&lt;)</b></td><td>Positive Yaw.</td></tr>
+      <tr><td><b>. (&gt;)</b></td><td>Negative Yaw.</td></tr>
+      <tr><td><b>right</b></td><td>Positive Roll.</td></tr>
+      <tr><td><b>left</b></td><td>Negative Roll.</td></tr>
+      <tr><th>Joint Selection</th></tr>
+      <tr><td><b>n</b></td><td>Select next joint.</td></tr>
+      <tr><td><b>p</b></td><td>Select previous joint.</td></tr>
+    </table>
   </body>
 </html>
