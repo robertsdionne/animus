@@ -147,10 +147,11 @@ animus.Renderer.prototype.onCreate = function(gl) {
     console.log(status);
   }
 
+  // WARNING: Programmer art.
   // These indices (parameter 1 of add()) depend upon
   // the preorder traversal of the scenegraph, this.root_.
   // We pass them to the shader as a vertex attribute
-  // to index the joint palette uniform.
+  // to index the joint palette array uniform.
   var a = new animus.BoxMan()
       .add(1, 1, 2, 0.2)      // skeleton
       .add(2, 0.5, 0.5, 0.5)  // skull
@@ -282,6 +283,39 @@ animus.Renderer.prototype.getLightTransform = function() {
 };
 
 
+animus.Renderer.prototype.shadowMapPass = function(gl) {
+  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+  gl.cullFace(gl.FRONT);
+  gl.useProgram(this.p2_.handle);
+  gl.uniform1f(this.p2_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
+  gl.uniformMatrix4fv(this.p2_.uProjection, false,
+      this.getPerspectiveProjectionMatrix());
+  gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
+      this.getLightTransform());
+  this.root_.translation = new animus.Vector();
+  this.visitor_.traverse(this.root_);
+  this.visitor_.render(gl, this.p2_, this.body_);
+};
+
+
+animus.Renderer.prototype.scenePass = function(gl) {
+  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+  gl.useProgram(this.p_.handle);
+  gl.cullFace(gl.BACK);
+  gl.uniform1i(this.p_.uTexture, this.texture_);
+  gl.uniform1f(this.p_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
+  gl.uniformMatrix4fv(this.p_.uProjection, false,
+      this.getPerspectiveProjectionMatrix());
+  gl.uniformMatrix4fv(this.p_.uTransform, false,
+      this.getTransform());
+  gl.uniformMatrix4fv(this.p_.uLightTransform, false,
+      this.getLightTransform());
+  this.root_.translation = new animus.Vector();
+  this.visitor_.traverse(this.root_);
+  this.visitor_.render(gl, this.p_, this.body_);
+};
+
+
 animus.Renderer.DISPLACEMENT = 0.1;
 
 
@@ -292,6 +326,25 @@ animus.Renderer.ROTATION = Math.PI/64;
  * @param {WebGLRenderingContext} gl
  */
 animus.Renderer.prototype.onDraw = function(gl) {
+  this.handleKeys();
+
+  if (this.index_ == 0) {
+    // Canvas 0: Render the full shadow mapped scene.
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
+    this.shadowMapPass(gl);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    this.scenePass(gl);
+  } else {
+    // Canvas 1: Render the shadow map.
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    this.shadowMapPass(gl);
+  }
+
+  gl.flush();
+};
+
+
+animus.Renderer.prototype.handleKeys = function() {
   var joint = this.joints_[this.selectedJoint_ % 10];
   if (this.keys_.justPressed(animus.Keys.Key.N)) {
     this.selectedJoint_ += 1;
@@ -347,53 +400,4 @@ animus.Renderer.prototype.onDraw = function(gl) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.J, -animus.Renderer.ROTATION));
   }
-
-  if (this.index_ == 1) {
-    gl.bindFramebuffer(gl.FRAMEBUFFER);
-    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-    gl.cullFace(gl.FRONT);
-    gl.useProgram(this.p2_.handle);
-    gl.uniform1f(this.p2_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
-    gl.uniformMatrix4fv(this.p2_.uProjection, false,
-        this.getPerspectiveProjectionMatrix());
-    gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
-        this.getLightTransform());
-    this.root_.translation = new animus.Vector();
-    this.visitor_.traverse(this.root_);
-    this.visitor_.render(gl, this.p2_, this.body_);
-  }
-
-  if (this.index_ == 0) {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
-    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-    gl.cullFace(gl.FRONT);
-    gl.useProgram(this.p2_.handle);
-    gl.uniform1f(this.p2_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
-    gl.uniformMatrix4fv(this.p2_.uProjection, false,
-        this.getPerspectiveProjectionMatrix());
-    gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
-        this.getLightTransform());
-    this.root_.translation = new animus.Vector();
-    this.visitor_.traverse(this.root_);
-    this.visitor_.render(gl, this.p2_, this.body_);
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-    gl.useProgram(this.p_.handle);
-    gl.cullFace(gl.BACK);
-    gl.uniform1i(this.p_.uTexture, this.texture_);
-    gl.uniform1f(this.p_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
-    gl.uniformMatrix4fv(this.p_.uProjection, false,
-        this.getPerspectiveProjectionMatrix());
-    gl.uniformMatrix4fv(this.p_.uTransform, false,
-        this.getTransform());
-    gl.uniformMatrix4fv(this.p_.uLightTransform, false,
-        this.getLightTransform());
-    this.root_.translation = new animus.Vector();
-
-    this.visitor_.traverse(this.root_);
-    this.visitor_.render(gl, this.p_, this.body_);
-  }
-
-  gl.flush();
 };
