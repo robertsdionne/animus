@@ -121,47 +121,6 @@ animus.Renderer.prototype.onCreate = function(gl) {
     console.log(status);
   }
 
-  // WARNING: Programmer art.
-  // These indices (parameter 1 of add()) depend upon
-  // the preorder traversal of the scenegraph, this.root_.
-  // We pass them to the shader as a vertex attribute
-  // to index the joint palette array uniform.
-  var a = new animus.BoxMan()
-      .add(1, 0.05, 2, 0.05)      // skeleton
-      .add(2, 0.05, 0.5, 0.05)  // skull
-      .add(3, 0.05, 0.5, 0.05)  // right arm
-      .add(4, 0.05, 0.5, 0.05)  // right forearm
-      .add(5, 0.05, 0.5, 0.05)  // left arm
-      .add(6, 0.05, 0.5, 0.05)  // left forearm
-      .add(7, 0.05, 1, 0.05)    // right thigh
-      .add(8, 0.05, 1, 0.05)    // right calf
-      .add(9, 0.05, 1, 0.05)    // left thigh
-      .add(10, 0.05, 1, 0.05)   // left calf
-      .add(11, 20, 1, 20)     // floor
-      .build();
-
-  var b = new animus.BoxMan()
-      .add(1, 1, 2, 0.2)      // skeleton
-      .add(11, 0.5, 0.5, 0.5)  // skull
-      .add(11, 0.2, 0.5, 0.2)  // right arm
-      .add(11, 0.2, 0.5, 0.2)  // right forearm
-      .add(11, 0.2, 0.5, 0.2)  // left arm
-      .add(11, 0.2, 0.5, 0.2)  // left forearm
-      .add(11, 0.2, 1, 0.2)    // right thigh
-      .add(11, 0.2, 1, 0.2)    // right calf
-      .add(11, 0.2, 1, 0.2)    // left thigh
-      .add(11, 0.2, 1, 0.2)   // left calf
-      .add(11, 20, 1, 20)     // floor
-      .build();
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.bones_);
-  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
-  gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
-  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
-  gl.bufferSubData(gl.ARRAY_BUFFER, 0, b);
-
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
   this.rightCalf = new animus.Transform(
@@ -207,11 +166,52 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.floor_.translation = new animus.Vector(0., -5., 0.);
   this.root_ = new animus.Transform();
   this.root_.children.push(this.skeleton_, this.floor_);
-  this.root_.translation = new animus.Vector(0, -0.5, -5.0);
 
   this.visitor_ = new animus.WebGlVisitor();
 
-//this.inverseBind_ = this.visitor_.traverse(this.root_).inverse();
+  var bind = this.visitor_.traverse(this.root_);
+  this.inverseBind_ = bind.inverse();
+
+  // WARNING: Programmer art.
+  // These indices (parameter 1 of add()) depend upon
+  // the preorder traversal of the scenegraph, this.root_.
+  // We pass them to the shader as a vertex attribute
+  // to index the joint palette array uniform.
+  var a = new animus.BoxMan()
+      .add(1, null, 0.05, 2, 0.05)      // skeleton
+      .add(2, null, 0.05, 0.5, 0.05)  // skull
+      .add(3, null, 0.05, 0.5, 0.05)  // right arm
+      .add(4, null, 0.05, 0.5, 0.05)  // right forearm
+      .add(5, null, 0.05, 0.5, 0.05)  // left arm
+      .add(6, null, 0.05, 0.5, 0.05)  // left forearm
+      .add(7, null, 0.05, 1, 0.05)    // right thigh
+      .add(8, null, 0.05, 1, 0.05)    // right calf
+      .add(9, null, 0.05, 1, 0.05)    // left thigh
+      .add(10, null, 0.05, 1, 0.05)   // left calf
+      .add(11, null, 20, 1, 20)     // floor
+      .build();
+
+  var b = new animus.BoxMan()
+      .add(1, bind.getJoint(1), 1, 2, 0.2)      // skeleton
+      .add(2, bind.getJoint(2), 0.5, 0.5, 0.5)  // skull
+      .add(3, bind.getJoint(3), 0.2, 0.5, 0.2)  // right arm
+      .add(4, bind.getJoint(4), 0.2, 0.5, 0.2)  // right forearm
+      .add(5, bind.getJoint(5), 0.2, 0.5, 0.2)  // left arm
+      .add(6, bind.getJoint(6), 0.2, 0.5, 0.2)  // left forearm
+      .add(7, bind.getJoint(7), 0.2, 1, 0.2)    // right thigh
+      .add(8, bind.getJoint(8), 0.2, 1, 0.2)    // right calf
+      .add(9, bind.getJoint(9), 0.2, 1, 0.2)    // left thigh
+      .add(10, bind.getJoint(10), 0.2, 1, 0.2)   // left calf
+      .add(11, bind.getJoint(11), 20, 1, 20)     // floor
+      .build();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.bones_);
+  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
+  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, b);
 
   // This array order depends upon the preorder traversal
   // of the scenegraph, this.root_.
@@ -228,6 +228,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
     this.leftCalf
   ];
   this.selectedJoint_ = 0;
+
+  this.drawBones_ = false;
 };
 
 
@@ -317,10 +319,12 @@ animus.Renderer.prototype.shadowMapPass = function(gl) {
       this.getPerspectiveProjectionMatrix());
   gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
       this.getLightTransform());
-  this.root_.translation = new animus.Vector();
   var palette = this.visitor_.traverse(this.root_);
-  this.render(gl, this.p2_, this.bones_, palette);
-//this.render(gl, this.p2_, this.body_, palette.times(this.inverseBind_));
+  if (this.drawBones_) {
+    this.render(gl, this.p2_, this.bones_, palette);
+  } else {
+    this.render(gl, this.p2_, this.body_, palette.times(this.inverseBind_));
+  }
 };
 
 
@@ -336,10 +340,12 @@ animus.Renderer.prototype.scenePass = function(gl) {
       this.getTransform());
   gl.uniformMatrix4fv(this.p_.uLightTransform, false,
       this.getLightTransform());
-  this.root_.translation = new animus.Vector();
   var palette = this.visitor_.traverse(this.root_);
-  this.render(gl, this.p_, this.bones_, palette);
-//this.render(gl, this.p_, this.body_, palette.times(this.inverseBind_));
+  if (this.drawBones_) {
+    this.render(gl, this.p_, this.bones_, palette);
+  } else {
+    this.render(gl, this.p_, this.body_, palette.times(this.inverseBind_));
+  }
 };
 
 
@@ -373,57 +379,60 @@ animus.Renderer.prototype.onDraw = function(gl) {
 
 animus.Renderer.prototype.handleKeys = function() {
   var joint = this.joints_[this.selectedJoint_ % 10];
-  if (this.keys_.justPressed(animus.Keys.Key.N)) {
+  if (this.keys_.justPressed(animus.Key.Y)) {
+    this.drawBones_ = !this.drawBones_;
+  }
+  if (this.keys_.justPressed(animus.Key.N)) {
     this.selectedJoint_ += 1;
   }
-  if (this.keys_.justPressed(animus.Keys.Key.P)) {
+  if (this.keys_.justPressed(animus.Key.P)) {
     this.selectedJoint_ -= 1;
   }
-  if (this.keys_.isPressed(animus.Keys.Key.W)) {
+  if (this.keys_.isPressed(animus.Key.W)) {
     this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.J.times(animus.Renderer.DISPLACEMENT));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.S)) {
+  if (this.keys_.isPressed(animus.Key.S)) {
     this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.J.times(-animus.Renderer.DISPLACEMENT));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.D)) {
+  if (this.keys_.isPressed(animus.Key.D)) {
     this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.I.times(animus.Renderer.DISPLACEMENT));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.A)) {
+  if (this.keys_.isPressed(animus.Key.A)) {
     this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.I.times(-animus.Renderer.DISPLACEMENT));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.Z)) {
+  if (this.keys_.isPressed(animus.Key.Z)) {
     this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.K.times(animus.Renderer.DISPLACEMENT));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.Q)) {
+  if (this.keys_.isPressed(animus.Key.Q)) {
     this.skeleton_.translation = this.skeleton_.translation.plus(
         animus.Vector.K.times(-animus.Renderer.DISPLACEMENT));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.RIGHT)) {
+  if (this.keys_.isPressed(animus.Key.RIGHT)) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.K, animus.Renderer.ROTATION));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.LEFT)) {
+  if (this.keys_.isPressed(animus.Key.LEFT)) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.K, -animus.Renderer.ROTATION));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.UP)) {
+  if (this.keys_.isPressed(animus.Key.UP)) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.I, animus.Renderer.ROTATION));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.DOWN)) {
+  if (this.keys_.isPressed(animus.Key.DOWN)) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.I, -animus.Renderer.ROTATION));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.LT)) {
+  if (this.keys_.isPressed(animus.Key.LT)) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.J, animus.Renderer.ROTATION));
   }
-  if (this.keys_.isPressed(animus.Keys.Key.GT)) {
+  if (this.keys_.isPressed(animus.Key.GT)) {
     joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
         animus.Vector.J, -animus.Renderer.ROTATION));
   }

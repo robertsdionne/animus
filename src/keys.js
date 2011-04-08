@@ -22,7 +22,7 @@ animus.Keys = function(document) {
 };
 
 
-animus.Keys.Key = {
+animus.Key = {
   LEFT: 37,
   UP: 38,
   RIGHT: 39,
@@ -32,6 +32,7 @@ animus.Keys.Key = {
   S: 83,
   D: 68,
   Q: 81,
+  Y: 89,
   Z: 90,
   N: 78,
   P: 80,

@@ -51,6 +51,14 @@ animus.Palette.prototype.reset = function() {
 
 
 /**
+ * @return {animus.DualQuaternion}
+ */
+animus.Palette.prototype.getJoint = function(i) {
+  return this.joints_[i];
+};
+
+
+/**
  * @return {Array.<number>}
  */
 animus.Palette.prototype.get = function() {
