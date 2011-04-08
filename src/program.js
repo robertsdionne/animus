@@ -25,26 +25,33 @@ webgl.Program = function(vertex, fragment) {
 };
 
 
-webgl.Program.prototype.defineUniforms = function(gl, uniforms) {
-  for (var i = 0; i < uniforms.length; ++i) {
-    var uniform = uniforms[i];
-    this[uniform] = gl.getUniformLocation(this.handle, uniform);
-//  if (this[uniform] < 0) {
-//    throw new Error(this.name + ': uniform ' + uniform +
-//        ' was ' + this[uniform]);
-//  }
+webgl.Program.EXTRACT_ARRAY = /(.*)\[.*/;
+
+
+webgl.Program.prototype.getSafeName = function(name) {
+  var match = name.match(webgl.Program.EXTRACT_ARRAY);
+  if (match) {
+    return match[1];
+  } else {
+    return name;
   }
 };
 
 
-webgl.Program.prototype.defineAttributes = function(gl, attributes) {
-  for (var i = 0; i < attributes.length; ++i) {
-    var attribute = attributes[i];
-    this[attribute] = gl.getAttribLocation(this.handle, attribute);
-//  if (this[attribute] < 0) {
-//    throw new Error(this.name + ': attribute ' + attribute +
-//        ' was ' + this[attribute]);
-//  }
+webgl.Program.prototype.defineUniforms = function(gl) {
+  var uniforms = gl.getProgramParameter(this.handle, gl.ACTIVE_UNIFORMS);
+  for (var i = 0; i < uniforms; ++i) {
+    var name = this.getSafeName(gl.getActiveUniform(this.handle, i).name);
+    this[name] = gl.getUniformLocation(this.handle, name);
+  }
+};
+
+
+webgl.Program.prototype.defineAttributes = function(gl) {
+  var attribs = gl.getProgramParameter(this.handle, gl.ACTIVE_ATTRIBUTES);
+  for (var i = 0; i < attribs; ++i) {
+    var name = this.getSafeName(gl.getActiveAttrib(this.handle, i).name);
+    this[name] = gl.getAttribLocation(this.handle, name);
   }
 };
 
@@ -86,4 +93,6 @@ webgl.Program.prototype.link = function(gl) {
     this.dispose(gl);
     throw new Error(log);
   }
+  this.defineUniforms(gl);
+  this.defineAttributes(gl);
 };

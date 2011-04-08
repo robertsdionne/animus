@@ -95,33 +95,6 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.body_ = gl.createBuffer();
 
-  this.p_.defineUniforms(gl, [
-    'uProjection',
-    'uTransform',
-    'uTexture',
-    'uLightTransform',
-    'uSelectedJoint',
-    'uJointPalette'
-  ]);
-
-  this.p_.defineAttributes(gl, [
-    'aPosition',
-    'aNormal',
-    'aColor',
-    'aJoint'
-  ]);
-
-  this.p2_.defineUniforms(gl, [
-    'uProjection',
-    'uLightTransform',
-    'uJointPalette'
-  ]);
-
-  this.p2_.defineAttributes(gl, [
-    'aPosition',
-    'aJoint'
-  ]);
-
   this.texture_ = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, this.texture_);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
