@@ -93,6 +93,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
 
+  this.bones_ = gl.createBuffer();
   this.body_ = gl.createBuffer();
 
   this.texture_ = gl.createTexture();
@@ -126,22 +127,40 @@ animus.Renderer.prototype.onCreate = function(gl) {
   // We pass them to the shader as a vertex attribute
   // to index the joint palette array uniform.
   var a = new animus.BoxMan()
-      .add(1, 1, 2, 0.2)      // skeleton
-      .add(2, 0.5, 0.5, 0.5)  // skull
-      .add(3, 0.2, 0.5, 0.2)  // right arm
-      .add(4, 0.2, 0.5, 0.2)  // right forearm
-      .add(5, 0.2, 0.5, 0.2)  // left arm
-      .add(6, 0.2, 0.5, 0.2)  // left forearm
-      .add(7, 0.2, 1, 0.2)    // right thigh
-      .add(8, 0.2, 1, 0.2)    // right calf
-      .add(9, 0.2, 1, 0.2)    // left thigh
-      .add(10, 0.2, 1, 0.2)   // left calf
+      .add(1, 0.05, 2, 0.05)      // skeleton
+      .add(2, 0.05, 0.5, 0.05)  // skull
+      .add(3, 0.05, 0.5, 0.05)  // right arm
+      .add(4, 0.05, 0.5, 0.05)  // right forearm
+      .add(5, 0.05, 0.5, 0.05)  // left arm
+      .add(6, 0.05, 0.5, 0.05)  // left forearm
+      .add(7, 0.05, 1, 0.05)    // right thigh
+      .add(8, 0.05, 1, 0.05)    // right calf
+      .add(9, 0.05, 1, 0.05)    // left thigh
+      .add(10, 0.05, 1, 0.05)   // left calf
       .add(11, 20, 1, 20)     // floor
       .build();
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
+  var b = new animus.BoxMan()
+      .add(1, 1, 2, 0.2)      // skeleton
+      .add(11, 0.5, 0.5, 0.5)  // skull
+      .add(11, 0.2, 0.5, 0.2)  // right arm
+      .add(11, 0.2, 0.5, 0.2)  // right forearm
+      .add(11, 0.2, 0.5, 0.2)  // left arm
+      .add(11, 0.2, 0.5, 0.2)  // left forearm
+      .add(11, 0.2, 1, 0.2)    // right thigh
+      .add(11, 0.2, 1, 0.2)    // right calf
+      .add(11, 0.2, 1, 0.2)    // left thigh
+      .add(11, 0.2, 1, 0.2)   // left calf
+      .add(11, 20, 1, 20)     // floor
+      .build();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.bones_);
   gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, a);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
+  gl.bufferData(gl.ARRAY_BUFFER, a.byteLength, gl.STATIC_DRAW);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, b);
 
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
@@ -191,6 +210,8 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.root_.translation = new animus.Vector(0, -0.5, -5.0);
 
   this.visitor_ = new animus.WebGlVisitor();
+
+//this.inverseBind_ = this.visitor_.traverse(this.root_).inverse();
 
   // This array order depends upon the preorder traversal
   // of the scenegraph, this.root_.
@@ -256,6 +277,37 @@ animus.Renderer.prototype.getLightTransform = function() {
 };
 
 
+animus.Renderer.prototype.render = function(gl, program, buffer, palette) {
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.uniform4fv(program.uJointPalette, palette.get());
+  gl.vertexAttribPointer(program.aPosition, 3, gl.FLOAT, false, 40, 0);
+  gl.enableVertexAttribArray(program.aPosition);
+  if (program.aNormal >= 0) {
+    gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 40, 12);
+    gl.enableVertexAttribArray(program.aNormal);
+  }
+  if (program.aColor >= 0) {
+    gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 40, 24);
+    gl.enableVertexAttribArray(program.aColor);
+  }
+  if (program.aJoint >= 0) {
+    gl.vertexAttribPointer(program.aJoint, 1, gl.FLOAT, false, 40, 36);
+    gl.enableVertexAttribArray(program.aJoint);
+  }
+  gl.drawArrays(gl.TRIANGLES, 0, 396);
+  gl.disableVertexAttribArray(program.aPosition);
+  if (program.aNormal >= 0) {
+    gl.disableVertexAttribArray(program.aNormal);
+  }
+  if (program.aColor >= 0) {
+    gl.disableVertexAttribArray(program.aColor);
+  }
+  if (program.aJoint >= 0) {
+    gl.disableVertexAttribArray(program.aJoint);
+  }
+};
+
+
 animus.Renderer.prototype.shadowMapPass = function(gl) {
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   gl.cullFace(gl.FRONT);
@@ -266,8 +318,9 @@ animus.Renderer.prototype.shadowMapPass = function(gl) {
   gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
       this.getLightTransform());
   this.root_.translation = new animus.Vector();
-  this.visitor_.traverse(this.root_);
-  this.visitor_.render(gl, this.p2_, this.body_);
+  var palette = this.visitor_.traverse(this.root_);
+  this.render(gl, this.p2_, this.bones_, palette);
+//this.render(gl, this.p2_, this.body_, palette.times(this.inverseBind_));
 };
 
 
@@ -284,8 +337,9 @@ animus.Renderer.prototype.scenePass = function(gl) {
   gl.uniformMatrix4fv(this.p_.uLightTransform, false,
       this.getLightTransform());
   this.root_.translation = new animus.Vector();
-  this.visitor_.traverse(this.root_);
-  this.visitor_.render(gl, this.p_, this.body_);
+  var palette = this.visitor_.traverse(this.root_);
+  this.render(gl, this.p_, this.bones_, palette);
+//this.render(gl, this.p_, this.body_, palette.times(this.inverseBind_));
 };
 
 

@@ -1,14 +1,38 @@
 // Copyright 2011 Robert Scott Dionne. All Rights Reserved.
 
 /**
- * @constructor
  */
 animus.Palette = function() {
   /**
    * @type {Array.<animus.DualQuaternion>}
    * @private
    */
-  this.palette_ = [];
+  this.joints_ = [];
+};
+
+
+/**
+ * @return {animus.Palette}
+ */
+animus.Palette.prototype.inverse = function() {
+  var result = new animus.Palette();
+  for (var i = 0; i < this.joints_.length; ++i) {
+    result.set(i, this.joints_[i].reciprocal());
+  }
+  return result;
+};
+
+
+/**
+ * @param {animus.Palette} that
+ * @return {animus.Palette}
+ */
+animus.Palette.prototype.times = function(that) {
+  var result = new animus.Palette();
+  for (var i = 0; i < this.joints_.length; ++i) {
+    result.set(i, this.joints_[i].times(that.joints_[i]));
+  }
+  return result;
 };
 
 
@@ -17,12 +41,12 @@ animus.Palette = function() {
  * @param {animus.DualQuaternion} joint
  */
 animus.Palette.prototype.set = function(i, joint) {
-  this.palette_[i] = joint;
+  this.joints_[i] = joint;
 };
 
 
 animus.Palette.prototype.reset = function() {
-  this.palette_ = [];
+  this.joints_ = [];
 };
 
 
@@ -31,8 +55,8 @@ animus.Palette.prototype.reset = function() {
  */
 animus.Palette.prototype.get = function() {
   var result = [];
-  for (var i = 0; i < this.palette_.length; ++i) {
-    var joint = this.palette_[i];
+  for (var i = 0; i < this.joints_.length; ++i) {
+    var joint = this.joints_[i];
     result.push(
         joint.vector.x.real,
         joint.vector.y.real,

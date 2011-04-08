@@ -117,8 +117,6 @@ animus.Visitor.prototype.visitTransform = animus.nullFunction;
  * @extends {animus.Visitor}
  */
 animus.WebGlVisitor = function() {
-  this.index_ = 0;
-  this.palette_ = new animus.Palette();
   this.transformationStack_ = [new animus.DualQuaternion()];
 };
 animus.inherits(animus.WebGlVisitor, animus.Visitor);
@@ -129,8 +127,11 @@ animus.inherits(animus.WebGlVisitor, animus.Visitor);
  */
 animus.WebGlVisitor.prototype.traverse = function(node) {
   this.index_ = 0;
-  this.palette_.reset();
+  this.palette_ = new animus.Palette();
   animus.WebGlVisitor.superClass_.traverse.call(this, node);
+  var result = this.palette_;
+  this.palette_ = null;
+  return result;
 };
 
 
@@ -154,35 +155,4 @@ animus.WebGlVisitor.prototype.visitTransform = function(transform) {
   this.palette_.set(this.index_++, this.transformationStack_[0]);
   this.visitComposite(transform);
   this.transformationStack_.shift();
-};
-
-
-animus.WebGlVisitor.prototype.render = function(gl, program, buffer) {
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.uniform4fv(program.uJointPalette, this.palette_.get());
-  gl.vertexAttribPointer(program.aPosition, 3, gl.FLOAT, false, 40, 0);
-  gl.enableVertexAttribArray(program.aPosition);
-  if (program.aNormal >= 0) {
-    gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 40, 12);
-    gl.enableVertexAttribArray(program.aNormal);
-  }
-  if (program.aColor >= 0) {
-    gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, 40, 24);
-    gl.enableVertexAttribArray(program.aColor);
-  }
-  if (program.aJoint >= 0) {
-    gl.vertexAttribPointer(program.aJoint, 1, gl.FLOAT, false, 40, 36);
-    gl.enableVertexAttribArray(program.aJoint);
-  }
-  gl.drawArrays(gl.TRIANGLES, 0, 396);
-  gl.disableVertexAttribArray(program.aPosition);
-  if (program.aNormal >= 0) {
-    gl.disableVertexAttribArray(program.aNormal);
-  }
-  if (program.aColor >= 0) {
-    gl.disableVertexAttribArray(program.aColor);
-  }
-  if (program.aJoint >= 0) {
-    gl.disableVertexAttribArray(program.aJoint);
-  }
 };
