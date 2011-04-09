@@ -116,19 +116,19 @@ animus.Visitor.prototype.visitTransform = animus.nullFunction;
  * @constructor
  * @extends {animus.Visitor}
  */
-animus.WebGlVisitor = function() {
+animus.GlobalPoseVisitor = function() {
   this.transformationStack_ = [new animus.DualQuaternion()];
 };
-animus.inherits(animus.WebGlVisitor, animus.Visitor);
+animus.inherits(animus.GlobalPoseVisitor, animus.Visitor);
 
 
 /**
  * @param {animus.Node} node
  */
-animus.WebGlVisitor.prototype.traverse = function(node) {
+animus.GlobalPoseVisitor.prototype.traverse = function(node) {
   this.index_ = 0;
   this.palette_ = new animus.Palette();
-  animus.WebGlVisitor.superClass_.traverse.call(this, node);
+  animus.GlobalPoseVisitor.superClass_.traverse.call(this, node);
   var result = this.palette_;
   this.palette_ = null;
   return result;
@@ -138,7 +138,7 @@ animus.WebGlVisitor.prototype.traverse = function(node) {
 /**
  * @inheritDoc
  */
-animus.WebGlVisitor.prototype.visitComposite = function(composite) {
+animus.GlobalPoseVisitor.prototype.visitComposite = function(composite) {
   var visitor = this;
   composite.children.forEach(function(child) {
     child.accept(visitor);
@@ -149,7 +149,7 @@ animus.WebGlVisitor.prototype.visitComposite = function(composite) {
 /**
  * @inheritDoc
  */
-animus.WebGlVisitor.prototype.visitTransform = function(transform) {
+animus.GlobalPoseVisitor.prototype.visitTransform = function(transform) {
   this.transformationStack_.unshift(
       this.transformationStack_[0].times(transform.transform));
   this.palette_.set(this.index_++, this.transformationStack_[0]);

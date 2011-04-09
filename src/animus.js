@@ -167,7 +167,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.root_ = new animus.Transform();
   this.root_.children.push(this.skeleton_, this.floor_);
 
-  this.visitor_ = new animus.WebGlVisitor();
+  this.visitor_ = new animus.GlobalPoseVisitor();
 
   var bind = this.visitor_.traverse(this.root_);
   this.inverseBind_ = bind.inverse();
