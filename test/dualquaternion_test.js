@@ -121,3 +121,25 @@ DualQuaternionTest.prototype.testDoUndoTranslateRotate = function() {
   assertRoughlyEquals(0, result.y, 0.01);
   assertRoughlyEquals(0, result.z, 0.01);
 };
+
+
+DualQuaternionTest.prototype.testLerp = function() {
+  var v = animus.Vector.I;
+  var q = new animus.DualQuaternion();
+  var r = animus.DualQuaternion.fromAxisAngle(animus.Vector.J, Math.PI / 2);
+  var s = q.lerp(r, 0.5);
+  var result = s.transform(v);
+  assertRoughlyEquals(0.707, result.x, 0.01);
+  assertRoughlyEquals(0, result.y, 0.01);
+  assertRoughlyEquals(-0.707, result.z, 0.01);
+  s = q.lerp(r, 0.0);
+  result = s.transform(v);
+  assertRoughlyEquals(1, result.x, 0.01);
+  assertRoughlyEquals(0, result.y, 0.01);
+  assertRoughlyEquals(0, result.z, 0.01);
+  s = q.lerp(r, 1.0);
+  result = s.transform(v);
+  assertRoughlyEquals(0, result.x, 0.01);
+  assertRoughlyEquals(0, result.y, 0.01);
+  assertRoughlyEquals(-1, result.z, 0.01);
+};

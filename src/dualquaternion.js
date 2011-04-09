@@ -72,6 +72,18 @@ animus.DualQuaternion.prototype.dual = function() {
 
 
 /**
+ * @param {animus.DualQuaternion} that
+ * @param {number} t
+ * @return {animus.DualQuaternion}
+ */
+animus.DualQuaternion.prototype.lerp = function(that, t) {
+  var v = new animus.DualNumber(t);
+  var u = new animus.DualNumber(1).minus(v);
+  return this.times(u).plus(that.times(v)).normalized();
+};
+
+
+/**
  * @return {animus.DualQuaternion} The negation of this quaternion.
  */
 animus.DualQuaternion.prototype.negate = function() {
