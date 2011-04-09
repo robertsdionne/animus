@@ -125,66 +125,73 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   this.skeleton_ = new animus.PoseBuilder()
       .setRightCalf(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/4),
-          new animus.Vector(0, 1.1, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.I, -Math.PI/4),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 1.1, 0)))
       .setRightThigh(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI).times(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/4)),
-          new animus.Vector(-0.4, -0.1, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.K, Math.PI).times(
+              animus.DualQuaternion.fromAxisAngle(animus.Vector.I, Math.PI/4)),
+          animus.DualQuaternion.fromTranslation(
+              new animus.Vector(-0.4, -0.1), 0))
       .setLeftCalf(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/2),
-          new animus.Vector(0, 1.1, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.I, -Math.PI/2),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 1.1, 0)))
       .setLeftThigh(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, -Math.PI).times(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/6)),
-          new animus.Vector(0.4, -0.1, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.K, -Math.PI).times(
+              animus.DualQuaternion.fromAxisAngle(animus.Vector.I, -Math.PI/6)),
+          animus.DualQuaternion.fromTranslation(
+              new animus.Vector(0.4, -0.1, 0)))
       .setRightForearm(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
-          new animus.Vector(0, 0.6, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 0.6, 0)))
       .setRightArm(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3).times(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, 5*Math.PI/6)),
-          new animus.Vector(-0.6, 2, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.I, Math.PI/3).times(
+              animus.DualQuaternion.fromAxisAngle(
+                  animus.Vector.K, 5*Math.PI/6)),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(-0.6, 2, 0)))
       .setLeftForearm(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
-          new animus.Vector(0, 0.6, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 0.6, 0)))
       .setLeftArm(
-          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/3).times(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, -5*Math.PI/6)),
-          new animus.Vector(0.6, 2, 0))
+          animus.DualQuaternion.fromAxisAngle(
+              animus.Vector.I, -Math.PI/3).times(
+                  animus.DualQuaternion.fromAxisAngle(
+                      animus.Vector.K, -5*Math.PI/6)),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0.6, 2, 0)))
       .setHead(
-          new animus.Quaternion(),
-          new animus.Vector(0, 2.1, 0))
+          new animus.DualQuaternion(),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 2.1, 0)))
       .build();
 
   this.skeleton2_ = new animus.PoseBuilder()
       .setRightCalf(
-          new animus.Quaternion(),
-          new animus.Vector(0, 1.1, 0))
+          new animus.DualQuaternion(),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 1.1, 0)))
       .setRightThigh(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI),
-          new animus.Vector(-0.4, -0.1, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.K, Math.PI),
+          animus.DualQuaternion.fromTranslation(
+              new animus.Vector(-0.4, -0.1), 0))
       .setLeftCalf(
-          new animus.Quaternion(),
-          new animus.Vector(0, 1.1, 0))
+          new animus.DualQuaternion(),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 1.1, 0)))
       .setLeftThigh(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI),
-          new animus.Vector(0.4, -0.1, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.K, Math.PI),
+          animus.DualQuaternion.fromTranslation(
+              new animus.Vector(0.4, -0.1, 0)))
       .setRightForearm(
-          new animus.Quaternion(),
-          new animus.Vector(0, 0.6, 0))
+          new animus.DualQuaternion(),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 0.6, 0)))
       .setRightArm(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI/2),
-          new animus.Vector(-0.6, 2, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.K, Math.PI/2),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(-0.6, 2, 0)))
       .setLeftForearm(
-          new animus.Quaternion(),
-          new animus.Vector(0, 0.6, 0))
+          new animus.DualQuaternion(),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 0.6, 0)))
       .setLeftArm(
-          animus.Quaternion.fromAxisAngle(animus.Vector.K, -Math.PI/2),
-          new animus.Vector(0.6, 2, 0))
+          animus.DualQuaternion.fromAxisAngle(animus.Vector.K, -Math.PI/2),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0.6, 2, 0)))
       .setHead(
-          new animus.Quaternion(),
-          new animus.Vector(0, 2.1, 0))
+          new animus.DualQuaternion(),
+          animus.DualQuaternion.fromTranslation(new animus.Vector(0, 2.1, 0)))
       .build();
 
   this.skeleton_ = this.skeleton2_;
@@ -397,51 +404,57 @@ animus.Renderer.prototype.handleKeys = function() {
     this.selectedJoint_ -= 1;
   }
   if (this.keys_.isPressed(animus.Key.W)) {
-    this.skeleton_.translation = this.skeleton_.translation.plus(
-        animus.Vector.J.times(animus.Renderer.DISPLACEMENT));
+    this.skeleton_.translation = this.skeleton_.translation.times(
+        animus.DualQuaternion.fromTranslation(
+            animus.Vector.J.times(animus.Renderer.DISPLACEMENT)));
   }
   if (this.keys_.isPressed(animus.Key.S)) {
-    this.skeleton_.translation = this.skeleton_.translation.plus(
-        animus.Vector.J.times(-animus.Renderer.DISPLACEMENT));
+    this.skeleton_.translation = this.skeleton_.translation.times(
+        animus.DualQuaternion.fromTranslation(
+            animus.Vector.J.times(-animus.Renderer.DISPLACEMENT)));
   }
   if (this.keys_.isPressed(animus.Key.D)) {
-    this.skeleton_.translation = this.skeleton_.translation.plus(
-        animus.Vector.I.times(animus.Renderer.DISPLACEMENT));
+    this.skeleton_.translation = this.skeleton_.translation.times(
+        animus.DualQuaternion.fromTranslation(
+            animus.Vector.I.times(animus.Renderer.DISPLACEMENT)));
   }
   if (this.keys_.isPressed(animus.Key.A)) {
-    this.skeleton_.translation = this.skeleton_.translation.plus(
-        animus.Vector.I.times(-animus.Renderer.DISPLACEMENT));
+    this.skeleton_.translation = this.skeleton_.translation.times(
+        animus.DualQuaternion.fromTranslation(
+            animus.Vector.I.times(-animus.Renderer.DISPLACEMENT)));
   }
   if (this.keys_.isPressed(animus.Key.Z)) {
-    this.skeleton_.translation = this.skeleton_.translation.plus(
-        animus.Vector.K.times(animus.Renderer.DISPLACEMENT));
+    this.skeleton_.translation = this.skeleton_.translation.times(
+        animus.DualQuaternion.fromTranslation(
+            animus.Vector.K.times(animus.Renderer.DISPLACEMENT)));
   }
   if (this.keys_.isPressed(animus.Key.Q)) {
-    this.skeleton_.translation = this.skeleton_.translation.plus(
-        animus.Vector.K.times(-animus.Renderer.DISPLACEMENT));
+    this.skeleton_.translation = this.skeleton_.translation.times(
+        animus.DualQuaternion.fromTranslation(
+            animus.Vector.K.times(-animus.Renderer.DISPLACEMENT)));
   }
   if (this.keys_.isPressed(animus.Key.RIGHT)) {
-    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+    joint.rotation = joint.rotation.times(animus.DualQuaternion.fromAxisAngle(
         animus.Vector.K, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.LEFT)) {
-    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+    joint.rotation = joint.rotation.times(animus.DualQuaternion.fromAxisAngle(
         animus.Vector.K, -animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.UP)) {
-    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+    joint.rotation = joint.rotation.times(animus.DualQuaternion.fromAxisAngle(
         animus.Vector.I, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.DOWN)) {
-    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+    joint.rotation = joint.rotation.times(animus.DualQuaternion.fromAxisAngle(
         animus.Vector.I, -animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.LT)) {
-    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+    joint.rotation = joint.rotation.times(animus.DualQuaternion.fromAxisAngle(
         animus.Vector.J, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.GT)) {
-    joint.rotation = joint.rotation.times(animus.Quaternion.fromAxisAngle(
+    joint.rotation = joint.rotation.times(animus.DualQuaternion.fromAxisAngle(
         animus.Vector.J, -animus.Renderer.ROTATION));
   }
 };
