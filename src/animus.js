@@ -157,6 +157,37 @@ animus.Renderer.prototype.onCreate = function(gl) {
           new animus.Vector(0, 2.1, 0))
       .build();
 
+  this.skeleton2_ = new animus.PoseBuilder()
+      .setRightCalf(
+          new animus.Quaternion(),
+          new animus.Vector(0, 1.1, 0))
+      .setRightThigh(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI),
+          new animus.Vector(-0.4, -0.1, 0))
+      .setLeftCalf(
+          new animus.Quaternion(),
+          new animus.Vector(0, 1.1, 0))
+      .setLeftThigh(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI),
+          new animus.Vector(0.4, -0.1, 0))
+      .setRightForearm(
+          new animus.Quaternion(),
+          new animus.Vector(0, 0.6, 0))
+      .setRightArm(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI/2),
+          new animus.Vector(-0.6, 2, 0))
+      .setLeftForearm(
+          new animus.Quaternion(),
+          new animus.Vector(0, 0.6, 0))
+      .setLeftArm(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, -Math.PI/2),
+          new animus.Vector(0.6, 2, 0))
+      .setHead(
+          new animus.Quaternion(),
+          new animus.Vector(0, 2.1, 0))
+      .build();
+
+  this.skeleton_ = this.skeleton2_;
   this.visitor_ = new animus.GlobalPoseVisitor();
 
   var bind = this.visitor_.traverse(this.skeleton_);
