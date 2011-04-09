@@ -123,45 +123,39 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
-  this.rightCalf = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/4),
-      new animus.Vector(0, 1.1, 0));
-  this.rightThigh = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI).times(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/4)),
-      new animus.Vector(-0.4, -0.1, 0));
-  this.rightThigh.children.push(this.rightCalf);
-  this.leftCalf = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/2),
-      new animus.Vector(0, 1.1, 0));
-  this.leftThigh = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.K, -Math.PI).times(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/6)),
-      new animus.Vector(0.4, -0.1, 0));
-  this.leftThigh.children.push(this.leftCalf);
-  this.rightForearm = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
-      new animus.Vector(0, 0.6, 0));
-  this.rightArm = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3).times(
-      animus.Quaternion.fromAxisAngle(animus.Vector.K, 5*Math.PI/6)),
-      new animus.Vector(-0.6, 2, 0));
-  this.rightArm.children.push(this.rightForearm);
-  this.leftForearm = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
-      new animus.Vector(0, 0.6, 0));
-  this.leftArm = new animus.Transform(
-      animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/3).times(
-      animus.Quaternion.fromAxisAngle(animus.Vector.K, -5*Math.PI/6)),
-      new animus.Vector(0.6, 2, 0));
-  this.leftArm.children.push(this.leftForearm);
-  this.skull = new animus.Transform(
-      null,
-      new animus.Vector(0, 2.1, 0));
-  this.skeleton_ = new animus.Transform();
-  this.skeleton_.children.push(
-      this.skull, this.rightArm, this.leftArm,
-      this.rightThigh, this.leftThigh);
+  this.skeleton_ = new animus.PoseBuilder()
+      .setRightCalf(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/4),
+          new animus.Vector(0, 1.1, 0))
+      .setRightThigh(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, Math.PI).times(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/4)),
+          new animus.Vector(-0.4, -0.1, 0))
+      .setLeftCalf(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/2),
+          new animus.Vector(0, 1.1, 0))
+      .setLeftThigh(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, -Math.PI).times(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/6)),
+          new animus.Vector(0.4, -0.1, 0))
+      .setRightForearm(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
+          new animus.Vector(0, 0.6, 0))
+      .setRightArm(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3).times(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, 5*Math.PI/6)),
+          new animus.Vector(-0.6, 2, 0))
+      .setLeftForearm(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, Math.PI/3),
+          new animus.Vector(0, 0.6, 0))
+      .setLeftArm(
+          animus.Quaternion.fromAxisAngle(animus.Vector.I, -Math.PI/3).times(
+          animus.Quaternion.fromAxisAngle(animus.Vector.K, -5*Math.PI/6)),
+          new animus.Vector(0.6, 2, 0))
+      .setHead(
+          new animus.Quaternion(),
+          new animus.Vector(0, 2.1, 0))
+      .build();
 
   this.visitor_ = new animus.GlobalPoseVisitor();
 
@@ -209,18 +203,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   // This array order depends upon the preorder traversal
   // of the scenegraph, this.skeleton_.
-  this.joints_ = [
-    this.skeleton_,
-    this.skull,
-    this.rightArm,
-    this.rightForearm,
-    this.leftArm,
-    this.leftForearm,
-    this.rightThigh,
-    this.rightCalf,
-    this.leftThigh,
-    this.leftCalf
-  ];
+  this.joints_ = new animus.JointVisitor().traverse(this.skeleton_);
   this.selectedJoint_ = 0;
 
   this.drawBones_ = false;
