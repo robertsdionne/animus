@@ -23,7 +23,12 @@ animus.Visitor.prototype.visitNode = animus.nullFunction;
 /**
  * @param {animus.Composite} composite
  */
-animus.Visitor.prototype.visitComposite = animus.nullFunction;
+animus.Visitor.prototype.visitComposite = function(composite) {
+  var visitor = this;
+  composite.children.forEach(function(child) {
+    child.accept(visitor);
+  });
+};
 
 
 /**

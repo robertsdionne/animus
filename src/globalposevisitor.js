@@ -26,17 +26,6 @@ animus.GlobalPoseVisitor.prototype.traverse = function(node) {
 /**
  * @inheritDoc
  */
-animus.GlobalPoseVisitor.prototype.visitComposite = function(composite) {
-  var visitor = this;
-  composite.children.forEach(function(child) {
-    child.accept(visitor);
-  });
-};
-
-
-/**
- * @inheritDoc
- */
 animus.GlobalPoseVisitor.prototype.visitTransform = function(transform) {
   this.transformationStack_.unshift(
       this.transformationStack_[0].times(transform.transform));
