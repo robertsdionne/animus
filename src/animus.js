@@ -38,7 +38,7 @@ animus.Renderer = function(keys, index) {
   /**
    * @type {animus.Node}
    */
-  this.root_ = null;
+  this.skeleton_ = null;
 
 
   /**
@@ -162,47 +162,41 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.skeleton_.children.push(
       this.skull, this.rightArm, this.leftArm,
       this.rightThigh, this.leftThigh);
-  this.floor_ = new animus.Transform();
-  this.floor_.translation = new animus.Vector(0., -5., 0.);
-  this.root_ = new animus.Transform();
-  this.root_.children.push(this.skeleton_, this.floor_);
 
   this.visitor_ = new animus.GlobalPoseVisitor();
 
-  var bind = this.visitor_.traverse(this.root_);
+  var bind = this.visitor_.traverse(this.skeleton_);
   this.inverseBind_ = bind.inverse();
 
   // WARNING: Programmer art.
   // These indices (parameter 1 of add()) depend upon
-  // the preorder traversal of the scenegraph, this.root_.
+  // the preorder traversal of the scenegraph, this.skeleton_.
   // We pass them to the shader as a vertex attribute
   // to index the joint palette array uniform.
   var a = new animus.BoxMan()
-      .add(1, null, 0.05, 2, 0.05)      // skeleton
-      .add(2, null, 0.05, 0.5, 0.05)  // skull
-      .add(3, null, 0.05, 0.5, 0.05)  // right arm
-      .add(4, null, 0.05, 0.5, 0.05)  // right forearm
-      .add(5, null, 0.05, 0.5, 0.05)  // left arm
-      .add(6, null, 0.05, 0.5, 0.05)  // left forearm
-      .add(7, null, 0.05, 1, 0.05)    // right thigh
-      .add(8, null, 0.05, 1, 0.05)    // right calf
-      .add(9, null, 0.05, 1, 0.05)    // left thigh
-      .add(10, null, 0.05, 1, 0.05)   // left calf
-      .add(11, null, 20, 1, 20)     // floor
+      .add(0, null, 0.05, 2, 0.05)      // skeleton
+      .add(1, null, 0.05, 0.5, 0.05)  // skull
+      .add(2, null, 0.05, 0.5, 0.05)  // right arm
+      .add(3, null, 0.05, 0.5, 0.05)  // right forearm
+      .add(4, null, 0.05, 0.5, 0.05)  // left arm
+      .add(5, null, 0.05, 0.5, 0.05)  // left forearm
+      .add(6, null, 0.05, 1, 0.05)    // right thigh
+      .add(7, null, 0.05, 1, 0.05)    // right calf
+      .add(8, null, 0.05, 1, 0.05)    // left thigh
+      .add(9, null, 0.05, 1, 0.05)   // left calf
       .build();
 
   var b = new animus.BoxMan()
-      .add(1, bind.getJoint(1), 1, 2, 0.2)      // skeleton
-      .add(2, bind.getJoint(2), 0.5, 0.5, 0.5)  // skull
-      .add(3, bind.getJoint(3), 0.2, 0.5, 0.2)  // right arm
-      .add(4, bind.getJoint(4), 0.2, 0.5, 0.2)  // right forearm
-      .add(5, bind.getJoint(5), 0.2, 0.5, 0.2)  // left arm
-      .add(6, bind.getJoint(6), 0.2, 0.5, 0.2)  // left forearm
-      .add(7, bind.getJoint(7), 0.2, 1, 0.2)    // right thigh
-      .add(8, bind.getJoint(8), 0.2, 1, 0.2)    // right calf
-      .add(9, bind.getJoint(9), 0.2, 1, 0.2)    // left thigh
-      .add(10, bind.getJoint(10), 0.2, 1, 0.2)   // left calf
-      .add(11, bind.getJoint(11), 20, 1, 20)     // floor
+      .add(0, bind.getJoint(0), 1, 2, 0.2)      // skeleton
+      .add(1, bind.getJoint(1), 0.5, 0.5, 0.5)  // skull
+      .add(2, bind.getJoint(2), 0.2, 0.5, 0.2)  // right arm
+      .add(3, bind.getJoint(3), 0.2, 0.5, 0.2)  // right forearm
+      .add(4, bind.getJoint(4), 0.2, 0.5, 0.2)  // left arm
+      .add(5, bind.getJoint(5), 0.2, 0.5, 0.2)  // left forearm
+      .add(6, bind.getJoint(6), 0.2, 1, 0.2)    // right thigh
+      .add(7, bind.getJoint(7), 0.2, 1, 0.2)    // right calf
+      .add(8, bind.getJoint(8), 0.2, 1, 0.2)    // left thigh
+      .add(9, bind.getJoint(9), 0.2, 1, 0.2)   // left calf
       .build();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.bones_);
@@ -214,7 +208,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, b);
 
   // This array order depends upon the preorder traversal
-  // of the scenegraph, this.root_.
+  // of the scenegraph, this.skeleton_.
   this.joints_ = [
     this.skeleton_,
     this.skull,
@@ -296,7 +290,7 @@ animus.Renderer.prototype.render = function(gl, program, buffer, palette) {
     gl.vertexAttribPointer(program.aJoint, 1, gl.FLOAT, false, 40, 36);
     gl.enableVertexAttribArray(program.aJoint);
   }
-  gl.drawArrays(gl.TRIANGLES, 0, 396);
+  gl.drawArrays(gl.TRIANGLES, 0, 360);
   gl.disableVertexAttribArray(program.aPosition);
   if (program.aNormal >= 0) {
     gl.disableVertexAttribArray(program.aNormal);
@@ -314,12 +308,12 @@ animus.Renderer.prototype.shadowMapPass = function(gl) {
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   gl.cullFace(gl.FRONT);
   gl.useProgram(this.p2_.handle);
-  gl.uniform1f(this.p2_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
+  gl.uniform1f(this.p2_.uSelectedJoint, this.selectedJoint_ % 10);
   gl.uniformMatrix4fv(this.p2_.uProjection, false,
       this.getPerspectiveProjectionMatrix());
   gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
       this.getLightTransform());
-  var palette = this.visitor_.traverse(this.root_);
+  var palette = this.visitor_.traverse(this.skeleton_);
   if (this.drawBones_) {
     this.render(gl, this.p2_, this.bones_, palette);
   } else {
@@ -333,14 +327,14 @@ animus.Renderer.prototype.scenePass = function(gl) {
   gl.useProgram(this.p_.handle);
   gl.cullFace(gl.BACK);
   gl.uniform1i(this.p_.uTexture, this.texture_);
-  gl.uniform1f(this.p_.uSelectedJoint, this.selectedJoint_ % 10 + 1);
+  gl.uniform1f(this.p_.uSelectedJoint, this.selectedJoint_ % 10);
   gl.uniformMatrix4fv(this.p_.uProjection, false,
       this.getPerspectiveProjectionMatrix());
   gl.uniformMatrix4fv(this.p_.uTransform, false,
       this.getTransform());
   gl.uniformMatrix4fv(this.p_.uLightTransform, false,
       this.getLightTransform());
-  var palette = this.visitor_.traverse(this.root_);
+  var palette = this.visitor_.traverse(this.skeleton_);
   if (this.drawBones_) {
     this.render(gl, this.p_, this.bones_, palette);
   } else {
