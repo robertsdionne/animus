@@ -59,9 +59,6 @@ animus.Renderer.prototype.onChange = function(gl, width, height) {
 };
 
 
-var N = 32;
-
-
 animus.Renderer.prototype.getShaderSource = function(id) {
   return animus.global.document.getElementById(id).text;
 };
@@ -380,6 +377,7 @@ animus.Renderer.prototype.onDraw = function(gl) {
     // Canvas 0: Render the full shadow mapped scene.
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
     this.shadowMapPass(gl);
+    gl.flush();
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     this.scenePass(gl);
   } else {
