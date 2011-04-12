@@ -32,6 +32,12 @@ animus.Visitor.prototype.visitComposite = function(composite) {
 
 
 /**
+ * @param {animus.KnobTransform} knobTransform
+ */
+animus.Visitor.prototype.visitKnobTransform = animus.nullFunction;
+
+
+/**
  * @param {animus.Transform} transform
  */
 animus.Visitor.prototype.visitTransform = animus.nullFunction;

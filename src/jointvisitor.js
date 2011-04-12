@@ -14,16 +14,14 @@ animus.inherits(animus.JointVisitor, animus.Visitor);
 animus.JointVisitor.prototype.traverse = function(node) {
   this.joints_ = [];
   animus.JointVisitor.superClass_.traverse.call(this, node);
-  var result = this.joints_;
-  this.joints_ = null;
-  return result;
+  return this.joints_;
 };
 
 
 /**
  * @inheritDoc
  */
-animus.JointVisitor.prototype.visitTransform = function(transform) {
+animus.JointVisitor.prototype.visitKnobTransform = function(transform) {
   this.joints_.push(transform);
   this.visitComposite(transform);
 };

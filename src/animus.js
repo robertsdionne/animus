@@ -44,7 +44,7 @@ animus.Renderer = function(keys, index) {
   /**
    * @type {animus.Visitor}
    */
-  this.visitor_ = null;
+  this.globalVisitor_ = null;
 };
 animus.inherits(animus.Renderer, webgl.Renderer);
 
@@ -192,9 +192,11 @@ animus.Renderer.prototype.onCreate = function(gl) {
       .build();
 
   this.skeleton_ = this.skeleton2_;
-  this.visitor_ = new animus.GlobalPoseVisitor();
+  this.localVisitor_ = new animus.LocalPoseVisitor();
+  this.globalVisitor_ = new animus.GlobalPoseVisitor();
 
-  var bind = this.visitor_.traverse(this.skeleton_);
+  var local = this.localVisitor_.traverse(this.skeleton_);
+  var bind = this.globalVisitor_.traverse(local);
   this.inverseBind_ = bind.inverse();
 
   // WARNING: Programmer art.
@@ -331,7 +333,8 @@ animus.Renderer.prototype.shadowMapPass = function(gl) {
       this.getPerspectiveProjectionMatrix());
   gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
       this.getLightTransform());
-  var palette = this.visitor_.traverse(this.skeleton_);
+  var local = this.localVisitor_.traverse(this.skeleton_);
+  var palette = this.globalVisitor_.traverse(local);
   if (this.drawBones_) {
     this.render(gl, this.p2_, this.bones_, palette);
   } else {
@@ -352,7 +355,8 @@ animus.Renderer.prototype.scenePass = function(gl) {
       this.getTransform());
   gl.uniformMatrix4fv(this.p_.uLightTransform, false,
       this.getLightTransform());
-  var palette = this.visitor_.traverse(this.skeleton_);
+  var local = this.localVisitor_.traverse(this.skeleton_);
+  var palette = this.globalVisitor_.traverse(local);
   if (this.drawBones_) {
     this.render(gl, this.p_, this.bones_, palette);
   } else {
