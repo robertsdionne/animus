@@ -11,4 +11,8 @@ animus.Node = function() {};
  */
 animus.Node.prototype.accept = function(visitor) {
   visitor.visitNode(this);
+}
+
+animus.Node.prototype.iterator = function() {
+  return new animus.NodeIterator(this);
 };
