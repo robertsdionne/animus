@@ -13,7 +13,7 @@ animus.inherits(animus.BlendVisitor, animus.Visitor);
 /**
  * @param {animus.Node} node
  */
-animus.BlendVisitor.prototype.blend = function(node, other, t) {
+animus.BlendVisitor.prototype.traverse = function(node, other, t) {
   var copy = this.visitor.traverse(node);
   this.iterator = other.iterator();
   this.t = t;
@@ -27,7 +27,7 @@ animus.BlendVisitor.prototype.blend = function(node, other, t) {
 /**
  * @inheritDoc
  */
-animus.BlendVisitor.prototype.visitKnobTransform = function(transform) {
+animus.BlendVisitor.prototype.visitTransform = function(transform) {
   transform.transform = transform.transform.lerp(
       this.iterator.next().transform, this.t);
   this.visitComposite(transform);

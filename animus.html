@@ -25,6 +25,8 @@
         'src/globalposevisitor.js',
         'src/localposevisitor.js',
         'src/jointvisitor.js',
+        'src/copyvisitor.js',
+        'src/blendvisitor.js',
         'src/app.js',
         'src/program.js',
         'src/renderer.js',
@@ -51,7 +53,6 @@
       uniform mat4 uProjection;
       uniform mat4 uTransform;
       uniform mat4 uLightTransform;
-      uniform float uSelectedJoint;
 
       // Per limb uniforms
       uniform vec4 uJointPalette[24];
@@ -97,11 +98,7 @@
         pos += transl;
 
         vNormal = rotate(transf[0], aNormal);
-        if (aJoint == uSelectedJoint) {
-          vColor = vec3(1, 0, 0);
-        } else {
-          vColor = aColor;
-        }
+        vColor = aColor;
         gl_Position = uProjection * uTransform * vec4(pos, 1.0);
         vTexCoord = bias * uProjection * uLightTransform * vec4(pos, 1.0);
         vPosition = pos;
@@ -215,16 +212,16 @@
       <tr><td><b>s</b></td><td>Negative Y.</td></tr>
       <tr><td><b>z</b></td><td>Positive Z.</td></tr>
       <tr><td><b>q</b></td><td>Negative Z.</td></tr>
-      <tr><th>Joint Rotation</th></tr>
+      <tr><th>Character Rotation</th></tr>
       <tr><td><b>up</b></td><td>Positive Pitch.</td></tr>
       <tr><td><b>down</b></td><td>Negative Pitch.</td></tr>
       <tr><td><b>, (&lt;)</b></td><td>Positive Yaw.</td></tr>
       <tr><td><b>. (&gt;)</b></td><td>Negative Yaw.</td></tr>
       <tr><td><b>right</b></td><td>Positive Roll.</td></tr>
       <tr><td><b>left</b></td><td>Negative Roll.</td></tr>
-      <tr><th>Joint Selection</th></tr>
-      <tr><td><b>n</b></td><td>Select next joint.</td></tr>
-      <tr><td><b>p</b></td><td>Select previous joint.</td></tr>
+      <tr><th>Character Animation</th></tr>
+      <tr><td><b>j</b></td><td>Rewind animation.</td></tr>
+      <tr><td><b>k</b></td><td>Play animation.</td></tr>
       <tr><th>Display Options</th></tr>
       <tr><td><b>y</b></td><td>Toggle unskinned bones/skinned mesh.</td></tr>
     </table>
