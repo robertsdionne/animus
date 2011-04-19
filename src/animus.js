@@ -191,14 +191,15 @@ animus.Renderer.prototype.onCreate = function(gl) {
           animus.DualQuaternion.fromTranslation(new animus.Vector(0, 2.1, 0)))
       .build();
 
-  //this.skeleton_ = this.skeleton2_;
   this.blendVisitor_ = new animus.BlendVisitor();
   this.blendT_ = 0.;
   this.localVisitor_ = new animus.LocalPoseVisitor();
   this.globalVisitor_ = new animus.GlobalPoseVisitor();
+  this.paletteVisitor_ = new animus.PaletteVisitor();
 
   var local = this.localVisitor_.traverse(this.skeleton_);
-  var bind = this.globalVisitor_.traverse(local);
+  var global = this.globalVisitor_.traverse(local);
+  var bind = this.paletteVisitor_.traverse(global);
   this.inverseBind_ = bind.inverse();
 
   // WARNING: Programmer art.
@@ -332,7 +333,8 @@ animus.Renderer.prototype.shadowMapPass = function(gl) {
   var local0 = this.localVisitor_.traverse(this.skeleton2_);
   var local1 = this.localVisitor_.traverse(this.skeleton_);
   var blend = this.blendVisitor_.traverse(local0, local1, this.blendT_);
-  var palette = this.globalVisitor_.traverse(blend);
+  var global = this.globalVisitor_.traverse(blend);
+  var palette = this.paletteVisitor_.traverse(global);
   if (this.drawBones_) {
     this.render(gl, this.p2_, this.bones_, palette);
   } else {
@@ -355,7 +357,8 @@ animus.Renderer.prototype.scenePass = function(gl) {
   var local0 = this.localVisitor_.traverse(this.skeleton2_);
   var local1 = this.localVisitor_.traverse(this.skeleton_);
   var blend = this.blendVisitor_.traverse(local0, local1, this.blendT_);
-  var palette = this.globalVisitor_.traverse(blend);
+  var global = this.globalVisitor_.traverse(blend);
+  var palette = this.paletteVisitor_.traverse(global);
   if (this.drawBones_) {
     this.render(gl, this.p_, this.bones_, palette);
   } else {
@@ -494,13 +497,9 @@ animus.Renderer.prototype.handleKeys = function() {
             animus.Vector.J, -animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.J)) {
-    if (this.blendT_ >= 0.05) {
-      this.blendT_ -= 0.05;
-    }
+    this.blendT_ -= 0.05;
   }
   if (this.keys_.isPressed(animus.Key.K)) {
-    if (this.blendT_ <= 0.95) {
-      this.blendT_ += 0.05;
-    }
+    this.blendT_ += 0.05;
   }
 };

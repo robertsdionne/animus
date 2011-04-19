@@ -6,6 +6,7 @@
  */
 animus.GlobalPoseVisitor = function() {
   this.transformationStack_ = [new animus.DualQuaternion()];
+  this.copyVisitor_ = new animus.CopyVisitor();
 };
 animus.inherits(animus.GlobalPoseVisitor, animus.Visitor);
 
@@ -14,12 +15,9 @@ animus.inherits(animus.GlobalPoseVisitor, animus.Visitor);
  * @param {animus.Node} node
  */
 animus.GlobalPoseVisitor.prototype.traverse = function(node) {
-  this.index_ = 0;
-  this.palette_ = new animus.Palette();
-  animus.GlobalPoseVisitor.superClass_.traverse.call(this, node);
-  var result = this.palette_;
-  this.palette_ = null;
-  return result;
+  var copy = this.copyVisitor_.traverse(node);
+  animus.GlobalPoseVisitor.superClass_.traverse.call(this, copy);
+  return copy;
 };
 
 
@@ -29,7 +27,7 @@ animus.GlobalPoseVisitor.prototype.traverse = function(node) {
 animus.GlobalPoseVisitor.prototype.visitTransform = function(transform) {
   this.transformationStack_.unshift(
       this.transformationStack_[0].times(transform.transform));
-  this.palette_.set(this.index_++, this.transformationStack_[0]);
+  transform.transform = this.transformationStack_[0];
   this.visitComposite(transform);
   this.transformationStack_.shift();
 };
