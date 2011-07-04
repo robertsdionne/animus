@@ -1,4 +1,4 @@
-// Copyright 2011 ... All Rights Reserved.
+// Copyright 2011 Robert Scott Dionne. All rights reserved.
 
 /**
  * @param {Document} document

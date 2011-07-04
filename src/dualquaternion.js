@@ -1,4 +1,4 @@
-// Copyright 2011 Robert Scott Dionne. All Rights Reserved.
+// Copyright 2011 Robert Scott Dionne. All rights reserved.
 
 /**
  * @fileoverview Defines the quaternion object.

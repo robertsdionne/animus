@@ -1,3 +1,4 @@
+// Copyright 2011 Robert Scott Dionne. All rights reserved.
 
 var DualQuaternionTest = TestCase('DualQuaternionTest');
 

@@ -1,3 +1,4 @@
+// Copyright 2011 Robert Scott Dionne. All rights reserved.
 
 animus.NodeIterator = function(transform) {  
   this.transform = transform;
