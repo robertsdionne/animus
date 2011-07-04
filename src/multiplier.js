@@ -2,20 +2,19 @@
 
 /**
  */
-animus.Blender = function() {};
+animus.Multiplier = function() {};
 
 
 /**
  * @param {!animus.Pose} first
  * @param {!animus.Pose} second
- * @param {number} t
- * @return {!animus.Pose}
+ * return {!animus.Pose}
  */
-animus.Blender.prototype.blend = function(first, second, t) {
+animus.Multiplier.protoype.multiply = function(first, second) {
   /** @type {animus.Pose} */
   var result = [];
   for (var bone = 0; bone < first.length; ++bone) {
-    result[bone] = first[bone].lerp(second[bone], t);
+    result[bone] = first[bone].times(second[bone]);
   }
   return result;
 };

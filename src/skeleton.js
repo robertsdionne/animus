@@ -1,7 +1,7 @@
 // Copyright 2011 Robert Scott Dionne. All rights reserved.
 
 /**
- * @param {Object.<!animus.Bone, animus.Bone>} joints
+ * @param {Array.<animus.Bone>} joints
  * @param {!animus.Pose} bindingPose
  */
 animus.Skeleton = function(joints, bindPose) {
