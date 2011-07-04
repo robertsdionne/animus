@@ -7,10 +7,11 @@ animus.Inverter = function() {};
 
 /**
  * @param {!animus.Pose} pose
+ * @return {!animus.Pose}
  */
 animus.Inverter.prototype.invert = function(pose) {
   /** @type {animus.Pose} */
-  var result = {};
+  var result = [];
   for (var bone in pose) {
     result[bone] = pose[bone].reciprocal();
   }

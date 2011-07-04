@@ -8,11 +8,12 @@ animus.Blender = function() {};
 /**
  * @param {!animus.Pose} first
  * @param {!animus.Pose} second
+ * @param {number} t
  * @return {!animus.Pose}
  */
 animus.Blender.prototype.blend = function(first, second, t) {
   /** @type {animus.Pose} */
-  var result = {};
+  var result = [];
   for (var bone in first) {
     result[bone] = first[bone].lerp(second[bone], t);
   }
