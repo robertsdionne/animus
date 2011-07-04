@@ -1,10 +1,10 @@
 // Copyright 2011 Robert Scott Dionne. All rights reserved.
 
 /**
- * @param {Object.<animus.Bone.Id, animus.Bone>} bones
- * @param {animus.Pose} bindingPose
+ * @param {Object.<!animus.Bone, animus.Bone>} joints
+ * @param {!animus.Pose} bindingPose
  */
-animus.Skeleton = function(bones, bindPose) {
-  this.bones = bones;
+animus.Skeleton = function(joints, bindPose) {
+  this.joints = joints;
   this.bindPose = bindPose;
 };
