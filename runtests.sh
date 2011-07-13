@@ -5,7 +5,7 @@ JSTD=$!
 
 sleep 5
 
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --incognito \
+chromium-browser --incognito \
   http://localhost:9876/capture &
 
 java -jar lib/jstestdriver/JsTestDriver.jar \
