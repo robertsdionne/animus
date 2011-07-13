@@ -93,7 +93,6 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
 
-  this.bones_ = gl.createBuffer();
   this.body_ = gl.createBuffer();
 
   this.texture_ = gl.createTexture();
