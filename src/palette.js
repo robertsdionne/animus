@@ -3,4 +3,4 @@
 /**
  * @typedef {Array.<number>}
  */
-animus.Pose;
+animus.Palette;
