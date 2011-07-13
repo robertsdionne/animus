@@ -2,9 +2,9 @@
 
 /**
  * @param {Array.<animus.Bone>} joints
- * @param {!animus.Pose} bindingPose
+ * @param {!animus.Pose} bindPose
  */
 animus.Skeleton = function(joints, bindPose) {
   this.joints = joints;
-  this.bindPose = bindPose;
+  this.globalBindPose = bindPose.globalize(this);
 };
