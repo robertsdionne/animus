@@ -343,6 +343,9 @@ animus.Renderer.ROTATION = Math.PI/64;
 animus.Renderer.prototype.onDraw = function(gl) {
   this.handleKeys();
 
+  this.blendT_ = (+new Date() % 1000) / 500;
+  animus.global.document.getElementById('t').innerText = this.blendT_;
+
   if (this.index_ == 0) {
     // Canvas 0: Render the full shadow mapped scene.
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
@@ -360,11 +363,4 @@ animus.Renderer.prototype.onDraw = function(gl) {
 };
 
 
-animus.Renderer.prototype.handleKeys = function() {
-  if (this.keys_.isPressed(animus.Key.J)) {
-    this.blendT_ -= 0.05;
-  }
-  if (this.keys_.isPressed(animus.Key.K)) {
-    this.blendT_ += 0.05;
-  }
-};
+animus.Renderer.prototype.handleKeys = function() {};
