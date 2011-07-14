@@ -122,6 +122,9 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
+  this.rootRotation_ = new animus.DualQuaternion();
+  this.rootTranslation_ = new animus.DualQuaternion();
+
   this.local0_ = new animus.Pose([
     // torso (0)
     new animus.DualQuaternion(),
@@ -308,8 +311,9 @@ animus.Renderer.prototype.shadowMapPass = function(gl) {
       this.getPerspectiveProjectionMatrix());
   gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
       this.getLightTransform());
-  var palette = this.animator_.animate(
-      this.skeleton_, this.local0_, this.local1_, this.blendT_);
+  var palette = this.animator_.animate(this.skeleton_,
+      this.rootTranslation_.times(this.rootRotation_),
+      this.local0_, this.local1_, this.blendT_);
   this.render(gl, this.p2_, this.body_, palette);
 };
 
@@ -325,8 +329,9 @@ animus.Renderer.prototype.scenePass = function(gl) {
       this.getTransform());
   gl.uniformMatrix4fv(this.p_.uLightTransform, false,
       this.getLightTransform());
-  var palette = this.animator_.animate(
-      this.skeleton_, this.local0_, this.local1_, this.blendT_);
+  var palette = this.animator_.animate(this.skeleton_,
+      this.rootTranslation_.times(this.rootRotation_),
+      this.local0_, this.local1_, this.blendT_);
   this.render(gl, this.p_, this.body_, palette);
 };
 
@@ -343,7 +348,6 @@ animus.Renderer.ROTATION = Math.PI/64;
 animus.Renderer.prototype.onDraw = function(gl) {
   this.handleKeys();
 
-  this.blendT_ = (+new Date() % 1000) / 500;
   animus.global.document.getElementById('t').innerText = this.blendT_;
 
   if (this.index_ == 0) {
@@ -370,100 +374,70 @@ animus.Renderer.ROTATION = Math.PI/64;
 
 
 animus.Renderer.prototype.handleKeys = function() {
+  if (this.keys_.isPressed(animus.Key.J)) {
+    this.blendT_ -= 0.05;
+  }
+  if (this.keys_.isPressed(animus.Key.K)) {
+    this.blendT_ += 0.05;
+  }
   if (this.keys_.isPressed(animus.Key.W)) {
-    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
         animus.Vector.J.times(animus.Renderer.DISPLACEMENT)).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
-        animus.Vector.J.times(animus.Renderer.DISPLACEMENT)).
-            times(this.local1_.getJoint(0)));
+            times(this.rootTranslation_);
   }
   if (this.keys_.isPressed(animus.Key.S)) {
-    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
         animus.Vector.J.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
-        animus.Vector.J.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.local1_.getJoint(0)));
+            times(this.rootTranslation_);
   }
   if (this.keys_.isPressed(animus.Key.D)) {
-    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
         animus.Vector.I.times(animus.Renderer.DISPLACEMENT)).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
-        animus.Vector.I.times(animus.Renderer.DISPLACEMENT)).
-            times(this.local1_.getJoint(0)));
+            times(this.rootTranslation_);
   }
   if (this.keys_.isPressed(animus.Key.A)) {
-    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
         animus.Vector.I.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
-        animus.Vector.I.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.local1_.getJoint(0)));
+            times(this.rootTranslation_);
   }
   if (this.keys_.isPressed(animus.Key.Z)) {
-    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
         animus.Vector.K.times(animus.Renderer.DISPLACEMENT)).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
-        animus.Vector.K.times(animus.Renderer.DISPLACEMENT)).
-            times(this.local1_.getJoint(0)));
+            times(this.rootTranslation_);
   }
   if (this.keys_.isPressed(animus.Key.Q)) {
-    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
         animus.Vector.K.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
-        animus.Vector.K.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.local1_.getJoint(0)));
+            times(this.rootTranslation_);
   }
   if (this.keys_.isPressed(animus.Key.RIGHT)) {
-    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.K, animus.Renderer.ROTATION).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.K, animus.Renderer.ROTATION).
-            times(this.local1_.getJoint(0)));
+    this.rootRotation_ = this.rootRotation_.times(
+        animus.DualQuaternion.fromAxisAngle(
+            animus.Vector.K, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.LEFT)) {
-    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.K, -animus.Renderer.ROTATION).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.K, -animus.Renderer.ROTATION).
-            times(this.local1_.getJoint(0)));
+    this.rootRotation_ = this.rootRotation_.times(
+        animus.DualQuaternion.fromAxisAngle(
+            animus.Vector.K, -animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.UP)) {
-    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.I, animus.Renderer.ROTATION).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.I, animus.Renderer.ROTATION).
-            times(this.local1_.getJoint(0)));
+    this.rootRotation_ = this.rootRotation_.times(
+        animus.DualQuaternion.fromAxisAngle(
+            animus.Vector.I, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.DOWN)) {
-    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.I, -animus.Renderer.ROTATION).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.I, -animus.Renderer.ROTATION).
-            times(this.local1_.getJoint(0)));
+    this.rootRotation_ = this.rootRotation_.times(
+        animus.DualQuaternion.fromAxisAngle(
+            animus.Vector.I, -animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.LT)) {
-    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.J, animus.Renderer.ROTATION).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.J, animus.Renderer.ROTATION).
-            times(this.local1_.getJoint(0)));
+    this.rootRotation_ = this.rootRotation_.times(
+        animus.DualQuaternion.fromAxisAngle(
+            animus.Vector.J, animus.Renderer.ROTATION));
   }
   if (this.keys_.isPressed(animus.Key.GT)) {
-    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.J, -animus.Renderer.ROTATION).
-            times(this.local0_.getJoint(0)));
-    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
-        animus.Vector.J, -animus.Renderer.ROTATION).
-            times(this.local1_.getJoint(0)));
+    this.rootRotation_ = this.rootRotation_.times(
+        animus.DualQuaternion.fromAxisAngle(
+            animus.Vector.J, -animus.Renderer.ROTATION));
   }
 };

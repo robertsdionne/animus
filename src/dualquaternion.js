@@ -182,6 +182,12 @@ animus.DualQuaternion.prototype.times = function(that) {
             plus(this.vector.times(that.scalar)).
             plus(this.vector.cross(that.vector)),
         this.scalar.times(that.scalar).minus(this.vector.dot(that.vector)));
+  } else if (that instanceof animus.Pose) {
+    var result = new animus.Pose();
+    for (var i = 0; i < that.bones_.length; ++i) {
+      result.set(i, this.times(that.bones_[i]));
+    }
+    return result;
   }
 };
 
