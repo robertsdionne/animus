@@ -88,7 +88,7 @@ animus.Pose.prototype.reset = function() {
 /**
  * @return {animus.DualQuaternion}
  */
-animus.Pose.prototype.getJoint = function(i) {
+animus.Pose.prototype.getBone = function(i) {
   return this.bones_[i];
 };
 

@@ -208,16 +208,16 @@ animus.Renderer.prototype.onCreate = function(gl) {
 
   var bind = this.local0_.globalize(this.skeleton_);
   var b = new animus.BoxMan()
-      .add(0, bind.getJoint(0), 1, 2, 0.2)      // skeleton
-      .add(1, bind.getJoint(1), 0.5, 0.5, 0.5)  // skull
-      .add(2, bind.getJoint(2), 0.2, 0.5, 0.2)  // right arm
-      .add(3, bind.getJoint(3), 0.2, 0.5, 0.2)  // right forearm
-      .add(4, bind.getJoint(4), 0.2, 0.5, 0.2)  // left arm
-      .add(5, bind.getJoint(5), 0.2, 0.5, 0.2)  // left forearm
-      .add(6, bind.getJoint(6), 0.2, 1, 0.2)    // right thigh
-      .add(7, bind.getJoint(7), 0.2, 1, 0.2)    // right calf
-      .add(8, bind.getJoint(8), 0.2, 1, 0.2)    // left thigh
-      .add(9, bind.getJoint(9), 0.2, 1, 0.2)   // left calf
+      .add(0, bind.getBone(0), 1, 2, 0.2)      // skeleton
+      .add(1, bind.getBone(1), 0.5, 0.5, 0.5)  // skull
+      .add(2, bind.getBone(2), 0.2, 0.5, 0.2)  // right arm
+      .add(3, bind.getBone(3), 0.2, 0.5, 0.2)  // right forearm
+      .add(4, bind.getBone(4), 0.2, 0.5, 0.2)  // left arm
+      .add(5, bind.getBone(5), 0.2, 0.5, 0.2)  // left forearm
+      .add(6, bind.getBone(6), 0.2, 1, 0.2)    // right thigh
+      .add(7, bind.getBone(7), 0.2, 1, 0.2)    // right calf
+      .add(8, bind.getBone(8), 0.2, 1, 0.2)    // left thigh
+      .add(9, bind.getBone(9), 0.2, 1, 0.2)   // left calf
       .build();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
