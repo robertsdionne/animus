@@ -363,4 +363,107 @@ animus.Renderer.prototype.onDraw = function(gl) {
 };
 
 
-animus.Renderer.prototype.handleKeys = function() {};
+animus.Renderer.DISPLACEMENT = 0.1;
+
+
+animus.Renderer.ROTATION = Math.PI/64;
+
+
+animus.Renderer.prototype.handleKeys = function() {
+  if (this.keys_.isPressed(animus.Key.W)) {
+    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.J.times(animus.Renderer.DISPLACEMENT)).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.J.times(animus.Renderer.DISPLACEMENT)).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.S)) {
+    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.J.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.J.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.D)) {
+    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.I.times(animus.Renderer.DISPLACEMENT)).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.I.times(animus.Renderer.DISPLACEMENT)).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.A)) {
+    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.I.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.I.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.Z)) {
+    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.K.times(animus.Renderer.DISPLACEMENT)).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.K.times(animus.Renderer.DISPLACEMENT)).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.Q)) {
+    this.local0_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.K.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromTranslation(
+        animus.Vector.K.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.RIGHT)) {
+    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.K, animus.Renderer.ROTATION).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.K, animus.Renderer.ROTATION).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.LEFT)) {
+    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.K, -animus.Renderer.ROTATION).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.K, -animus.Renderer.ROTATION).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.UP)) {
+    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.I, animus.Renderer.ROTATION).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.I, animus.Renderer.ROTATION).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.DOWN)) {
+    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.I, -animus.Renderer.ROTATION).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.I, -animus.Renderer.ROTATION).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.LT)) {
+    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.J, animus.Renderer.ROTATION).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.J, animus.Renderer.ROTATION).
+            times(this.local1_.getJoint(0)));
+  }
+  if (this.keys_.isPressed(animus.Key.GT)) {
+    this.local0_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.J, -animus.Renderer.ROTATION).
+            times(this.local0_.getJoint(0)));
+    this.local1_.set(0, animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.J, -animus.Renderer.ROTATION).
+            times(this.local1_.getJoint(0)));
+  }
+};
