@@ -14,3 +14,4 @@ app.get('/', function(request, response) {
 });
 
 app.listen(8888);
+console.log('Server listening at http://localhost:8888/');
