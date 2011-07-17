@@ -7,13 +7,10 @@ var http = require('http');
 var app = express.createServer();
 
 app.use(express.favicon('favicon.ico'));
+app.use(express.static('src'));
 
 app.get('/', function(request, response) {
-  response.sendfile('animus.html');
-});
-
-app.get('/src/*', function(request, response) {
-  response.sendfile('src/' + request.params[0]);
+  response.sendfile('src/animus.html');
 });
 
 app.listen(8888);
