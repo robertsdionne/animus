@@ -10,6 +10,10 @@ app.get('/', function(request, response) {
   response.sendfile('animus.html');
 });
 
+app.get('/favicon.ico', function(request, response) {
+  response.sendfile('favicon.ico');
+});
+
 app.get('/src/*', function(request, response) {
   response.sendfile('src/' + request.params[0]);
 });
