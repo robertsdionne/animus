@@ -5,7 +5,13 @@ var http = require('http');
 
 
 var app = express.createServer();
+
 app.get('/', function(request, response) {
-  response.redirect('http://www.google.com/');
+  response.sendfile('animus.html');
 });
+
+app.get(/\/src\/(.+)/, function(request, response) {
+  response.sendfile('src/' + request.params[0]);
+});
+
 app.listen(8888);
