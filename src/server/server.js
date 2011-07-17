@@ -10,7 +10,7 @@ app.get('/', function(request, response) {
   response.sendfile('animus.html');
 });
 
-app.get(/\/src\/(.+)/, function(request, response) {
+app.get('/src/*', function(request, response) {
   response.sendfile('src/' + request.params[0]);
 });
 
