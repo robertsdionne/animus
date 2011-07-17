@@ -6,12 +6,10 @@ var http = require('http');
 
 var app = express.createServer();
 
+app.use(express.favicon('favicon.ico'));
+
 app.get('/', function(request, response) {
   response.sendfile('animus.html');
-});
-
-app.get('/favicon.ico', function(request, response) {
-  response.sendfile('favicon.ico');
 });
 
 app.get('/src/*', function(request, response) {
