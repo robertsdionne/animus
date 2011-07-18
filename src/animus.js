@@ -64,6 +64,9 @@ animus.inherits(animus.Renderer, webgl.Renderer);
  */
 animus.Renderer.prototype.onChange = function(gl, width, height) {
   gl.viewport(0, 0, width, height);
+  var aspect = width/height;
+  this.projection_ = this.getFrustumMatrix(
+      -aspect, aspect, -1, 1, 1, 1000);
 };
 
 
@@ -234,12 +237,17 @@ animus.Renderer.prototype.onCreate = function(gl) {
 animus.Renderer.prototype.onDestroy = animus.nullFunction;
 
 
-animus.Renderer.prototype.getPerspectiveProjectionMatrix = function() {
+animus.Renderer.prototype.getFrustumMatrix = function(
+    left, right, bottom, top, near, far) {
+  var a = (right + left) / (right - left);
+  var b = (top + bottom) / (top - bottom);
+  var c = -(far + near) / (far - near);
+  var d = -(2 * far * near) / (far - near);
   return [
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, -101.0/99.0, -1.0,
-    0.0, 0.0, -200.0/99.0, 0.0
+    2 * near / (right - left), 0, 0, 0,
+    0, 2 * near / (top - bottom), 0, 0,
+    a, b, c, -1,
+    0, 0, d, 0
   ];
 };
 
@@ -281,8 +289,7 @@ animus.Renderer.prototype.scenePass = function(gl) {
   gl.useProgram(this.p_.handle);
   gl.cullFace(gl.BACK);
   gl.depthFunc(gl.LESS);
-  gl.uniformMatrix4fv(this.p_.uProjection, false,
-      this.getPerspectiveProjectionMatrix());
+  gl.uniformMatrix4fv(this.p_.uProjection, false, this.projection_);
   gl.uniform1i(this.p_.uLighting, true);
   var palette = this.animator_.animate(this.skeleton_, this.root_,
       this.local0_, this.local1_, this.blendT_);
