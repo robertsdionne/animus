@@ -375,11 +375,11 @@ animus.Renderer.prototype.handleKeys = function() {
     this.root_ = animus.DualQuaternion.fromAxisAngle(
         animus.Vector.J, -animus.Renderer.ROTATION).times(this.root_);
   }
-  if (this.keys_.isPressed(animus.Key.UP)) {
+  if (this.keys_.isPressed(animus.Key.DOWN)) {
     this.root_ = animus.DualQuaternion.fromAxisAngle(
         animus.Vector.I, animus.Renderer.ROTATION).times(this.root_);
   }
-  if (this.keys_.isPressed(animus.Key.DOWN)) {
+  if (this.keys_.isPressed(animus.Key.UP)) {
     this.root_ = animus.DualQuaternion.fromAxisAngle(
         animus.Vector.I, -animus.Renderer.ROTATION).times(this.root_);
   }
