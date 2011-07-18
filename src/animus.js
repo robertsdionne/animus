@@ -244,16 +244,6 @@ animus.Renderer.prototype.getPerspectiveProjectionMatrix = function() {
 };
 
 
-animus.Renderer.prototype.getOrthographicProjectionMatrix = function() {
-  return [
-    1.0/4.0, 0.0, 0.0, 0.0,
-    0.0, 1.0/4.0, 0.0, 0.0,
-    0.0, 0.0, -2.0/9.0, 0.0,
-    0.0, 0.0, -11.0/9.0, 1.0
-  ];
-};
-
-
 animus.Renderer.prototype.render = function(
     gl, program, buffer, palette, n, type) {
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
