@@ -65,8 +65,7 @@ animus.inherits(animus.Renderer, webgl.Renderer);
 animus.Renderer.prototype.onChange = function(gl, width, height) {
   gl.viewport(0, 0, width, height);
   var aspect = width/height;
-  this.projection_ = this.getFrustumMatrix(
-      -aspect, aspect, -1, 1, 1, 1000);
+  this.projection_ = this.getFrustumMatrix(-aspect, aspect, -1, 1, 1, 1000);
 };
 
 
