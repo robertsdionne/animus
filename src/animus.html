@@ -13,6 +13,7 @@
         'dualquaternion.js',
         'dualvector.js',
         'boxman.js',
+        'grid.js',
         'app.js',
         'program.js',
         'renderer.js',
@@ -40,8 +41,6 @@
     <script id="v0" type="x-shader/x-vertex">
       // Per skeleton uniforms
       uniform mat4 uProjection;
-      uniform mat4 uTransform;
-      uniform mat4 uLightTransform;
 
       // Per limb uniforms
       uniform vec4 uJointPalette[24];
@@ -53,7 +52,6 @@
       attribute float aJoint;
 
       // Per vertex varyings
-      varying vec4 vTexCoord;
       varying vec3 vPosition;
       varying vec3 vNormal;
       varying vec3 vColor;
@@ -88,102 +86,24 @@
 
         vNormal = rotate(transf[0], aNormal);
         vColor = aColor;
-        gl_Position = uProjection * uTransform * vec4(pos, 1.0);
-        vTexCoord = bias * uProjection * uLightTransform * vec4(pos, 1.0);
+        gl_Position = uProjection * vec4(pos, 1.0);
         vPosition = pos;
       }
     </script>
     <script id="f0" type="x-shader/x-fragment">
-      uniform sampler2D uTexture;
-      uniform highp mat4 uLightTransform;
-
       // Per fragment varyings
-      varying highp vec4 vTexCoord;
       varying highp vec3 vPosition;
       varying highp vec3 vNormal;
       varying lowp vec3 vColor;
 
-      const highp vec3 LIGHT_POSITION = vec3(0., 3., 0.);
+      const highp vec3 LIGHT_POSITION = vec3(0., 0., 0.);
       const highp float AMBIENT = 0.25;
-      const highp float ERROR = 0.001;
-      const highp vec4 BIT_SHIFT = vec4(1./(256.*256.*256.),
-          1./(256.*256.), 1./256., 1.);
-
-      // Depth unpacking function and constants adapted from
-      // SpiderGL Example 6: Shadow Mapping:
-      // http://spidergl.org/example.php?id=6
-      float unpackDepth(vec4 rgbaDepth) {
-        return dot(rgbaDepth, BIT_SHIFT);
-      }
 
       void main() {
-        highp float diffuse = AMBIENT;
         highp vec3 light = normalize(LIGHT_POSITION - vPosition);
         highp float dot = dot(light, vNormal);
-        if (dot >= 0.) {
-          highp float calculatedDepth = vTexCoord.z/vTexCoord.w;
-          highp float mapDepth =
-              unpackDepth(texture2DProj(uTexture, vTexCoord));
-          if (calculatedDepth - mapDepth < ERROR) {
-            diffuse = max(dot, AMBIENT);
-          }
-        }
+        highp float diffuse = max(dot, AMBIENT);
         gl_FragColor = vec4(diffuse * vColor, 1.);
-      }
-    </script>
-    <script id="v1" type="x-shader/x-vertex">
-      // Per skeleton uniforms
-      uniform mat4 uProjection;
-      uniform mat4 uLightTransform;
-
-      // Per limb uniforms
-      uniform vec4 uJointPalette[24];
-
-      // Per vertex attributes
-      attribute vec4 aPosition;
-      attribute float aJoint;
-
-      void getJoint(float i, out vec4 joint[2]) {
-        joint[0] = uJointPalette[2 * int(i)];
-        joint[1] = uJointPalette[2 * int(i) + 1];
-      }
-
-      void main() {
-        vec4 transformation[2];
-        getJoint(aJoint, transformation);
-
-        // Dual quaternion transformation code adapted from
-        // Geometric Skinning with Approximate Dual Quaternion Blending:
-        // http://isg.cs.tcd.ie/kavanl/papers/sdq-tog08.pdf
-        // See dqsFast():
-        // http://isg.cs.tcd.ie/kavanl/dq/dqs.cg
-        float length = length(transformation[0]);
-        vec4 transf[2];
-        transf[0] = transformation[0] / length;
-        transf[1] = transformation[1] / length;
-        vec3 pos = rotate(transf[0], aPosition.xyz);
-        vec3 transl = 2.0*(transf[0].w*transf[1].xyz -
-            transf[1].w*transf[0].xyz+cross(transf[0].xyz,transf[1].xyz));
-        pos += transl;
-
-        gl_Position = uProjection * uLightTransform * vec4(pos, 1.0);
-      }
-    </script>
-    <script id="f1" type="x-shader/x-fragment">
-      const highp vec4 BIT_SHIFT = vec4(256.*256.*256., 256.*256., 256., 1.);
-      const highp vec4 BIT_MASK = vec4(0., 1./256., 1./256., 1./256.);
-
-      // Depth packing function and constants adapted from
-      // SpiderGL Example 6: Shadow Mapping:
-      // http://spidergl.org/example.php?id=6
-      vec4 packDepth(float depth) {
-        highp vec4 result = fract(depth * BIT_SHIFT);
-        result -= result.xxyz * BIT_MASK;
-        return result;
-      }
-
-      void main() {
-        gl_FragColor = packDepth(gl_FragCoord.z);
       }
     </script>
   </head>

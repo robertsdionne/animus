@@ -40,6 +40,11 @@ animus.Renderer = function(keys, index) {
   this.body_ = null;
 
   /**
+   * @type {WebGLBuffer}
+   */
+  this.floor_ = null;
+
+  /**
    * @type {animus.Node}
    */
   this.skeleton_ = null;
@@ -81,19 +86,12 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.p_.create(gl);
   this.p_.link(gl);
 
-  var vertex2 = new webgl.Shader('v1',
-      gl.VERTEX_SHADER,
-      this.getShaderSource('quatlib') + this.getShaderSource('v1'));
-  var fragment2 = new webgl.Shader('f1',
-      gl.FRAGMENT_SHADER, this.getShaderSource('f1'));
-  this.p2_ = new webgl.Program(vertex2, fragment2);
-  this.p2_.create(gl);
-  this.p2_.link(gl);
-
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
 
   this.body_ = gl.createBuffer();
+  this.floor_ = gl.createBuffer();
+  this.floorFrame_ = gl.createBuffer();
 
   this.texture_ = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, this.texture_);
@@ -108,22 +106,10 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.bindRenderbuffer(gl.RENDERBUFFER, this.rb_);
   gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 640, 640);
 
-  this.framebuffer_ = gl.createFramebuffer();
-  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D,
-      this.texture_, 0);
-  gl.framebufferRenderbuffer(
-      gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.rb_);
-
-  var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-  if (status != gl.FRAMEBUFFER_COMPLETE) {
-    console.log(status);
-  }
-
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
-  this.rootRotation_ = new animus.DualQuaternion();
-  this.rootTranslation_ = new animus.DualQuaternion();
+  this.root_ = animus.DualQuaternion.fromTranslation(
+      new animus.Vector(0, 0, -5));
 
   this.local0_ = new animus.Pose([
     // torso (0)
@@ -207,20 +193,36 @@ animus.Renderer.prototype.onCreate = function(gl) {
   this.blendT_ = 0.;
 
   var bind = this.local0_.globalize(this.skeleton_);
-  var b = new animus.BoxMan()
-      .add(0, bind.getBone(0), 1, 2, 0.2)      // skeleton
-      .add(1, bind.getBone(1), 0.5, 0.5, 0.5)  // skull
-      .add(2, bind.getBone(2), 0.2, 0.5, 0.2)  // right arm
-      .add(3, bind.getBone(3), 0.2, 0.5, 0.2)  // right forearm
-      .add(4, bind.getBone(4), 0.2, 0.5, 0.2)  // left arm
-      .add(5, bind.getBone(5), 0.2, 0.5, 0.2)  // left forearm
-      .add(6, bind.getBone(6), 0.2, 1, 0.2)    // right thigh
-      .add(7, bind.getBone(7), 0.2, 1, 0.2)    // right calf
-      .add(8, bind.getBone(8), 0.2, 1, 0.2)    // left thigh
-      .add(9, bind.getBone(9), 0.2, 1, 0.2)   // left calf
-      .build();
+  var b = new animus.BoxMan().
+      add(0, bind.getBone(0), 1, 2, 0.2).      // skeleton
+      add(1, bind.getBone(1), 0.5, 0.5, 0.5).  // skull
+      add(2, bind.getBone(2), 0.2, 0.5, 0.2).  // right arm
+      add(3, bind.getBone(3), 0.2, 0.5, 0.2).  // right forearm
+      add(4, bind.getBone(4), 0.2, 0.5, 0.2).  // left arm
+      add(5, bind.getBone(5), 0.2, 0.5, 0.2).  // left forearm
+      add(6, bind.getBone(6), 0.2, 1, 0.2).    // right thigh
+      add(7, bind.getBone(7), 0.2, 1, 0.2).    // right calf
+      add(8, bind.getBone(8), 0.2, 1, 0.2).    // left thigh
+      add(9, bind.getBone(9), 0.2, 1, 0.2).   // left calf
+      build();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.body_);
+  gl.bufferData(gl.ARRAY_BUFFER, b.byteLength, gl.STATIC_DRAW);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, b);
+
+  var grid = new animus.Grid(
+      -2, 50, 50, 50, 50, [.21, .44, .33], [.42, .58, .44]);
+  b = grid.buildTriangles();
+  this.floorVertexCount_ = grid.getTriangleVertexCount();
+  this.floorFrameVertexCount_ = grid.getWireframeVertexCount();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.floor_);
+  gl.bufferData(gl.ARRAY_BUFFER, b.byteLength, gl.STATIC_DRAW);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, b);
+
+  b = grid.buildWireframe();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.floorFrame_);
   gl.bufferData(gl.ARRAY_BUFFER, b.byteLength, gl.STATIC_DRAW);
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, b);
 };
@@ -252,27 +254,8 @@ animus.Renderer.prototype.getOrthographicProjectionMatrix = function() {
 };
 
 
-animus.Renderer.prototype.getTransform = function() {
-  return [
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, -5.0, 1.0
-  ];
-};
-
-
-animus.Renderer.prototype.getLightTransform = function() {
-  return [
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, -1.0, 0.0, 0.0,
-    0.0, 0.0, -5.0, 1.0
-  ];
-};
-
-
-animus.Renderer.prototype.render = function(gl, program, buffer, palette) {
+animus.Renderer.prototype.render = function(
+    gl, program, buffer, palette, n, type) {
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.uniform4fv(program.uJointPalette, palette);
   gl.vertexAttribPointer(program.aPosition, 3, gl.FLOAT, false, 40, 0);
@@ -289,7 +272,7 @@ animus.Renderer.prototype.render = function(gl, program, buffer, palette) {
     gl.vertexAttribPointer(program.aJoint, 1, gl.FLOAT, false, 40, 36);
     gl.enableVertexAttribArray(program.aJoint);
   }
-  gl.drawArrays(gl.TRIANGLES, 0, 360);
+  gl.drawArrays(type, 0, n);
   gl.disableVertexAttribArray(program.aPosition);
   if (program.aNormal >= 0) {
     gl.disableVertexAttribArray(program.aNormal);
@@ -303,36 +286,22 @@ animus.Renderer.prototype.render = function(gl, program, buffer, palette) {
 };
 
 
-animus.Renderer.prototype.shadowMapPass = function(gl) {
-  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-  gl.cullFace(gl.FRONT);
-  gl.useProgram(this.p2_.handle);
-  gl.uniformMatrix4fv(this.p2_.uProjection, false,
-      this.getPerspectiveProjectionMatrix());
-  gl.uniformMatrix4fv(this.p2_.uLightTransform, false,
-      this.getLightTransform());
-  var palette = this.animator_.animate(this.skeleton_,
-      this.rootTranslation_.times(this.rootRotation_),
-      this.local0_, this.local1_, this.blendT_);
-  this.render(gl, this.p2_, this.body_, palette);
-};
-
-
 animus.Renderer.prototype.scenePass = function(gl) {
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
   gl.useProgram(this.p_.handle);
   gl.cullFace(gl.BACK);
-  gl.uniform1i(this.p_.uTexture, this.texture_);
+  gl.depthFunc(gl.LESS);
   gl.uniformMatrix4fv(this.p_.uProjection, false,
       this.getPerspectiveProjectionMatrix());
-  gl.uniformMatrix4fv(this.p_.uTransform, false,
-      this.getTransform());
-  gl.uniformMatrix4fv(this.p_.uLightTransform, false,
-      this.getLightTransform());
-  var palette = this.animator_.animate(this.skeleton_,
-      this.rootTranslation_.times(this.rootRotation_),
+  var palette = this.animator_.animate(this.skeleton_, this.root_,
       this.local0_, this.local1_, this.blendT_);
-  this.render(gl, this.p_, this.body_, palette);
+  this.render(gl, this.p_, this.body_, palette, 360, gl.TRIANGLES);
+  //palette = new animus.Pose([new animus.DualQuaternion()]).get();
+  this.render(
+      gl, this.p_, this.floor_, palette, this.floorVertexCount_, gl.TRIANGLES);
+  gl.depthFunc(gl.LEQUAL);
+  this.render(gl, this.p_, this.floorFrame_, palette,
+      this.floorFrameVertexCount_, gl.LINES);
 };
 
 
@@ -352,17 +321,9 @@ animus.Renderer.prototype.onDraw = function(gl) {
 
   if (this.index_ == 0) {
     // Canvas 0: Render the full shadow mapped scene.
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer_);
-    this.shadowMapPass(gl);
-    gl.flush();
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     this.scenePass(gl);
-  } else {
-    // Canvas 1: Render the shadow map.
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    this.shadowMapPass(gl);
   }
-
   gl.flush();
 };
 
@@ -381,63 +342,57 @@ animus.Renderer.prototype.handleKeys = function() {
     this.blendT_ += 0.05;
   }
   if (this.keys_.isPressed(animus.Key.W)) {
-    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
-        animus.Vector.J.times(animus.Renderer.DISPLACEMENT)).
-            times(this.rootTranslation_);
+    this.root_ = animus.DualQuaternion.fromTranslation(
+        animus.Vector.K.times(animus.Renderer.DISPLACEMENT)).
+            times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.S)) {
-    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
-        animus.Vector.J.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.rootTranslation_);
-  }
-  if (this.keys_.isPressed(animus.Key.D)) {
-    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
-        animus.Vector.I.times(animus.Renderer.DISPLACEMENT)).
-            times(this.rootTranslation_);
+    this.root_ = animus.DualQuaternion.fromTranslation(
+        animus.Vector.K.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.A)) {
-    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
+    this.root_ = animus.DualQuaternion.fromTranslation(
+        animus.Vector.I.times(animus.Renderer.DISPLACEMENT)).
+            times(this.root_);
+  }
+  if (this.keys_.isPressed(animus.Key.D)) {
+    this.root_ = animus.DualQuaternion.fromTranslation(
         animus.Vector.I.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.rootTranslation_);
+            times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.Z)) {
-    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
-        animus.Vector.K.times(animus.Renderer.DISPLACEMENT)).
-            times(this.rootTranslation_);
+    this.root_ = animus.DualQuaternion.fromTranslation(
+        animus.Vector.J.times(animus.Renderer.DISPLACEMENT)).
+            times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.Q)) {
-    this.rootTranslation_ = animus.DualQuaternion.fromTranslation(
-        animus.Vector.K.times(-animus.Renderer.DISPLACEMENT)).
-            times(this.rootTranslation_);
+    this.root_ = animus.DualQuaternion.fromTranslation(
+        animus.Vector.J.times(-animus.Renderer.DISPLACEMENT)).
+            times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.RIGHT)) {
-    this.rootRotation_ = this.rootRotation_.times(
-        animus.DualQuaternion.fromAxisAngle(
-            animus.Vector.K, animus.Renderer.ROTATION));
+    this.root_ = animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.J, animus.Renderer.ROTATION).times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.LEFT)) {
-    this.rootRotation_ = this.rootRotation_.times(
-        animus.DualQuaternion.fromAxisAngle(
-            animus.Vector.K, -animus.Renderer.ROTATION));
+    this.root_ = animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.J, -animus.Renderer.ROTATION).times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.UP)) {
-    this.rootRotation_ = this.rootRotation_.times(
-        animus.DualQuaternion.fromAxisAngle(
-            animus.Vector.I, animus.Renderer.ROTATION));
+    this.root_ = animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.I, animus.Renderer.ROTATION).times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.DOWN)) {
-    this.rootRotation_ = this.rootRotation_.times(
-        animus.DualQuaternion.fromAxisAngle(
-            animus.Vector.I, -animus.Renderer.ROTATION));
-  }
-  if (this.keys_.isPressed(animus.Key.LT)) {
-    this.rootRotation_ = this.rootRotation_.times(
-        animus.DualQuaternion.fromAxisAngle(
-            animus.Vector.J, animus.Renderer.ROTATION));
+    this.root_ = animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.I, -animus.Renderer.ROTATION).times(this.root_);
   }
   if (this.keys_.isPressed(animus.Key.GT)) {
-    this.rootRotation_ = this.rootRotation_.times(
-        animus.DualQuaternion.fromAxisAngle(
-            animus.Vector.J, -animus.Renderer.ROTATION));
+    this.root_ = animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.K, animus.Renderer.ROTATION).times(this.root_);
+  }
+  if (this.keys_.isPressed(animus.Key.LT)) {
+    this.root_ = animus.DualQuaternion.fromAxisAngle(
+        animus.Vector.K, -animus.Renderer.ROTATION).times(this.root_);
   }
 };

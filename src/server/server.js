@@ -1,3 +1,4 @@
+#!/usr/local/bin/node
 // Copyright 2011 Robert Scott Dionne. All rights reserved.
 
 var express = require('express');
