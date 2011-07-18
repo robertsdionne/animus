@@ -30,10 +30,12 @@ webgl.App.WEBGL_CONTEXT = 'experimental-webgl';
  */
 webgl.App.prototype.checkDimensions_ = function() {
   for (var id in this.gls_) {
-    var width = this.canvases_[id].width;
-    var height = this.canvases_[id].height;
+    var width = window.innerWidth;
+    var height = window.innerHeight;
     if (this.widths_[id] !== width ||
         this.heights_[id] !== height) {
+      this.canvases_[id].width = width;
+      this.canvases_[id].height = height;
       this.widths_[id] = width;
       this.heights_[id] = height;
       this.renderers_[id].onChange(this.gls_[id], width, height);
