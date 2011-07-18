@@ -56,11 +56,6 @@
       varying vec3 vNormal;
       varying vec3 vColor;
 
-      mat4 bias = mat4(0.5, 0.0, 0.0, 0.0,
-                       0.0, 0.5, 0.0, 0.0,
-                       0.0, 0.0, 0.5, 0.0,
-                       0.5, 0.5, 0.5, 1.0);
-
       void getJoint(float i, out vec4 joint[2]) {
         joint[0] = uJointPalette[2 * int(i)];
         joint[1] = uJointPalette[2 * int(i) + 1];
