@@ -296,7 +296,6 @@ animus.Renderer.prototype.scenePass = function(gl) {
   var palette = this.animator_.animate(this.skeleton_, this.root_,
       this.local0_, this.local1_, this.blendT_);
   this.render(gl, this.p_, this.body_, palette, 360, gl.TRIANGLES);
-  //palette = new animus.Pose([new animus.DualQuaternion()]).get();
   this.render(
       gl, this.p_, this.floor_, palette, this.floorVertexCount_, gl.TRIANGLES);
   gl.depthFunc(gl.LEQUAL);
@@ -321,7 +320,6 @@ animus.Renderer.prototype.onDraw = function(gl) {
 
   if (this.index_ == 0) {
     // Canvas 0: Render the full shadow mapped scene.
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     this.scenePass(gl);
   }
   gl.flush();
