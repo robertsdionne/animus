@@ -91,6 +91,8 @@
       }
     </script>
     <script id="f0" type="x-shader/x-fragment">
+      uniform lowp bool uLighting;
+
       // Per fragment varyings
       varying highp vec3 vPosition;
       varying highp vec3 vNormal;
@@ -102,7 +104,7 @@
       void main() {
         highp vec3 light = normalize(LIGHT_POSITION - vPosition);
         highp float dot = dot(light, vNormal);
-        highp float diffuse = max(dot, AMBIENT);
+        highp float diffuse = uLighting ? max(dot, AMBIENT) : 1.;
         gl_FragColor = vec4(diffuse * vColor, 1.);
       }
     </script>

@@ -293,12 +293,14 @@ animus.Renderer.prototype.scenePass = function(gl) {
   gl.depthFunc(gl.LESS);
   gl.uniformMatrix4fv(this.p_.uProjection, false,
       this.getPerspectiveProjectionMatrix());
+  gl.uniform1i(this.p_.uLighting, true);
   var palette = this.animator_.animate(this.skeleton_, this.root_,
       this.local0_, this.local1_, this.blendT_);
   this.render(gl, this.p_, this.body_, palette, 360, gl.TRIANGLES);
   this.render(
       gl, this.p_, this.floor_, palette, this.floorVertexCount_, gl.TRIANGLES);
   gl.depthFunc(gl.LEQUAL);
+  gl.uniform1i(this.p_.uLighting, false);
   this.render(gl, this.p_, this.floorFrame_, palette,
       this.floorFrameVertexCount_, gl.LINES);
 };
