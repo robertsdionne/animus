@@ -300,7 +300,7 @@ animus.Renderer.prototype.scenePass = function(gl) {
   this.render(
       gl, this.p_, this.floor_, palette, this.floorVertexCount_, gl.TRIANGLES);
   gl.depthFunc(gl.LEQUAL);
-  gl.uniform1i(this.p_.uLighting, false);
+  gl.uniform1i(this.p_.uLighting, true);
   this.render(gl, this.p_, this.floorFrame_, palette,
       this.floorFrameVertexCount_, gl.LINES);
 };

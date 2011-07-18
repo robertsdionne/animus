@@ -50,6 +50,8 @@ webgl.App.prototype.checkDimensions_ = function() {
 webgl.App.prototype.install = function(renderers, opt_stats) {
   for (var id in renderers) {
     this.canvases_[id] = animus.global.document.getElementById(id);
+    this.canvases_[id].width = window.innerHeight;
+    this.canvases_[id].height = window.innerHeight;
     this.gls_[id] = this.canvases_[id].getContext(webgl.App.WEBGL_CONTEXT);
     this.renderers_[id] = renderers[id];
     this.renderers_[id].onCreate(this.gls_[id]);

@@ -108,12 +108,26 @@
         gl_FragColor = vec4(diffuse * vColor, 1.);
       }
     </script>
+    <style type="text/css">
+      body {
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+      }
+      .float {
+        position: absolute;
+        top: 0px;
+      }
+    </style>
   </head>
   <body>
     <div style="float: left;">
-      <canvas id="c0" width="640" height="640"></canvas>
+      <canvas id="c0"></canvas>
     </div>
+    <div class="float">
     <p><b>ms/frame</b> = <span id="stats"></span></p>
     <p><b>t</b> = <span id="t"></span></p>
+  </div>
   </body>
 </html>
