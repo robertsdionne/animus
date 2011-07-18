@@ -97,8 +97,8 @@
       const highp float AMBIENT = 0.25;
 
       void main() {
-        highp vec3 light = normalize(LIGHT_POSITION - vPosition);
-        highp float dot = dot(light, vNormal);
+        highp vec3 light = LIGHT_POSITION - vPosition;
+        highp float dot = dot(normalize(light), vNormal);
         highp float diffuse = uLighting ? max(dot, AMBIENT) : 1.;
         gl_FragColor = vec4(diffuse * vColor, 1.);
       }
