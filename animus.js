@@ -108,7 +108,7 @@ animus.Renderer.prototype.onCreate = function(gl) {
   gl.bindRenderbuffer(gl.RENDERBUFFER, this.rb_);
   gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 640, 640);
 
-  gl.clearColor(0.0, 0.0, 0.5, 1.0);
+  gl.clearColor(0.1, 0.2, 0.8, 1.0);
 
   this.root_ = animus.DualQuaternion.fromTranslation(
       new animus.Vector(0, 0, -5));
