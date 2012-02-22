@@ -1,0 +1,128 @@
+<!-- Copyright 2010 Robert Scott Dionne. All Rights Reserved. -->
+<html>
+  <head>
+    <!--
+    <script type="application/javascript" src="animus.js"></script>
+    -->
+    <script type="application/javascript">
+      var srcs = [
+        'base.js',
+        'quaternion.js',
+        'vector.js',
+        'dualnumber.js',
+        'dualquaternion.js',
+        'dualvector.js',
+        'boxman.js',
+        'grid.js',
+        'app.js',
+        'program.js',
+        'renderer.js',
+        'shader.js',
+        'keys.js',
+        'animator.js',
+        'pose.js',
+        'skeleton.js',
+        'animus.js'
+      ];
+      srcs.forEach(function(src) {
+        document.write(
+            '<script type="application/javascript" src="' +
+            src + '"></' + 'script>');
+      });
+    </script>
+    <script id="quatlib" type="x-shader/x-vertex">
+      vec3 rotate(vec4 q, vec3 v) {
+        vec3 r = q.xyz;
+        float a = q.w;
+        return v + cross(2.0 * r, cross(r, v) + a * v);
+      }
+
+    </script>
+    <script id="v0" type="x-shader/x-vertex">
+      // Per skeleton uniforms
+      uniform mat4 uProjection;
+
+      // Per limb uniforms
+      uniform vec4 uJointPalette[24];
+
+      // Per vertex attributes
+      attribute vec3 aPosition;
+      attribute vec3 aNormal;
+      attribute vec3 aColor;
+      attribute float aJoint;
+
+      // Per vertex varyings
+      varying vec3 vPosition;
+      varying vec3 vNormal;
+      varying vec3 vColor;
+
+      void getJoint(float i, out vec4 joint[2]) {
+        joint[0] = uJointPalette[2 * int(i)];
+        joint[1] = uJointPalette[2 * int(i) + 1];
+      }
+
+      void main() {
+        vec4 transformation[2];
+        getJoint(aJoint, transformation);
+
+        // Dual quaternion transformation code adapted from
+        // Geometric Skinning with Approximate Dual Quaternion Blending:
+        // http://isg.cs.tcd.ie/kavanl/papers/sdq-tog08.pdf
+        // See dqsFast():
+        // http://isg.cs.tcd.ie/kavanl/dq/dqs.cg
+        float length = length(transformation[0]);
+        vec4 transf[2];
+        transf[0] = transformation[0] / length;
+        transf[1] = transformation[1] / length;
+        vec3 pos = rotate(transf[0], aPosition);
+        vec3 transl = 2.0 * (transf[0].w * transf[1].xyz -
+            transf[1].w * transf[0].xyz + cross(transf[0].xyz, transf[1].xyz));
+        pos += transl;
+
+        vNormal = rotate(transf[0], aNormal);
+        vColor = aColor;
+        gl_Position = uProjection * vec4(pos, 1.0);
+        vPosition = pos;
+      }
+    </script>
+    <script id="f0" type="x-shader/x-fragment">
+      uniform lowp bool uLighting;
+
+      // Per fragment varyings
+      varying highp vec3 vPosition;
+      varying highp vec3 vNormal;
+      varying lowp vec3 vColor;
+
+      const highp vec3 LIGHT_POSITION = vec3(0., 0., 0.);
+      const highp float AMBIENT = 0.25;
+
+      void main() {
+        highp vec3 light = LIGHT_POSITION - vPosition;
+        highp float dot = dot(normalize(light), vNormal);
+        highp float diffuse = uLighting ? max(dot, AMBIENT) : 1.;
+        gl_FragColor = vec4(diffuse * vColor, 1.);
+      }
+    </script>
+    <style type="text/css">
+      body {
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+      }
+      .float {
+        position: absolute;
+        top: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="float: left;">
+      <canvas id="c0"></canvas>
+    </div>
+    <div class="float">
+    <p><b>ms/frame</b> = <span id="stats"></span></p>
+    <p><b>t</b> = <span id="t"></span></p>
+  </div>
+  </body>
+</html>
