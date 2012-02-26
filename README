@@ -1,21 +1,32 @@
-Animus
-Author: Robert Dionne
+Animus Dual-Quaternion Animation Engine
+Robert Dionne
+February 25, 2012
 
-Animus is an animation engine, written in WebGL, that uses dual quaternions for the translations and rotations of the joints. Currently, it supports posing a character with vertices skinned to single joint, but will eventually support skinning to multiple joints and animated motion.
+Animus is an animation engine, written in WebGL, that uses dual quaternions (see http://en.wikipedia.org/wiki/Dual_quaternion) for the translations and rotations of the joints. Currently, it supports posing a character with vertices skinned to single joint, but will eventually support skinning to multiple joints and animated motion.
 
-Mac OS X support:
-Google Chrome 10: http://www.google.com/chrome
-Mozilla Firefox 4: http://www.mozilla.com/en-US/firefox/new/
+Requirements:
+1) Macbook Pro running Mac OS X Snow Leopard.
+2a) Google Chrome 17.0.963.56 or better: http://www.google.com/chrome
+  OR
+2b) Mozilla Firefox 10.0.2 or better: http://www.mozilla.com/en-US/firefox/new/
 
-Windows 7 support:
-Mozilla Firefox 4: http://www.mozilla.com/en-US/firefox/new/
+Running:
+1) Visit http://robertsdionne.github.com/animus/ in Google Chrome 17 or Mozilla Firefox 10.
 
-To execute:
-1) Download animus as a zip file:
-https://github.com/robertsdionne/animus/zipball/master
+Controls:
+  W - Move forward.
+  S - Move backward.
+  A - Move left.
+  D - Move right.
+  Q - Move up.
+  Z - Move down.
 
-2) Unzip animus.
+  UP - Pitch up.
+  DOWN - Pitch down.
+  LEFT - Yaw left.
+  RIGHT - Yaw right.
+  < - Roll left.
+  > - Roll right.
 
-3) Open file:///path/to/animus.html in your browser.
-
-Currently, animus does not work in Google Chrome 10 on Windows 7. I'll need to debug this issue further.
+  J - Step animation backward in time.
+  K - Step animation forward in time.
